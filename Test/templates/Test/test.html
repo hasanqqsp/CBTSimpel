@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for package in TestPackage  %}    
+        <p>Penyedia Tes : {{ package.testAuthor }}</p>
+        <p>Judul Tes : {{ package.testTitle }}</p>
+        <p>Jumlah Soal : {{ package.questionCount}}</p>
+        <a href="{{package.testID}}"><p>Kerjakan &raquo;</p></a>
+    {% endfor %}
+</body>
+<script>
+
+    
+    ​
+</script>
+</html>

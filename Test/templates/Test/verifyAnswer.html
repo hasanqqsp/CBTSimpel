@@ -1,0 +1,92 @@
+{% extends 'snippets/base.html' %}
+{% block web_title %}
+KONFIRMASI IDENTITAS DAN JAWABAN
+{% endblock web_title %}
+{% block card_header %}
+    <h3 class="m-1"><strong>KONFIRMASI IDENTITAS DAN JAWABAN</strong></h3>
+                    
+
+{% endblock card_header %}
+{% block card_body %}
+  <div class="alert alert-success" role="alert">
+  {% if answerQuery.count < packQuery.questionCount %}
+        <h5 class="text-center"> <a href="{{lastQuest}}">Selesaikan seluruh  jawaban </a> atau habiskan waktu sebelum mengirim jawaban</h4>
+    {% else %}
+    <h4 class="alert-heading">Selamat ! Anda telah menyelesaikan seluruh pertanyaan</h4>
+    <hr>
+    <p class="mb-0">Silakan memeriksa kembali jawaban anda!</p>
+    {% endif %}
+  </div>    
+    <ul class="list-group block list-group-flush">
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{takerQuery.testTakerName}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kelas / Grup</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{takerQuery.testTakerGroup}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Tes</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.testCode}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Penyedia Tes</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.testAuthor}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Judul Tes</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.testTitle}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jumlah Soal</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.questionCount}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jadwal / Waktu Mulai Tes</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.testSchedule | date:"l, d F Y"}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Batas Waktu Pengerjaan</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.timeLimit}} Menit</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Sesi</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{user}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted mt-auto mb-3 h6 text-uppercase">Jawaban Anda :</div></div>
+            <ul class="list-group block list-group-flush">
+            {% for q in query %}
+              <li class="list-group-item d-flex flex-column py-1  "><div class="row">
+                  <div class="col-md-2 pl-2 my-auto"><div class="card-title text-muted my-auto  h6 text-uppercase">Soal Ke-{{q.num}}</div></div>
+                  <div class="col-md-5 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">{{q.question}}</div></div>
+                  
+                  {% if q.answer == "Error"%}
+                    <div class="col-md-5 pl-2"><a href="{% url 'test:question' packQuery.testID q.questID %}" class="card-text btn btn-info btn-block text-left rounded h6 my-1 p-2">Belum Diisi</a></div>
+                    {% else %}
+                  <div class="col-md-5 pl-2"><a href="{% url 'test:question' packQuery.testID q.questID %}" class="card-text btn btn-info btn-block text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</a></div>
+                  {% endif %}
+                      
+                  </div></li>
+                {% endfor %}
+            </ul>
+          </div>
+          </li>
+        <li class="list-group-item"><div class="row">
+        <small class="form-text text-muted">Dengan mengklik tombol <strong> Kirim Jawaban Saya</strong>
+        sesi anda akan dihapus dan jawaban dikirimkan kepada penyedia tes. Anda tidak dapat mengubah jawaban setelah mengirim.</small>
+        </li>
+
+{% endblock card_body %}
+{% block card_footer %}
+    {% if answerQuery.count < packQuery.questionCount %}
+        <h5 class="text-center"> <a href="{{lastQuest}}">Selesaikan seluruh  jawaban </a> atau habiskan waktu sebelum mengirim jawaban</h4>
+    {% else %}
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Kirim Jawaban Saya</button>
+    </form>
+    {% endif %}
+        
+{% endblock card_footer %}

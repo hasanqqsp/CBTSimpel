@@ -1,0 +1,177 @@
+{% extends 'snippets/base.html' %}
+{% block web_title %}
+ (Soal ke {{question.questionNum}}/{{question_list.count}}) {{testInfo.testTitle}}
+{% endblock web_title %}
+
+{% block no_card_header %}
+<div class="card-header d-flex  flex-row flex-wrap justify-content-between bg-success ">
+        <h6 class="bg-primary align-self-center border-primary rounded p-1 mb-0  text-nowrap">Soal Ke-{{question.questionNum}} dari {{question_list.count}}</h3>
+        
+        {% if is_preview %}
+        <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : Pratinjau</h3>
+
+        {% else %}
+        <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : {{user}}</h3>
+        {% endif %}
+            
+</div>
+{% include 'django_quill/media.html' %}
+
+{% endblock no_card_header %}
+{% block no_card_body %}
+    <div class="card-body py-1">
+        <ul class="list-group block list-group-flush">
+            <li class="p-0 pb-2 list-group-item d-flex justify-content-between flex-row text-nowrap ">
+                {{testInfo.testTitle}}
+                
+                {% if testInfo.timeLimit == 0 %}
+                {% else %}  
+                <span id="now"></span>
+                {% endif %}
+                    
+            </li> 
+            <div class="ql-container ql-snow">
+                <li class="p-1 list-group-item ql-editor text-justify" id="question">test</li>
+        </div>
+        <form method="POST">
+        <form method="POST">
+            {% if is_preview %}
+                    <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
+
+                    {% for i in choices %}
+                        {% if i  %}
+                            <label class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+                            <input type="radio" name="radio"><span id="choice{{forloop.counter}}"></span></label>
+                            </label>
+                        {% else %}
+                        {% endif %}
+                    {% endfor %}
+                        </div></div>
+
+            {% else %}
+                {% for form in form  %}
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        {% for error in form.errors %} 
+                        {% if error == 'Bidang ini tidak boleh kosong.'%}
+                        {% else %}
+                        <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+                            <p>{{error}} Coba Refresh</p>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                    <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
+                    
+                    {% for radio  in form %}
+
+                    {% if radio.choice_label == "" or None %}
+                        {% else %}
+                            <label class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+                            {{radio.tag}}<span id="choice{{forloop.counter}}"></span></label>
+                            </label>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                </li>
+                </ul>
+                {% endfor %}
+        </div>
+    {% endif %}
+
+    {% endblock no_card_body %}
+{% block card_footer %}
+
+{% if is_preview %}
+    <div class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
+    {% if question.questionNum == 1 %}
+    {% else %}
+    <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+    {% endif %}
+    <a href="#" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+        <a class="btn rounded my-1  btn-primary" href="#">Kirim</a>
+    </div>
+{% else %}
+    <div class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
+    {% if question.prevQuestID == None %}
+    {% else %}
+    <a href="{{question.prevQuestID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+    {% endif %}
+    {% if question.nextQuestID == None %}
+    {% else %}
+    <a href="{{question.nextQuestID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+    {% endif %}
+        <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
+    </div>
+{% endif %}
+    
+    {% endblock card_footer %} 
+{% block after_footer %}
+    
+    {% if is_preview %}
+        {% else %}
+    <div class="d-flex flex-wrap card-footer">
+        <nav aria-label="Quest navigation">
+        {% for i in question_list %}
+            {% if i.questionNum == question.questionNum %}
+            <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{i.questionNum}}</a>
+            {% else %}
+            <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{i.questionNum}}</a>
+            {% endif %}
+            {% endfor %}
+        </nav>
+    {{question.answerKey}}
+    </div>
+    {% endif %}
+        
+    {% endblock after_footer %}   
+    {% block user_script %}
+        <script>
+            var question_now = JSON.parse('{{ json_q | escapejs }}')[{{question.questionNum}}-1]['fields']
+            let question_contents = JSON.parse('{{ json_q | escapejs }}')[{{question.questionNum}}-1]['fields']['question'];
+            var questionChoiceAll = [];
+            document.getElementById("question").innerHTML = question_contents;
+
+            var choice = Object.keys(question_now)
+            .map(function(key) {
+                return question_now[key];
+            });
+            for (i = 1; i <= 6; i++) {
+                var id = "choice" + i.toString()
+                document.getElementById(id).innerHTML = choice[i+4]
+            };
+            delete question_now.answerKey
+
+        function makeTimer() {
+        var endTime = (
+                {{takerQuery.timeStart | date:"U"}}
+                +
+                ({{testInfo.timeLimit}}*60) 
+                );
+                var now = new Date();
+                now = (Date.parse(now) / 1000);
+
+                let timeLeft = endTime - now;
+
+                var days = Math.floor(timeLeft / 86400);
+                var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+                var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+                var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+                if (hours < "10") { hours = "0" + hours; }
+                if (minutes < "10") { minutes = "0" + minutes; }
+                if (seconds < "10") { seconds = "0" + seconds; }
+                if(days < "0"){
+                timeLeft = 'bg-danger p-1 px-2 rounded ">Waktu Habis'
+                }else{
+                timeLeft = 'bg-primary p-1 px-2 rounded ">Sisa Waktu : ' + hours + " : " + minutes+ " : " + seconds
+
+                }
+                $("#now").html(`<div class="`+ timeLeft +`</span></div>`);
+
+        }
+        setInterval(function() { makeTimer(); }, 1000);
+        </script>
+        {% endblock user_script %}

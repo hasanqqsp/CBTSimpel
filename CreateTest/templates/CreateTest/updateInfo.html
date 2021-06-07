@@ -1,0 +1,70 @@
+{% extends 'CreateTest/snippets/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block nav_brand %}
+    Perbarui Informasi Tes
+{% endblock nav_brand %}
+    
+{% block main_container %}
+
+<form  method="post">
+    {% csrf_token %}
+  <div class="form-group">
+    <label for="id_testTitle">Judul Tes</label>
+    {{form.testTitle |add_class:"form-control"}}
+    </div>
+  <div class="form-group">
+    <label for="id_testAuthor">Penyedia / Penyelenggara Tes</label>
+    {{form.testAuthor |add_class:"form-control"}}
+    </div>
+  <div class="form-group">
+    <label for="id_testCode">Kode Tes </label>
+    {{form.testCode |add_class:"form-control"|attr:"disabled"}}
+    <small  class="form-text text-muted">Buatlah Sebuah Kode 6 digit. Ini akan  digunakan peserta untuk mengakses tes. 
+    <strong>Tidak dapat diubah lagi. Kosongkan untuk membuat secara otomatis</strong> </small>
+    </div>
+    <div class="form-group">
+    <label for="id_testSchedule">Jadwal Tes (Tahun/Bulan/Hari)</label>
+  <div class="input-group date" id="datepicker" data-date-format="dd.mm.yyyy">
+    {{form.testSchedule |add_class:"form-control datepicker" |attr:"placeholder:YYYY/MM/DD"}}
+    <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div></div>
+  <div class="form-group">
+    <label for="id_timeLimit">Batas Waktu (menit)</label>
+    {{form.timeLimit |add_class:"form-control"}}
+    <small  class="form-text text-muted">
+    <strong>Isi dengan nol untuk tanpa batas waktu</strong> </small>
+    </div>
+  <div class="form-group">
+    <label for="id_questionCount">Jumlah Soal</label>
+    {{form.questionCount |add_class:"form-control"|attr:"disabled"}}
+    </div>
+
+  <div class="form-group">
+    <label for="id_maxScore">Skor Maksimal</label>
+    {{form.maxScore |add_class:"form-control"|attr:"disabled"}}
+    </div>
+
+
+  <div class="form-group">
+    <label for="id_passwordTest">Password Tes</label>
+    {{form.passwordTest |add_class:"form-control" |attr:"type:text"}}
+    <small  class="form-text text-muted">Buatlah Sebuah Password. Ini akan  digunakan peserta untuk mengakses tes. 
+    <strong>Isi dengan None untuk tanpa password</strong> </small>
+    </div>
+  <div class="form-group">
+    <label for="id_passwordAdminTest">Password Admin Tes </label>
+    {{form.passwordAdminTest |add_class:"form-control"|attr:"type:text"}}
+    <small  class="form-text text-muted">Buatlah Sebuah Password. Ini akan  digunakan peserta untuk mengakses administrasi tes. </small>
+    </div>
+<button type="submit"class="btn btn-primary">Kirim</button>
+{% endblock main_container %}
+{% block user_script %}
+<script>
+
+ $('.input-group.date#datepicker').datepicker({
+   format: "yyyy-mm-dd",
+ }); 
+ </script>
+
+{% endblock user_script %}
+    

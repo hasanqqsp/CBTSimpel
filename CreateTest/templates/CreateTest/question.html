@@ -1,0 +1,26 @@
+{% extends 'CreateTest/snippets/base.html' %}
+{% block nav_brand %}
+    Daftar Pertanyaan 
+{% endblock nav_brand %}
+
+{% block main_container %}
+<a href="{% url 'create:questionID' 'new' %}" class="btn btn-lg btn-block ml-0 mr-3 my-1 btn-outline-success">BUAT SOAL BARU</a>
+<BR></BR>
+{% if object_list == None %}
+    Tidak Ada Pertanyaan Tersedia
+{% else %}
+    {% for i in object_list %}
+    <div class="notice notice-info">
+    <p> Soal Ke-{{i.questionNum}}</p>
+    <p> {{i.question | truncatechars_html:200 | striptags}} <p>
+    <div class="flex-row">
+    <a href="question/{{i.questID}}/delete" class="btn btn-danger">HAPUS</a>
+    <a href="question/{{i.questID}}" class="btn btn-primary">EDIT</a>
+    </div>
+
+    </div>
+    {% endfor %}
+{% endif %}
+    
+{% endblock main_container %}
+    

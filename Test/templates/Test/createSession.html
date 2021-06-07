@@ -1,0 +1,27 @@
+{% extends 'snippets/base.html' %}
+{% load widget_tweaks %}
+
+  {% block card_header %}
+    <h3 class="m-1"><strong>IDENTITAS dan OTENTIKASI</strong></h3>
+  {% endblock card_header %}
+  {% block card_body %}
+    <form method = 'POST'>
+        {% csrf_token %}
+      <div class="form-group">
+        <label for="id_testTakerName">Nama Peserta Tes</label>
+        {{form.testTakerName |add_class:"form-control"}}
+        </div>
+      <div class="form-group">
+        <label for="id_testTakerGroup">Kelas / Kelompok </label>
+        {{form.testTakerGroup |add_class:"form-control"}}
+        </div>
+      <div class="form-group">
+        <label for="id_session_password">Kunci Sesi / Password </label>
+        {{form.session_password |add_class:"form-control"}}
+        <small id="emailHelp" class="form-text text-muted">Buatlah Sebuah Password. Ini akan digunakan untuk melanjutkan tes jika terjadi galat. 
+        <strong>Catatlah bersama Kode Sesi yang akan diberikan dihalaman selanjutnya</strong> </small>
+        </div>
+  {% endblock card_body %}
+  {% block card_footer %}
+    <button type="submit" class="btn btn-primary">Lanjut &raquo;</button>
+  {% endblock card_footer %}

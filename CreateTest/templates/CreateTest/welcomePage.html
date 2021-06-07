@@ -1,0 +1,30 @@
+    {% extends 'CreateTest/snippets/base.html' %}
+  {% load static %}
+ {% load widget_tweaks %}
+ {% block user_head_script %}
+    {{form.media}}
+<script src="{% static 'script/image-resize.js' %}"></script>
+<script src="https://unpkg.com/quill-image-compress@1.2.11/dist/quill.imageCompressor.min.js"></script>
+<script>
+Quill.register("modules/imageCompressor", imageCompressor)
+
+</script>
+{% endblock user_head_script %}
+{% block nav_brand %}
+    Dashboard Administrasi Tes 
+{% endblock nav_brand %}
+{% block no_container %}
+<div class="container-fluid  p-0 mx-2 pr-3 my-1 flex-column h-75">
+<form  method="post" class=h-75>
+{% csrf_token %}
+{{form.welcomeMessage}}
+
+<div class="container-fluid my-1 h-25">
+<button type="submit" class="btn btn-primary">Simpan</button>
+</form>
+<a href="{% url 'create:welcomeprev' %}" class="btn btn-success">Pratinjau</a>
+</div>
+{% endblock no_container %}
+
+{% block wysiwyg_script %}
+{% endblock wysiwyg_script %}

@@ -1,0 +1,132 @@
+{% extends 'CreateTest/snippets/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block user_head_script %}
+  {{form.media}}
+<script src="{% static 'script/image-resize.js' %}"></script>
+<script src="https://unpkg.com/quill-image-compress@1.2.11/dist/quill.imageCompressor.min.js"></script>
+<script>
+Quill.register("modules/imageCompressor", imageCompressor)
+
+</script>
+{% endblock user_head_script %}
+{% block nav_brand %}
+  Dashboard Administrasi Tes 
+{% endblock nav_brand %}
+{% block no_container %}
+<div class="container-fluid  p-0 mx-2 pr-3 my-1 flex-column">
+<div class="d-flex flex-row">
+<a href="{% url 'create:question' %}" class="btn btn-outline-secondary p-2 m-1 text-nowrap">&laquo; Kembali</a>
+<a href="{% url 'create:questionID' 'new' %}" class="btn btn-block p-2 m-1 btn-outline-primary">Tambahkan Soal Lain</a>
+<a href="delete" class="btn btn-block p-2 m-1 btn-outline-danger">Hapus Soal</a>
+</div>
+
+<form  method="post" class=5>
+    {% if form.errors %}
+<div class="alert alert-danger" role="alert">
+    {% for field, errors in form.errors.items %}
+    {% for error in errors %}
+    <b>{{ field }}</b>: {{ error }}
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endif %}
+{% csrf_token %}
+{{form.question}}
+<div class="container-fluid my-1 text-right">
+<button type="submit" class="btn btn-primary">Simpan</button>
+
+<a href="preview" class="btn btn-success">Pratinjau</a>
+</div>
+<p class="my-1">Pilihan Jawaban:</p>
+    {% for i in choice %}
+    {% if i.choice == None  %}
+    <div class=" my-1 popover-item">
+        <a href="?choice={{forloop.counter}}" data-toggle="modal" data-target="#Modal{{forloop.counter}}" class="btn btn-outline-success  text-left btn-block">Tambahkan Pilihan {{forloop.counter}}</a>
+            <div class="popover-content">
+                <small><h6 class="text-white">
+                Klik Untuk Menambahkan Pilihan
+                </h6>
+                </small> 
+                </div>
+        </div>
+    {% else %}
+    <div class="my-1 popover-item">
+    <a href="?choice={{forloop.counter}}" data-toggle="modal" data-target="#Modal{{forloop.counter}}" class=" btn btn-outline-success text-left btn-block">{{i.choice |safe}}
+    </a>
+            <div class="popover-content">
+                <small><h6 class="text-white">
+                Klik Untuk Mengubah Pilihan
+                </h6>
+                </small> 
+                </div>
+        </div>
+
+    {% endif %}
+    {% endfor %}
+    {% include 'CreateTest/snippets/modalchoice.html' %}
+
+  <p class="my-1">Kunci Jawaban :</p>
+      <label class="px-5 my-1 btn btn-outline-success btn-block rounded "data-toggle="modal" data-target="#ModalAnswerKey"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+      <span id="answerKey">
+      {% if answerKey == "" or None %}
+      Tetapkan Kunci Jawaban
+      {% else %}
+      {{answerKey | safe}}
+
+      {% endif %}
+      </span></label>
+      
+    <a href="{% url 'create:questionID' 'new' %}" class="btn btn-block p-2 my-4 btn-lg btn-outline-primary">Tambahkan Soal Lain</a>
+<div class="modal fade" id="ModalAnswerKey" tabindex="-1" role="dialog" aria-labelledby="ModalAnswerKeyLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="ModalAnswerKeyLabel">Tetapkan Kunci Jawaban</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+        <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
+          {% for radio  in form.answerKey %}
+            {% if radio.choice_label %}
+                <label class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+                {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label |safe }}</span></label>
+                </label>
+              {% else %}
+              {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </form>
+        </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock no_container %}
+{% block user_script %}
+<script>
+
+$( document ).on( "mousemove", function( event ) {
+  $( ".popover-item:hover .popover-content" ).css({
+    "display": "inline-block",
+    "left" : event.pageX,
+    "top" : event.pageY
+  });
+});
+$( ".popover-item" ).on( "mouseleave", function( event ) {
+  $( " .popover-content" ).css({
+    "display": "none",
+  });
+});
+
+</script>
+
+{% endblock user_script %}
+    
+{% block wysiwyg_script %}
+{% endblock wysiwyg_script %}

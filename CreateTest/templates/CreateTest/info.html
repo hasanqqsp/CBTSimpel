@@ -1,0 +1,24 @@
+{% extends 'snippets/base.html' %}
+{% load widget_tweaks %}
+{% block web_title %}
+Buat Tes Baru
+{% endblock web_title %}
+{% block card_header %}
+    <h3 class="m-1"><strong>Buat Tes Baru</strong></h3>
+
+{% endblock card_header %}
+{% block card_body %}
+{% include 'snippets/testInfoForm.html' %}    
+
+{% endblock card_body %}
+{% block card_footer %}
+        <button type="submit" class="btn btn-primary">Buat Test</button>
+{% endblock card_footer %}
+{% block user_script %}
+<script>
+
+ $('.input-group.date#datepicker').datepicker({
+   format: "yyyy-mm-dd",
+ }); 
+ </script>
+ {% endblock user_script %}

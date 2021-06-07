@@ -1,0 +1,37 @@
+{% extends 'snippets/base.html' %}
+{% load filter_tags %}
+{% load widget_tweaks %}
+{% block web_title %}
+INFORMASI PESERTA DAN TES
+{% endblock web_title %}
+  {% block card_header %}
+    <h3 class="m-1"><strong>INFORMASI PESERTA DAN TES</strong></h3>
+  {% endblock card_header %}
+{% block card_body %}
+{% include 'Test/snippets/detailtestsession.html' %}
+{% endblock card_body %}       
+{% block card_footer %}
+ {% if testInfo.questionCount == '0' %}
+        <p class="m-auto h5 strong text-center">Test ini belum memiliki Soal</p>
+    {% else %}
+        {% if form == None %}
+            <a class="btn btn-primary" href="q/welcome">Lanjut&raquo;</a>
+        {% else %}  
+            <form method="POST">
+                {% csrf_token %}
+                <div class="d-flex flex-row justify-content-between">
+                        <div class="form-inline flex-row">
+                        <label for="id_passw" class="h6 my-auto mr-3 text-center text-muted">  
+                            Masukan Password Tes :
+                        </label>
+                        <div>
+                        {{form.passw|add_class:"form-control" |attr:"type:password"}}
+                        </div>
+                        </div>
+                        <input class="btn rounded my-1 ml-2 btn-primary" type="submit" value="Kirim"></form>
+                    </div>
+            </form>
+        {% endif %}
+    {% endif %}
+{% endblock card_footer %}
+

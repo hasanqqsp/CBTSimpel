@@ -1,0 +1,18 @@
+{% extends 'snippets/base.html' %}
+{% block card_header %}
+    <h3 class="m-1 text-uppercase"><strong>peringatan !</strong></h3>
+{% endblock card_header %}
+{% block card_body %}
+    <div class="alert alert-warning text-justify">
+    Peserta : <strong>"{{testTakerInfo.testTakerName}}"</strong> memiliki Sesi Tersimpan untuk Tes "<a class="alert-link" href="/test/{{savedTest.testID}}">{{savedTest.testTitle}}</a>"<br>
+    <a class="btn btn-primary" href="
+    {% if savedTest.questionCount == '0' %}
+        {% url 'test:detail' idtest=savedTest.testID %}
+    {% else %}
+        {% url 'test:resume' %}
+    {% endif %}
+    ">Lanjutkan</a>,<a class="btn btn-success" href="/test/{{savedTest.testID}}/q/verify">Kirim</a> atau <a class="btn btn-warning" href="/test/cancel/r/{{redirID}}">Batalkan </a> Test Tersebut sebelum memulai
+    </div>
+{% endblock card_body %}
+{% block card_footer %}
+{% endblock card_footer %}

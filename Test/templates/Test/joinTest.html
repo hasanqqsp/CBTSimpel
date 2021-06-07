@@ -1,0 +1,23 @@
+{% extends 'snippets/base.html' %}
+{% load widget_tweaks %}
+{% block web_title %}
+Masukan Kode Tes
+{% endblock web_title %}
+{% block main_container %}
+    <h2 class="text-center font-weight-bold">Masukan Kode Tes Yang Akan Anda Ikuti</h2>
+<form method="POST" class="row mx-1 ">
+    {% csrf_token %}
+    {{form.codeTest|attr:"placeholder:Masukan Kode"|attr:"pattern:\d*" |attr:"maxlength:6"|add_class:"form-control  col-sm-9"}}
+    <button class="btn btn-primary mt-1 my-sm-0 col-sm-3 text-nowrap" type="submit">Mulai</button>
+  </form>
+  {% if form.errors.codeTest %}
+  <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+    <p> Tes dengan kode tersebut tidak ditemukan</p>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+  {% endif %}
+<p class="text-capitalize text-muted text-center h6">Sudah mulai mengerjakan?  <br><a href="{% url 'test:resume' %}">Lanjutkan dengan kunci sesi yang anda miliki disini</a> </p>
+
+{% endblock main_container %}

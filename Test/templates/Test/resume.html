@@ -1,0 +1,40 @@
+{% extends 'snippets/base.html' %}
+{% load widget_tweaks %}
+{% block web_title %}
+Lanjutkan Tes
+{% endblock web_title %}
+{% block card_header %}
+    <h3 class="m-1"><strong>INFORMASI PESERTA DAN TES</strong></h3>
+{% endblock card_header %}
+{% block card_body %}
+    <form method="post">
+        {% csrf_token %}
+        {% if form.errors.password %}
+            <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+            <p> Verifikasi Sesi Gagal, Kunci Sesi mungkin salah</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </div>
+        {% endif %}
+        {% if form.errors.username %}
+            <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+            <p> Kode Sesi Tidak ditemukan, mungkin salah atau sesi telah kadaluarsa </p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </div>
+        {% endif %}
+        <label for="session_key">Kode Sesi</label>
+        {{form.username|add_class:"form-control"}}
+        <label for="password">Kunci Sesi</label>
+        {{form.password}}
+{% endblock card_body %}
+{% block card_footer %}
+<div class="row">
+    <a class=" col-md-6 h6 my-auto text-center text-muted" href="/test/join">Belum Mulai Mengerjakan? Mulai Disini</a>
+    <div class="col-md-3"></div>
+        <button class="col-md-3 btn btn-primary " type="submit">Lanjutkan</button>
+    </form>
+    </div>
+{% endblock card_footer %}
+</body>
+</html>
