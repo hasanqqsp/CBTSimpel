@@ -21,13 +21,6 @@ import tempfile
 
 
 
-# Create your views here.
-# def handler404(request):
-#     response = render_to_response('404.html', {},
-#                               context_instance=RequestContext(request))
-#     response.status_code = 404
-#     return response
-
 def index(request):
     return render(request, 'Test/index.html')
 

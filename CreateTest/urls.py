@@ -14,6 +14,7 @@ urlpatterns = [
     path('edit/info', createViews.UpdateInfo.as_view(),name='info'),
     path('edit', createViews.editTest,name='edit'),
     path('login',createViews.authorLogin,name='login'),
+    path('logout',createViews.authorLogout,name='authorLogout'),
     path('info', createViews.info,name='signup'),
     path('', createViews.index,name='index')
 ]

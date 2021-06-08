@@ -7,15 +7,15 @@ from django.views.generic.edit import UpdateView
 from Test.models import (Question , TestPackage, Answer, TestTaker,TestWelcome)
 from django.http import (HttpResponseRedirect ,HttpResponse)
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.core import serializers
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView,LogoutView
 from django_quill.forms import QuillFormField
 import random ,string, sys 
 from django.views.generic import ListView, UpdateView, DetailView, FormView, CreateView,TemplateView
-
+from utils.generate_id import generate_id
 
 # Create your views here.
 def index(request):
@@ -47,6 +47,7 @@ def info(request):
                 testCode = generate_testCode()
             testCode = request.POST.get('testCode')
             TestPackage.objects.create(
+                testID= generate_id(TestPackage,'testID',16),
                 testCode = testCode,
                 testTitle = request.POST.get('testTitle'),
                 testAuthor = request.POST.get('testAuthor'),
@@ -95,6 +96,10 @@ def authorLogin(request):
     }
     return render(request,'Test/resume.html',context)
 
+def authorLogout(request):
+    logout(request)
+    return HttpResponseRedirect('/createtest/login')
+
 def questionList(request):
     pass
 
@@ -121,9 +126,15 @@ class EditQuestion(UpdateView):
         return obj
     def get(self, request, *args, **kwargs):
         testID = TestPackage.objects.get(testCode= self.request.user)
-        questQuery = Question.objects.filter(testID=testID.testID).order_by('-questionNum')
+        lastNum = Question.objects.filter(testID=testID.testID).order_by('-questionNum')
+        questID = generate_id(Question,'questID',16)
+        print(questID)
+        if lastNum.exists():
+            lastNum = lastNum[0].questionNum + 1
+        else :
+            lastNum = 1
         if self.kwargs.get('idquest') == 'new':
-            a = Question.objects.create(question="",testID=testID.testID,questionNum=questQuery[0].questionNum+1)
+            a = Question.objects.create(question="",testID=testID.testID,questionNum=lastNum,questID=questID)
             return HttpResponseRedirect("{}/{}".format(self.success_url, a.questID))
         else:
             self.object = self.get_object()
@@ -190,46 +201,33 @@ class EditQuestion(UpdateView):
     def form_valid(self, form,request):
         self.object = self.get_object()
         object = self.get_object()
-        # object.question = eval(form.data['data'])['html']
-        # if request.POST.get('question'):
-        #     object.question = eval(request.POST.get('question'))['html']
-        # elif request.POST.get('choice1'):
-        #     object.choiceFirst = eval(request.POST.get('choice1'))['html']
-        #     object.save()
-        # elif request.POST.get('choice2'):
-        #     object.choiceSecond = eval(request.POST.get('choice2'))['html']
-        #     object.save()
-        # elif request.POST.get('choice3'):
-        #     object.choiceThird = eval(request.POST.get('choice3'))['html']
-        #     object.save()
-        # elif request.POST.get('choice4'):
-        #     object.choiceFourth = eval(request.POST.get('choice4'))['html']
-        #     object.save()
-        # elif request.POST.get('choice5'):
-        #     object.choiceFifth = eval(request.POST.get('choice5'))['html']
-        #     object.save()
-        # elif request.POST.get('choice6'):
-        #     object.choiceSixth = eval(request.POST.get('choice6'))['html']
-        #     object.save()
-        # elif request.POST.get('answerKey'):
-        #     object.answerKey = request.POST.get('answerKey')
-        #     object.save()
+        if request.POST.get('question'):
+            object.question = eval(request.POST.get('question'))['html']
+            
+            object.save()
+        if request.POST.get('choice1'):
+            object.choiceFirst = eval(request.POST.get('choice1'))['html']
+            print(object.choiceFirst)
+            object.save()
+        if request.POST.get('choice2'):
+            object.choiceSecond = eval(request.POST.get('choice2'))['html']
+            object.save()
+        if request.POST.get('choice3'):
+            object.choiceThird = eval(request.POST.get('choice3'))['html']
+            object.save()
+        if request.POST.get('choice4'):
+            object.choiceFourth = eval(request.POST.get('choice4'))['html']
+            object.save()
+        if request.POST.get('choice5'):
+            object.choiceFifth = eval(request.POST.get('choice5'))['html']
+            object.save()
+        if request.POST.get('choice6'):
+            object.choiceSixth = eval(request.POST.get('choice6'))['html']
+            object.save()
+        if request.POST.get('answerKey'):
+            object.answerKey = request.POST.get('answerKey')
+            object.save()
 
-        # else:
-        #     # print('FALSE')
-        #     return self.form_invalid(form)
-
-        object.question = request.POST.get('question')
-        object.choiceFirst = request.POST.get('choice1')
-        object.choiceSecond = request.POST.get('choice2')
-        object.choiceThird = request.POST.get('choice3')
-        object.choiceFourth = request.POST.get('choice4')
-        object.choiceFifth = request.POST.get('choice5')
-        object.choiceSixth = request.POST.get('choice6')
-        object.answerKey = request.POST.get('answerKey')
-        object.save()
-
-        object.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def post(self, request, *args, **kwargs):

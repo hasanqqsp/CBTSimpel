@@ -7,26 +7,11 @@ import uuid
 import random
 import string
 import datetime
-
-# Create your models here.
-# from https://zindilis.com/blog/2015/12/06/hex-primary-key-in-django-model.html
+from utils.generate_id import generate_id
 
 
 class TestPackage(models.Model):
-    def generate_id():
-        '''Generate an 8-character long hexadecimal ID'''
-        possible = str(hexlify(os.urandom(8)))
-        possible = possible[2:18]
-        try:
-            # if this possible ID exists, run again:
-            TestPackage.objects.get(testID=possible)
-            return self.generate_id()
-        except:
-            return possible
-
-
-    # id = models.CharField(primary_key=True, max_length=16, default=generate_id() , editable=True);
-    testID = models.CharField(max_length=16, default=generate_id() , editable=True)
+    testID = models.CharField(max_length=16, unique=True ,editable=True)
     testTitle = models.CharField(max_length=1024)
     testAuthor = models.CharField(max_length=1024)
     questionCount = models.CharField(default=0, max_length=4)
@@ -53,20 +38,8 @@ class TestPackage(models.Model):
         super().save(*args, **kwargs)
 
 class Question(models.Model):
-    def generate_id(*args, **kwargs):
-        # from https://stackoverflow.com/questions/39137344/short-unique-hexadecimal-string-in-python?
-        digits = '0123456789'
-        letters = 'abcdef'
-        all_chars = digits + letters
-        length = 16
-        val = ''.join(random.choice(all_chars) for i in range(length))
-        try:
-            # if this possible ID exists, run again:
-            Question.objects.get(testID=val)
-            return self.generate_id()
-        except:
-            return val
-    questID = models.CharField(max_length=16,blank=False ,default=generate_id() , editable=True)
+
+    questID = models.CharField(max_length=16, unique = True, editable=True)
     questionNum = models.IntegerField(default=0)
     question = models.TextField()
     testID = models.CharField(max_length=16)
@@ -85,8 +58,6 @@ class Question(models.Model):
 
 
     def save(self,*args, **kwargs):
-        if not self.pk:
-            self.questID = self.generate_id()
         findPack = TestPackage.objects.get(testID=self.testID)
         if str(self.questionNum) == '1' :
             findPack.firstQuestID = self.questID
@@ -131,33 +102,6 @@ class Question(models.Model):
             self.choiceSixth = None
         else:
             pass
-        if request.POST.get('question'):
-            object.question = eval(request.POST.get('question'))['html']
-        elif request.POST.get('choice1'):
-            object.choiceFirst = eval(request.POST.get('choice1'))['html']
-            object.save()
-        elif request.POST.get('choice2'):
-            object.choiceSecond = eval(request.POST.get('choice2'))['html']
-            object.save()
-        elif request.POST.get('choice3'):
-            object.choiceThird = eval(request.POST.get('choice3'))['html']
-            object.save()
-        elif request.POST.get('choice4'):
-            object.choiceFourth = eval(request.POST.get('choice4'))['html']
-            object.save()
-        elif request.POST.get('choice5'):
-            object.choiceFifth = eval(request.POST.get('choice5'))['html']
-            object.save()
-        elif request.POST.get('choice6'):
-            object.choiceSixth = eval(request.POST.get('choice6'))['html']
-            object.save()
-        elif request.POST.get('answerKey'):
-            object.answerKey = request.POST.get('answerKey')
-            object.save()
-
-        else:
-            # print('FALSE')
-            return self.form_invalid(form)
 
         max_score = 0
         for i in Question.objects.filter(testID=self.testID):
