@@ -21,8 +21,8 @@ from CreateTest import views as createViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
-    path('test/',include('Test.urls', namespace='test') ),
-    path('createtest/', include('CreateTest.urls',namespace='create'))
+    # path('', views.index),
+    # path('test/',include('Test.urls', namespace='test') ),
+    # path('createtest/', include('CreateTest.urls',namespace='create'))
 
 ]
