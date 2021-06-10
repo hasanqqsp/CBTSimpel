@@ -110,8 +110,14 @@ class TestTaker(models.Model):
         return "{}({})".format(self.testTaker,self.testTakerName)
 
 class Question(models.Model):
+<<<<<<< HEAD
     questID = models.CharField(max_length=16, unique = True, blank=True,editable=True)
     questTitle = models.CharField(max_length=1024)
+=======
+
+    questID = models.CharField(max_length=16, unique = True, editable=True)
+    questionNum = models.IntegerField(default=0)
+>>>>>>> parent of 51ff13a (models patching)
     question = models.TextField()
     testPackage = models.ForeignKey(TestPackage,on_delete=models.CASCADE)
     choices = models.JSONField(blank=True,null=True)
@@ -120,6 +126,7 @@ class Question(models.Model):
     defaultScore = models.FloatField(default=0)
     falseScore = models.FloatField(default=0)
     def save(self,*args, **kwargs):
+<<<<<<< HEAD
         if not self.questID:
             self.questID = generate_id(Question,'questID',16)
         super().save(*args, **kwargs)
@@ -135,6 +142,58 @@ class Question(models.Model):
                 i.save()
                 
         super().delete()
+=======
+        findPack = TestPackage.objects.get(testID=self.testID)
+        if str(self.questionNum) == '1' :
+            findPack.firstQuestID = self.questID
+        else:
+            pass
+        findPack.questionCount="{}".format(len(Question.objects.filter(testID=self.testID)))
+        findPack.save()
+        sameData = Question.objects.filter(testID=self.testID, questionNum=self.questionNum)
+        for i in sameData:
+            if i.id != self.id:
+                i.delete()
+            else:
+                pass
+        try:
+            findPQ = Question.objects.get(testID=self.testID, questionNum=(self.questionNum-1))
+            self.prevQuestID = findPQ.questID
+            findPQ.nextQuestID = self.questID
+            findPQ.save()
+        except:
+                pass
+        if self.choiceFirst == "<p><br></p>":
+            self.choiceFirst = None
+        else:
+            pass
+        if self.choiceSecond == "<p><br></p>":
+            self.choiceSecond= None
+        else:
+            pass
+        if self.choiceThird  == "<p><br></p>":
+            self.choiceThird = None
+        else:
+            pass
+        if self.choiceFourth == "<p><br></p>":
+            self.choiceFourth= None
+        else:
+            pass
+        if self.choiceFifth  == "<p><br></p>":
+            self.choiceFifth = None
+        else:
+            pass
+        if self.choiceSixth  == "<p><br></p>":
+            self.choiceSixth = None
+        else:
+            pass
+
+        max_score = 0
+        for i in Question.objects.filter(testID=self.testID):
+            max_score += i.trueScore
+        findPack.maxScore = max_score
+        super().save(*args, **kwargs)
+>>>>>>> parent of 51ff13a (models patching)
 
     def __str__(self):
          return "{}_{}".format(self.TestPackage,self.questTitle)
