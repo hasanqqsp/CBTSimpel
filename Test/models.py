@@ -8,10 +8,10 @@ import random
 import string
 import datetime
 from utils.generate_id import generate_id
-
+import json
 
 class TestPackage(models.Model):
-    testID = models.CharField(max_length=16, unique=True,editable=True)
+    testID = models.CharField(max_length=16, unique=True,editable=True,blank=True)
     testTitle = models.CharField(max_length=1024)
     testAuthor = models.CharField(max_length=1024)
     testCode = models.CharField(default=None, editable=True, max_length=6)
@@ -22,9 +22,9 @@ class TestPackage(models.Model):
     maxScore = models.IntegerField(default=0)
     welcomeMessage = models.TextField()
     settings = models.JSONField(blank=True,null=True)
-    # def __str__(self):
-    #     return "{}_{}".format(self.testID,self.testTitle)
     def save(self, *args, **kwargs):
+        if not self.testID:
+            self.testID = generate_id(TestPackage,'testID',16)
         try :
             user = User.objects.get(username=self.testCode)
             group = Group.objects.get(name='testAuthor') 
@@ -35,6 +35,31 @@ class TestPackage(models.Model):
             user = User.objects.create_user(self.testCode, '', self.passwordAdminTest)
             user.save()
         super().save(*args, **kwargs)
+
+    def get_question_count(self):
+        return self.question_set.all().count()
+    def get_random_sequence(self):
+        list = []
+        while len(list) < self.question_set.all().count():
+            r = random.randint(0,self.question_set.all().count()-1)
+            if r not in list :
+                list.append(r)
+        return list
+    
+    def get_one_question(self,num,*args):
+        print(args[0])
+        if len(args) > 0:
+            num = args[0][num-1]
+        else:
+            num -= 1
+        return self.question_set.all()[num]
+'''
+from Test.models import *
+all = TestPackage.objects.all()
+a1=all[1]
+a1.get_one_question(1,a1.get_random_sequence())
+'''
+
 
 class TestTaker(models.Model):
     testTakerID = models.CharField(max_length=16, unique=True,editable=True)
@@ -47,8 +72,10 @@ class TestTaker(models.Model):
     lastAnswered = models.IntegerField(default=0, editable=True)
     timeStart = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True,default=datetime.datetime.now())
     timeFinish = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True,default=datetime.datetime.now())
-
+    sequences = models.JSONField(blank=True,null=True)
     def save(self,*args, **kwargs):
+        if not self.sequences:
+            self.sequences = json.dumps(self.testPackage.get_random_sequence())
         try :
             User.objects.get(username=self.session_code)
         except:
@@ -60,16 +87,18 @@ class TestTaker(models.Model):
     #     return "{}({})".format(self.testTakerID,self.testTakerName)
 
 class Question(models.Model):
-    questID = models.CharField(max_length=16, unique = True, editable=True)
-    questionNum = models.IntegerField(default=0)
+    questID = models.CharField(max_length=16, unique = True, blank=True,editable=True)
     question = models.TextField()
     testPackage = models.ForeignKey(TestPackage,on_delete=models.CASCADE)
-    choices = models.JSONField()
+    choices = models.JSONField(blank=True,null=True)
     answerKey = models.CharField(max_length=1024,default=None, blank=True, null=True)
     trueScore = models.FloatField(default=0)
     defaultScore = models.FloatField(default=0)
     falseScore = models.FloatField(default=0)
-
+    def save(self,*args, **kwargs):
+        if not self.questID:
+            self.questID = generate_id(Question,'questID',16)
+        super().save(*args, **kwargs)
     # def save(self,*args, **kwargs):
     #     sameData = Question.objects.filter(testID=self.testID, questionNum=self.questionNum)
     #     for i in sameData:
@@ -82,7 +111,8 @@ class Question(models.Model):
     #         max_score += i.trueScore
     #     findPack.maxScore = max_score
     #     super().save(*args, **kwargs)
-
+    def get_question_count(self):
+        return Question.objects.filter()
     def delete(self,*args,**kwargs):
         questionList = Question.objects.filter(testID = self.testID)
         questionCount = questionList.count()
