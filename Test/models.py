@@ -125,7 +125,7 @@ class Question(models.Model):
                 
         super().delete()
 
-    # def __str__(self):
+def __str__(self):
     #     return "{}.{}_{}".format(self.questionNum,self.testID,self.question)
 
 class Answer(models.Model):
