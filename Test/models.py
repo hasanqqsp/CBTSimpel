@@ -38,7 +38,6 @@ class TestPackage(models.Model):
         super().save(*args, **kwargs)
 
 class Question(models.Model):
-
     questID = models.CharField(max_length=16, unique = True, editable=True)
     questionNum = models.IntegerField(default=0)
     question = models.TextField()
@@ -63,6 +62,7 @@ class Question(models.Model):
             findPack.firstQuestID = self.questID
         else:
             pass
+
         findPack.questionCount="{}".format(len(Question.objects.filter(testID=self.testID)))
         findPack.save()
         sameData = Question.objects.filter(testID=self.testID, questionNum=self.questionNum)
@@ -71,13 +71,13 @@ class Question(models.Model):
                 i.delete()
             else:
                 pass
-        try:
-            findPQ = Question.objects.get(testID=self.testID, questionNum=(self.questionNum-1))
-            self.prevQuestID = findPQ.questID
-            findPQ.nextQuestID = self.questID
-            findPQ.save()
-        except:
-                pass
+        # try:
+        #     findPQ = Question.objects.get(testID=self.testID, questionNum=(self.questionNum-1))
+        #     self.prevQuestID = findPQ.questID
+        #     findPQ.nextQuestID = self.questID
+        #     findPQ.save()
+        # except:
+        #         pass
         if self.choiceFirst == "<p><br></p>":
             self.choiceFirst = None
         else:
@@ -108,6 +108,18 @@ class Question(models.Model):
             max_score += i.trueScore
         findPack.maxScore = max_score
         super().save(*args, **kwargs)
+
+    def delete(self,*args,**kwargs):
+        questionList = Question.objects.filter(testID = self.testID)
+        questionCount = questionList.count()
+        if not self.questionNum == questionCount:
+            print(self.questionNum)
+            questionList = questionList[self.questionNum-1:]
+            for i in questionList:
+                i.questionNum -= 1
+                i.save()
+                
+        super().delete()
 
     def __str__(self):
         return "{}.{}_{}".format(self.questionNum,self.testID,self.question)
