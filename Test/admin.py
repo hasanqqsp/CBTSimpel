@@ -30,8 +30,7 @@ Answer, TestTaker)
 
 # admin.site.register(TestPackage, TestPackageAdmin )
 # admin.site.register(Question, QuestionAdmin)
-# admin.site.register(Answer, AnswerAdmin)
-# admin.site.register(TestTaker,TestTakerAdmin)
+admin.site.register(Answer)
+admin.site.register(TestTaker)
 admin.site.register(Question)
-
 admin.site.register(TestPackage)
