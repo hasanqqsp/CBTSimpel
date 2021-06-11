@@ -7,7 +7,7 @@ import uuid
 import random
 import string
 import datetime
-from utils.generate_id import generate_id
+from utils.generate_id import generate_id,generate_numeric_code
 import json
 
 class TestPackage(models.Model):
@@ -19,7 +19,6 @@ class TestPackage(models.Model):
     timeLimit = models.IntegerField(default=0, null=True)
     passwordAdminTest = models.CharField(max_length=16,default=None, null=True)
     passwordTest = models.CharField(max_length=16, default="123456")
-    maxScore = models.IntegerField(default=0)
     welcomeMessage = models.TextField()
     settings = models.JSONField(blank=True,null=True)
     def save(self, *args, **kwargs):
@@ -49,10 +48,13 @@ class TestPackage(models.Model):
     def get_one_question(self,num,*args):
         print(args[0])
         if len(args) > 0:
-            num = args[0][num-1]
+            num = json.loads(args[0])[num-1]
         else:
             num -= 1
         return self.question_set.all()[num]
+        
+    def __str__(self):
+        return f"{self.testID}_{self.testTitle}"
 '''
 from Test.models import *
 all = TestPackage.objects.all()
@@ -74,15 +76,25 @@ class TestTaker(models.Model):
     timeFinish = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True,default=datetime.datetime.now())
     sequences = models.JSONField(blank=True,null=True)
     def save(self,*args, **kwargs):
+        if not self.session_code:
+            session_code = generate_numeric_code(TestTaker,'session_code',10)
+            user = User.objects.create_user(session_code, None, self.session_password)
+            self.session_code = session_code
+            user.save()
+        if not self.testTakerID:
+            self.testTakerID = generate_id(TestTaker,'testTakerID',16)
         if not self.sequences:
             self.sequences = json.dumps(self.testPackage.get_random_sequence())
-        try :
-            User.objects.get(username=self.session_code)
-        except:
-            user = User.objects.create_user(self.session_code, None, self.session_password)
-            user.save()
+            
         super().save(*args, **kwargs)
-
+    def timerStart(self):
+        self.timeStart = datetime.datetime.now()
+        super().save()
+        
+    def timerEnd(self):
+        self.timeFinish = datetime.datetime.now()
+        super().save()
+        
     # def __str__(self):
     #     return "{}({})".format(self.testTakerID,self.testTakerName)
 
@@ -125,8 +137,8 @@ class Question(models.Model):
                 
         super().delete()
 
-def __str__(self):
-    #     return "{}.{}_{}".format(self.questionNum,self.testID,self.question)
+    def __str__(self):
+        return "{}_{}".format(self.testPackage.testID,self.question)
 
 class Answer(models.Model):
     answerID = models.CharField(max_length=16, default=generate_id , editable=True)

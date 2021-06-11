@@ -9,12 +9,12 @@ Masukan Kode Tes
     <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
       <p> Tes dengan kode tersebut tidak ditemukan</p>
   </div>
+  {% endif %}
 <form method="POST" class="row mx-1 ">
     {% csrf_token %}
     {{form.testCode|attr:"placeholder:Masukan Kode"|attr:"pattern:\d*" |attr:"maxlength:6"|add_class:"form-control  col-sm-9"}}
     <button class="btn btn-primary mt-1 my-sm-0 col-sm-3 text-nowrap" type="submit">Mulai</button>
   </form>
-  {% endif %}
   {% comment "" %}
 <p class="text-capitalize text-muted text-center h6">Sudah mulai mengerjakan?  <br><a href="{% url 'test:resume' %}">Lanjutkan dengan kunci sesi yang anda miliki disini</a> </p>
   {% endcomment %}

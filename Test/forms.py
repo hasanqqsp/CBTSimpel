@@ -27,7 +27,7 @@ class AuthTestForm1(forms.Form):
     testCode = forms.CharField()
 
 class AuthTestForm2(forms.Form):
-     password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput)
     
 # class ResumeTestForm(forms.Form):
 #     username = forms.CharField(widget=forms.TextInput(
