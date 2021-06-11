@@ -2,7 +2,7 @@ from django.shortcuts import render,get_object_or_404
 from .models import (Question , TestPackage, Answer, TestTaker)
 #from .forms import (AnswerForm , CreateSessionForm, AuthTestForm2, 
 #     AuthTestForm1, CreateTestForm, ResumeTestForm, )
-from .forms import AuthTestForm1
+from .forms import AuthTestForm1, CreateSessionForm
 from django.http import (HttpResponseRedirect ,HttpResponse)
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -25,19 +25,19 @@ import datetime
 def index(request):
     return render(request, 'Test/index.html')
 
-# def showTest(request):
-#     testPackage = TestPackage.objects.all() 
-#     context = {
-#         'TestPackage' : testPackage,
-#     }
-#     return render(request, 'Test/test.html',context)
+def showTest(request):
+    testPackage = TestPackage.objects.all() 
+    context = {
+        'TestPackage' : testPackage,
+    }
+    return render(request, 'Test/test.html',context)
 
 def joinTest(request):
     form = AuthTestForm1(request.POST or None)
     if request.method == 'POST':
         form = AuthTestForm1(request.POST or None)
         if form.is_valid():
-            testCode = request.POST.get('codeTest')
+            testCode = request.POST.get('testCode')
             try:
                 query = TestPackage.objects.get(testCode=testCode)
                 return HttpResponseRedirect('/test/{}'.format(query.testID))
@@ -66,19 +66,21 @@ def joinTest(request):
 #     return render(request, 'Test/changeTest.html',context)
 
 def detailTest(request, testID):
-    
+    if testID == 'join':
+        return joinTest(request)
+
     try : 
         q_testTaker = TestTaker.objects.get(session_code = request.user) 
     except : 
         return HttpResponseRedirect('/test/createsession/{}'.format(testID))
-        
-    if testID == 'join':
-        return joinTest(request)
-        
-    elif testID != q_testTaker.testID:
+
+    if testID != q_testTaker.testID:
         return changeTest(request,testID,q_testTaker)
 
+        
+
     else :
+        
         form = AuthTestForm2(request.POST or None)
         q_testPackage = TestPackage.objects.get(testID=testID)
         if q_testPackage.passwordTest == 'None':
@@ -240,45 +242,35 @@ def detailTest(request, testID):
 #     }
 #     return render(request,'Test/doTest.html',context)
 
-# def createSession(request,*args, **kwargs):
-#     def generate_sessionkey():
-#         '''Generate an 10-character Integer'''
-#         rand = ''.join([random.choice(string.digits) for n in range(10)])
-#         try:
-#             # if this possible ID exists, run again:
-#             TestTaker.objects.get(session_key=rand)
-#             return self.generate_sessionkey()
-#         except:
-#             return rand
-    
-#     check = get_object_or_404(TestPackage,testID=kwargs['testID'])
-        
-#     if request.method == 'POST':
-#         createSessionForm = CreateSessionForm(request.POST or None)
-#         if createSessionForm.is_valid():
-#             skey = generate_sessionkey()
-#             TestTaker.objects.create(
-#                 session_key=skey,
-#                 testTakerName = request.POST.get('testTakerName'),
-#                 testTakerGroup = request.POST.get('testTakerGroup'),
-#                 session_password = request.POST.get('session_password'),
-#                 testID = kwargs['testID']
-#             )
-            
-#             credential = authenticate(request, username=skey, password=request.POST.get('session_password'),)
-#             login(request,credential)
-#         return HttpResponseRedirect('../{}'.format(kwargs['testID']))
-#     else :
-#         createSessionForm = CreateSessionForm
-#     context = {
-#         'form' : createSessionForm
-#     }
+def createSession(request,*args, **kwargs):
 
-#     return render(request,'Test/createSession.html',context)
+    check = get_object_or_404(TestPackage,testID=kwargs['testID'])
+        
+    if request.method == 'POST':
+        createSessionForm = CreateSessionForm(request.POST or None)
+        if createSessionForm.is_valid():
+            
+            TestTaker.objects.create(
+                testTakerName = request.POST.get('testTakerName'),
+                testTakerGroup = request.POST.get('testTakerGroup'),
+                session_password = request.POST.get('session_password'),
+                testPackage = testPackage.object.get(testID=kwargs['testID'])
+            )
+            
+            credential = authenticate(request, username=skey, password=request.POST.get('session_password'),)
+            login(request,credential)
+        return HttpResponseRedirect('../{}'.format(kwargs['testID']))
+    else :
+        createSessionForm = CreateSessionForm
+    context = {
+        'form' : createSessionForm
+    }
+
+    return render(request,'Test/createSession.html',context)
 
 # def resumeTest(request,*args, **kwargs):
 #     def getUserSession(request):
-#         findTakerData = TestTaker.objects.get(session_key= request.user or request.POST.get("username"))                # session[0]
+#         findTakerData = TestTaker.objects.get(session_key=request.user or request.POST.get("username"))                # session[0]
 #         getTestPackage = TestPackage.objects.get(testID=findTakerData.testID)                                           # session[1]
 #         getLastAnsweredQuest = Question.objects.get(testID=findTakerData.testID,questionNum=findTakerData.lastAnswered or 1) # session[2]
 #         return(findTakerData,getTestPackage,getLastAnsweredQuest)

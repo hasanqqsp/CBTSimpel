@@ -1,17 +1,17 @@
-# from django import forms
-# from .models import TestTaker , Question,TestPackage
+from django import forms
+from .models import TestTaker , Question,TestPackage
 # from django.contrib.auth.forms import AuthenticationForm
 
 # class AnswerForm(forms.Form):
 #     answer =forms.ChoiceField(choices=(("",""),), widget=forms.RadioSelect())
 
-# class CreateSessionForm(forms.ModelForm):
-#     class Meta:
-#         model = TestTaker
-#         fields = ['testTakerName','testTakerGroup','session_password',]
-#         widgets = {
-#             'session_password' : forms.PasswordInput()
-#         }
+class CreateSessionForm(forms.ModelForm):
+    class Meta:
+        model = TestTaker
+        fields = ['testTakerName','testTakerGroup','session_password',]
+        widgets = {
+            'session_password' : forms.PasswordInput()
+        }
 
 # class CreateTestForm(forms.ModelForm):
 #     class Meta:
@@ -22,6 +22,7 @@
 #             'passwordTest' : forms.PasswordInput(),
 #             'testSchedule' : forms.DateTimeInput(),
 #         }
+
 class AuthTestForm1(forms.Form):
     testCode = forms.CharField()
 
