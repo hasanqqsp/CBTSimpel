@@ -22,11 +22,11 @@
 #             'passwordTest' : forms.PasswordInput(),
 #             'testSchedule' : forms.DateTimeInput(),
 #         }
-# class AuthTestForm1(forms.Form):
-#     codeTest = forms.CharField()
+class AuthTestForm1(forms.Form):
+    testCode = forms.CharField()
 
-# class AuthTestForm2(forms.Form):
-#     passw = forms.CharField(widget=forms.PasswordInput)
+class AuthTestForm2(forms.Form):
+     password = forms.CharField(widget=forms.PasswordInput)
     
 # class ResumeTestForm(forms.Form):
 #     username = forms.CharField(widget=forms.TextInput(

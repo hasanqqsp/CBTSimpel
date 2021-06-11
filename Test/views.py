@@ -1,17 +1,18 @@
-# from django.shortcuts import render,get_object_or_404
-# from .models import (Question , TestPackage, Answer, TestTaker)
-# from .forms import (AnswerForm , CreateSessionForm, AuthTestForm2, 
+from django.shortcuts import render,get_object_or_404
+from .models import (Question , TestPackage, Answer, TestTaker)
+#from .forms import (AnswerForm , CreateSessionForm, AuthTestForm2, 
 #     AuthTestForm1, CreateTestForm, ResumeTestForm, )
-# from django.http import (HttpResponseRedirect ,HttpResponse)
-# from django.contrib.auth.models import User
-# from django.contrib.auth import authenticate, login
-# from django.contrib.auth.forms import AuthenticationForm
-# from django.core.exceptions import ValidationError
+from .forms import AuthTestForm1
+from django.http import (HttpResponseRedirect ,HttpResponse)
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import ValidationError
 # from django.utils.translation import gettext as _
-# from django.contrib.auth.views import LoginView
-# from django.core import serializers
+from django.contrib.auth.views import LoginView
+#from django.core import serializers
 # from wkhtmltopdf.views import PDFTemplateResponse
-# import datetime
+import datetime
 # import pdfkit
 # import random 
 # import string
@@ -21,8 +22,8 @@
 
 
 
-# def index(request):
-#     return render(request, 'Test/index.html')
+def index(request):
+    return render(request, 'Test/index.html')
 
 # def showTest(request):
 #     testPackage = TestPackage.objects.all() 
@@ -31,83 +32,85 @@
 #     }
 #     return render(request, 'Test/test.html',context)
 
-# def joinTest(request):
-#     form = AuthTestForm1(request.POST or None)
-#     if request.method == 'POST':
-#         form = AuthTestForm1(request.POST or None)
-#         if form.is_valid():
-#             codeTest = request.POST.get('codeTest')
-#             try:
-#                 query = TestPackage.objects.get(testCode=codeTest)
-#                 return HttpResponseRedirect('/test/{}'.format(query.testID))
-#             except :
-#                 form.add_error(error=ValidationError(''),field='codeTest')
+def joinTest(request):
+    form = AuthTestForm1(request.POST or None)
+    if request.method == 'POST':
+        form = AuthTestForm1(request.POST or None)
+        if form.is_valid():
+            testCode = request.POST.get('codeTest')
+            try:
+                query = TestPackage.objects.get(testCode=testCode)
+                return HttpResponseRedirect('/test/{}'.format(query.testID))
+            except :
+                form.add_error(error=ValidationError(''),field='testCode')
 
 
-#     context = {
-#         'form' : form
-#     }
-#     return render(request, 'Test/joinTest.html',context)
+    context = {
+        'form' : form
+    }
+    return render(request, 'Test/joinTest.html',context)
             
-# def changeTest(request,idtest,testTakerInfo):
-#     querytest = TestPackage.objects.get(testID=idtest)
+# def changeTest(request,testID,testTakerInfo):
+#     querytest = TestPackage.objects.get(testID=testID)
 #     if request.user.is_authenticated:
-#         findTestTaker = TestTaker.objects.get(session_key = request.user)
+#         q_testTaker = TestTaker.objects.get(session_key = request.user)
 #     else :
-#         return HttpResponseRedirect('/test/createsession/{}'.format(idtest))
+#         return HttpResponseRedirect('/test/createsession/{}'.format(testID))
         
 #     context = {
-#         "savedTest" : TestPackage.objects.get(testID=findTestTaker.testID),
-#         "redirID" : idtest,
+#         "savedTest" : TestPackage.objects.get(testID=q_testTaker.testID),
+#         "redirID" : testID,
 #         'testInfo': querytest,
 #         'testTakerInfo': testTakerInfo
 #     }
 #     return render(request, 'Test/changeTest.html',context)
 
-# def detailTest(request, idtest):
-#     try : 
-#         findTestTaker = TestTaker.objects.get(session_key = request.user) 
-#     except : 
-#         return HttpResponseRedirect('/test/createsession/{}'.format(idtest))        
-#     if idtest == 'join':
-#         return joinTest(request)
-#     elif idtest != findTestTaker.testID:
-#         return changeTest(request,idtest,findTestTaker)
+def detailTest(request, testID):
+    
+    try : 
+        q_testTaker = TestTaker.objects.get(session_code = request.user) 
+    except : 
+        return HttpResponseRedirect('/test/createsession/{}'.format(testID))
+        
+    if testID == 'join':
+        return joinTest(request)
+        
+    elif testID != q_testTaker.testID:
+        return changeTest(request,testID,q_testTaker)
 
-#     else :
-#         form = AuthTestForm2(request.POST or None)
-#         query = TestPackage.objects.get(testID=idtest)
-#         is_noPassword = False
-#         if query.passwordTest == 'None':
-#             form = None
-#         else :
-#             if request.method == 'POST':
-#                 form = AuthTestForm2(request.POST or None)
-#                 if form.is_valid():
-#                     passw = request.POST.get('passw')
-#                     if str(passw) == str(query.passwordTest):
-#                         return HttpResponseRedirect("q/welcome")
-#                     else:
-#                         form.add_error(error=ValidationError('Terjadi Kesalahan, Password Mungkin Salah'),field='passw')
-#         try : 
-#             findTestTaker = TestTaker.objects.get(session_key = request.user) 
-#         except : 
-#             return HttpResponseRedirect('/test/createsession/{}'.format(idtest))
+    else :
+        form = AuthTestForm2(request.POST or None)
+        q_testPackage = TestPackage.objects.get(testID=testID)
+        if q_testPackage.passwordTest == 'None':
+            form = None
+        else :
+            if request.method == 'POST':
+                form = AuthTestForm2(request.POST or None)
+                if form.is_valid():
+                    password = request.POST.get('password')
+                    if str(password) == str(query.passwordTest):
+                        return HttpResponseRedirect("q/welcome")
+                    else:
+                        form.add_error(error=ValidationError('Terjadi Kesalahan, Password Mungkin Salah'),field='passw')
+        try : 
+            q_testTaker = TestTaker.objects.get(session_key = request.user) 
+        except : 
+            return HttpResponseRedirect('/test/createsession/{}'.format(testID))
 
-#         context = {
-#             'form' : form,
-#             'testInfo': query,
-#             'testTakerInfo': findTestTaker
-#         }
-#         return render(request, 'Test/overviewTest.html', context)
+        context = {
+            'form' : form,
+            'testInfo': q_testPackage,
+            'testTakerInfo': q_testTaker
+        }
+        return render(request, 'Test/overviewTest.html', context)
 
-# def welcomeTest(request,idtest):
+# def welcomeTest(request,testID):
 #     findTakerData = TestTaker.objects.get(session_key= request.user)                # session[0]
 #     getLastAnsweredQuest = Question.objects.get(testID=findTakerData.testID,questionNum=findTakerData.lastAnswered or 1) # session[2]
-#     packQuery = TestPackage.objects.get(testID=idtest)
+#     packQuery = TestPackage.objects.get(testID=testID)
 #     if request.method == 'POST':
 #         Answer.objects.create(
-#             testID=idtest,
+#             testID=testID,
 #             session_key = str(request.user),
 #             testTakerID=findTakerData.testTakerID,
 #             questionID= packQuery.firstQuestID,
@@ -123,19 +126,19 @@
 #     }
 #     return render(request,'Test/welcomeTest.html',context)
 
-# def verifyAnswer(request, idtest):
+# def verifyAnswer(request, testID):
 #     try:
-#         takerQuery = TestTaker.objects.get(session_key=request.user, testID=idtest)
+#         takerQuery = TestTaker.objects.get(session_key=request.user, testID=testID)
 #     except:
 #         return HttpResponseRedirect('/test/resume')
 #     getLastAnsweredQuest = Question.objects.get(testID=takerQuery.testID,questionNum=takerQuery.lastAnswered or 1) # session[2]
-#     packQuery = TestPackage.objects.get(testID=idtest)
-#     answerQuery = Answer.objects.filter(testID=idtest,session_key=request.user).order_by('num_ofAnswer')
-#     questQuery = Question.objects.filter(testID=idtest).order_by('questionNum')
+#     packQuery = TestPackage.objects.get(testID=testID)
+#     answerQuery = Answer.objects.filter(testID=testID,session_key=request.user).order_by('num_ofAnswer')
+#     questQuery = Question.objects.filter(testID=testID).order_by('questionNum')
 #     query = []
 #     for i in range(len(questQuery)):
 #         try:
-#             i_answer = Answer.objects.get(testID=idtest,session_key=request.user,num_ofAnswer=i+1)
+#             i_answer = Answer.objects.get(testID=testID,session_key=request.user,num_ofAnswer=i+1)
 #             i_answer = i_answer.answer
 #             print(i_answer)
 #         except: 
@@ -174,20 +177,20 @@
 
 #     return render(request, 'Test/verifyAnswer.html',context)
 
-# def doTest(request, idtest, idquest):
-#     querytest = TestPackage.objects.get(testID=idtest)
+# def doTest(request, testID, idquest):
+#     querytest = TestPackage.objects.get(testID=testID)
 #     json_serializer = serializers.get_serializer("json")()
-#     questionList = Question.objects.filter(testID=idtest)
-#     queryset = Question.objects.get(questID=idquest, testID=idtest)
+#     questionList = Question.objects.filter(testID=testID)
+#     queryset = Question.objects.get(questID=idquest, testID=testID)
 #     try:
-#         findTestTaker = TestTaker.objects.get(session_key = request.user)
+#         q_testTaker = TestTaker.objects.get(session_key = request.user)
 #     except:
 #         return HttpResponseRedirect('/test/resume')
 
-#     json_question = json_serializer.serialize(Question.objects.filter(testID=idtest), ensure_ascii=False)
+#     json_question = json_serializer.serialize(Question.objects.filter(testID=testID), ensure_ascii=False)
 
 #     try:
-#         findAnswer = Answer.objects.get(session_key=request.user, testID=idtest, questionID=idquest)
+#         findAnswer = Answer.objects.get(session_key=request.user, testID=testID, questionID=idquest)
 #     except:
 #         findAnswer = None
 #     if Question.objects.get(questID=idquest).nextQuestID == None:
@@ -200,9 +203,9 @@
 #         if form.is_valid():
 #             user = request.user
 #             Answer.objects.create(
-#                 testID=idtest,
+#                 testID=testID,
 #                 session_key = str(user),
-#                 testTakerID=findTestTaker.testTakerID,
+#                 testTakerID=q_testTaker.testTakerID,
 #                 questionID= idquest,
 #                 num_ofAnswer=queryset.questionNum,
 #                 answer=request.POST['answer'],
@@ -228,7 +231,7 @@
 #     )
 #     form.base_fields['answer'].choices = CHOICES
 #     context = {
-#         'takerQuery' : findTestTaker,
+#         'takerQuery' : q_testTaker,
 #         'question' : queryset,
 #         'form' : form,
 #         'json_q': json_question,
@@ -248,7 +251,7 @@
 #         except:
 #             return rand
     
-#     check = get_object_or_404(TestPackage,testID=kwargs['idtest'])
+#     check = get_object_or_404(TestPackage,testID=kwargs['testID'])
         
 #     if request.method == 'POST':
 #         createSessionForm = CreateSessionForm(request.POST or None)
@@ -259,12 +262,12 @@
 #                 testTakerName = request.POST.get('testTakerName'),
 #                 testTakerGroup = request.POST.get('testTakerGroup'),
 #                 session_password = request.POST.get('session_password'),
-#                 testID = kwargs['idtest']
+#                 testID = kwargs['testID']
 #             )
             
 #             credential = authenticate(request, username=skey, password=request.POST.get('session_password'),)
 #             login(request,credential)
-#         return HttpResponseRedirect('../{}'.format(kwargs['idtest']))
+#         return HttpResponseRedirect('../{}'.format(kwargs['testID']))
 #     else :
 #         createSessionForm = CreateSessionForm
 #     context = {
@@ -323,19 +326,19 @@
 #         return HttpResponseRedirect('/test/{}'.format(kwargs['redirID']))
 
 # def viewScore(request,session_key):
-#     findTestTaker = get_object_or_404(TestTaker, session_key = session_key)
+#     q_testTaker = get_object_or_404(TestTaker, session_key = session_key)
 #     answerQuery = Answer.objects.filter(session_key=session_key)
-#     packQuery = TestPackage.objects.get(testID=findTestTaker.testID)
-#     questQuery = Question.objects.filter(testID=findTestTaker.testID).order_by('questionNum')
+#     packQuery = TestPackage.objects.get(testID=q_testTaker.testID)
+#     questQuery = Question.objects.filter(testID=q_testTaker.testID).order_by('questionNum')
 #     query = []
 #     score_obtained = 0
 #     for i in answerQuery:
 #         score_obtained += i.scoreObtain
-#     findTestTaker.scoreObtained = score_obtained
-#     findTestTaker.save()
+#     q_testTaker.scoreObtained = score_obtained
+#     q_testTaker.save()
 #     for i in range(len(questQuery)):
 #         try:
-#             nth_answer = Answer.objects.get(testID=findTestTaker.testID,session_key=session_key,num_ofAnswer=i+1)
+#             nth_answer = Answer.objects.get(testID=q_testTaker.testID,session_key=session_key,num_ofAnswer=i+1)
 #             i_answer = nth_answer.answer
 #             print(i_answer)
 #         except: 
@@ -364,26 +367,26 @@
 #             'score':"{}".format(nth_answer.scoreObtain)})
 #     context = {
 #         'answerQuery': answerQuery,
-#         'takerQuery' : findTestTaker ,
+#         'takerQuery' : q_testTaker ,
 #         'packQuery' : packQuery,
 #         'query': query
 #     }
 #     return render(request,'Test/viewScore.html',context)
 
 # def generate_pdf(request, session_key):
-#     findTestTaker = get_object_or_404(TestTaker, session_key = session_key)
+#     q_testTaker = get_object_or_404(TestTaker, session_key = session_key)
 #     answerQuery = Answer.objects.filter(session_key=session_key)
-#     packQuery = TestPackage.objects.get(testID=findTestTaker.testID)
-#     questQuery = Question.objects.filter(testID=findTestTaker.testID).order_by('questionNum')
+#     packQuery = TestPackage.objects.get(testID=q_testTaker.testID)
+#     questQuery = Question.objects.filter(testID=q_testTaker.testID).order_by('questionNum')
 #     query = []
 #     score_obtained = 0
 #     for i in answerQuery:
 #         score_obtained += i.scoreObtain
-#     findTestTaker.scoreObtained = score_obtained
-#     findTestTaker.save()
+#     q_testTaker.scoreObtained = score_obtained
+#     q_testTaker.save()
 #     for i in range(len(questQuery)):
 #         try:
-#             nth_answer = Answer.objects.get(testID=findTestTaker.testID,session_key=session_key,num_ofAnswer=i+1)
+#             nth_answer = Answer.objects.get(testID=q_testTaker.testID,session_key=session_key,num_ofAnswer=i+1)
 #             i_answer = nth_answer.answer
 #             print(i_answer)
 #         except: 
@@ -412,7 +415,7 @@
 #             'score':"{}".format(nth_answer.scoreObtain)})
 #     context = {
 #         'answerQuery': answerQuery,
-#         'takerQuery' : findTestTaker ,
+#         'takerQuery' : q_testTaker ,
 #         'packQuery' : packQuery,
 #         'query': query
 #     }
