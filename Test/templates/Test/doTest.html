@@ -31,55 +31,14 @@
                     
             </li> 
             <div class="ql-container ql-snow">
-                <li class="p-1 list-group-item ql-editor text-justify" id="question">test</li>
-        </div>
-        <form method="POST">
-        <form method="POST">
-            {% if is_preview %}
-                    <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
+                <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question"></li>
+            </div>
+        </ul>
+    </div>
 
-                    {% for i in choices %}
-                        {% if i  %}
-                            <label class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
-                            <input type="radio" name="radio"><span id="choice{{forloop.counter}}"></span></label>
-                            </label>
-                        {% else %}
-                        {% endif %}
-                    {% endfor %}
-                        </div></div>
 
-            {% else %}
-                {% for form in form  %}
-                    {% csrf_token %}
-                    {% if form.errors %}
-                        {% for error in form.errors %} 
-                        {% if error == 'Bidang ini tidak boleh kosong.'%}
-                        {% else %}
-                        <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
-                            <p>{{error}} Coba Refresh</p>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </div>
-                            {% endif %}
-                            {% endfor %}
-                            {% endif %}
-                    <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
-                    
-                    {% for radio  in form %}
 
-                    {% if radio.choice_label == "" or None %}
-                        {% else %}
-                            <label class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
-                            {{radio.tag}}<span id="choice{{forloop.counter}}"></span></label>
-                            </label>
-                        {% endif %}
-                    {% endfor %}
-                    </div>
-                </li>
-                </ul>
-                {% endfor %}
-        </div>
-    {% endif %}
+        
 
     {% endblock no_card_body %}
 {% block card_footer %}
@@ -116,9 +75,9 @@
         <nav aria-label="Quest navigation">
         {% for i in question_list %}
             {% if i.questionNum == question.questionNum %}
-            <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{i.questionNum}}</a>
+            <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
             {% else %}
-            <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{i.questionNum}}</a>
+            <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
             {% endif %}
             {% endfor %}
         </nav>
@@ -128,8 +87,8 @@
         
     {% endblock after_footer %}   
     {% block user_script %}
-        <script>
-            var question_now = JSON.parse('{{ json_q | escapejs }}')[{{question.questionNum}}-1]['fields']
+        {% comment %} <script>
+            {% comment %} var question_now = JSON.parse('{{ json_q | escapejs }}')[{{question.questionNum}}-1]['fields']
             let question_contents = JSON.parse('{{ json_q | escapejs }}')[{{question.questionNum}}-1]['fields']['question'];
             var questionChoiceAll = [];
             document.getElementById("question").innerHTML = question_contents;
@@ -142,7 +101,7 @@
                 var id = "choice" + i.toString()
                 document.getElementById(id).innerHTML = choice[i+4]
             };
-            delete question_now.answerKey
+            delete question_now.answerKey 
 
         function makeTimer() {
         var endTime = (
@@ -173,5 +132,5 @@
 
         }
         setInterval(function() { makeTimer(); }, 1000);
-        </script>
+        </script> {% endcomment %}
         {% endblock user_script %}

@@ -45,8 +45,10 @@ class TestPackage(models.Model):
                 list.append(r)
         return list
     
+    def get_all_question(self):
+        return self.question_set.all()
+
     def get_one_question(self,num,*args):
-        print(args[0])
         if len(args) > 0:
             num = json.loads(args[0])[num-1]
         else:
@@ -123,8 +125,32 @@ class Question(models.Model):
     #         max_score += i.trueScore
     #     findPack.maxScore = max_score
     #     super().save(*args, **kwargs)
-    def get_question_count(self):
-        return Question.objects.filter()
+    def get_next_question(self,*args):
+        q_question = list(Question.objects.filter(testPackage=self.testPackage))
+        sequence = json.loads(args[0])
+        inIndex = q_question.index(self)
+        inSequence = sequence.index(inIndex)
+        if inSequence  == len(sequence)-1:
+            return None
+        num = sequence[inSequence+1]
+        print(num)
+        return q_question[num]
+
+    def get_prev_question(self,*args):
+        q_question = list(Question.objects.filter(testPackage=self.testPackage))
+        sequence = json.loads(args[0])
+        inIndex = q_question.index(self)
+        inSequence = sequence.index(inIndex)
+        if inSequence  == len(sequence)-1:
+            return None
+        num = sequence[inSequence-1]
+        return q_question[num]
+    '''
+from Test.models import *
+q= Question.objects.filter(questID='dhfDPn3i6jTA3CnG')[0]
+q.get_next_question("[4, 3, 2, 0, 1]").get_prev_question("[4, 3, 2, 0, 1]")
+    '''
+
     def delete(self,*args,**kwargs):
         questionList = Question.objects.filter(testID = self.testID)
         questionCount = questionList.count()
@@ -141,66 +167,67 @@ class Question(models.Model):
         return "{}_{}".format(self.testPackage.testID,self.question)
 
 class Answer(models.Model):
-    answerID = models.CharField(max_length=16, default=generate_id , editable=True)
-    testTaker = models.ForeignKey(TestTaker,on_delete=models.CASCADE ,max_length=16)
-    session_code = models.CharField(max_length=16)
-    testID = models.CharField(max_length=16)
-    question = models.CharField(max_length=16)
+    answerID =  models.CharField(max_length=16, unique=True,editable=True,blank=True)
+    testTaker = models.ForeignKey(TestTaker,on_delete=models.CASCADE,related_name='f_testTaker')
+    question = models.ForeignKey(Question,on_delete=models.CASCADE,related_name='f_question')
     answer = models.CharField(max_length=4096,null=True, blank= True )
     isTrue = models.BooleanField(default=None,null=True,blank=True)
-
     def save(self, *args, **kwargs):
-        if not self.pk and self.questi == 1:
-            findTaker = TestTaker.objects.get(testTakerID=self.testTakerID, session_code=self.session_code)
-            findTaker.startTime = datetime.datetime.now()
-            findTaker.save()
-            super(Answer, self).save(*args, **kwargs)
-        try:
-            findQuest = Answer.objects.get(questionID=self.questionID, testTakerID=self.testTakerID)
-        except:
-            pass
-        try:
-            findAnswer = Answer.objects.filter(testTakerID=self.testTakerID, session_code=self.session_code)
-            findTaker = TestTaker.objects.get(testTakerID= self.testTakerID)
-
-            score_obtained = 0
-            for i in findAnswer:
-                score_obtained += i.scoreObtain
-
-            findTaker.scoreObtained = score_obtained
-            findTaker.save()
-
-            checkAnswer = Question.objects.get(questID=self.questionID,testTakerID=self.testTakerID)
-            findTaker.lastAnswered = checkAnswer.questionNum
-            findTaker.save()
-            if str(self.answer) == str(checkAnswer.answerKey):
-                self.scoreObtain = checkAnswer.trueScore
-            else :
-                self.scoreObtain = checkAnswer.falseScore
-            checkAnswer.save()
-
-            findTaker = Answer.objects.filter(testTakerID==self.testTakerID, session_code=self.session_code)
-            findTestTaker = TestTaker.objects.get(testTakerID=self.testTakerID)
-            if self.questi == 1:
-                findTestTaker.firstAnswerID = self.answerID
-                findTestTaker.save()
-            else:
-                pass
-
-            findPA = Answer.objects.get(questionID=self.questionID, testTakerID=self.testTakerID, questi=(self.questi-1))
-            self.prevAnswerID = findPA.answerID
-            findPA.nextQuestID = self.answerID
-            findPA.save()
-        except:
-            pass
-
-        sameData = Answer.objects.filter(session_code=self.session_code, testID=self.testID, questionID=self.questionID)
-        for i in sameData:
-            if i.id != self.id:
-                i.delete()
-            else:
-                pass
+        if not self.answerID:
+            self.answerID = generate_id(Answer,'answerID',16)
         super(Answer, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.pk and self.questi == 1:
+    #         findTaker = TestTaker.objects.get(testTakerID=self.testTakerID, session_code=self.session_code)
+    #         findTaker.startTime = datetime.datetime.now()
+    #         findTaker.save()
+    #         super(Answer, self).save(*args, **kwargs)
+    #     try:
+    #         findQuest = Answer.objects.get(questionID=self.questionID, testTakerID=self.testTakerID)
+    #     except:
+    #         pass
+    #     try:
+    #         findAnswer = Answer.objects.filter(testTakerID=self.testTakerID, session_code=self.session_code)
+    #         findTaker = TestTaker.objects.get(testTakerID= self.testTakerID)
 
-    def __str__(self):
-        return "{} for {}".format(self.testTakerID , self.questionID)
+    #         score_obtained = 0
+    #         for i in findAnswer:
+    #             score_obtained += i.scoreObtain
+
+    #         findTaker.scoreObtained = score_obtained
+    #         findTaker.save()
+
+    #         checkAnswer = Question.objects.get(questID=self.questionID,testTakerID=self.testTakerID)
+    #         findTaker.lastAnswered = checkAnswer.questionNum
+    #         findTaker.save()
+    #         if str(self.answer) == str(checkAnswer.answerKey):
+    #             self.scoreObtain = checkAnswer.trueScore
+    #         else :
+    #             self.scoreObtain = checkAnswer.falseScore
+    #         checkAnswer.save()
+
+    #         findTaker = Answer.objects.filter(testTakerID==self.testTakerID, session_code=self.session_code)
+    #         findTestTaker = TestTaker.objects.get(testTakerID=self.testTakerID)
+    #         if self.questi == 1:
+    #             findTestTaker.firstAnswerID = self.answerID
+    #             findTestTaker.save()
+    #         else:
+    #             pass
+
+    #         findPA = Answer.objects.get(questionID=self.questionID, testTakerID=self.testTakerID, questi=(self.questi-1))
+    #         self.prevAnswerID = findPA.answerID
+    #         findPA.nextQuestID = self.answerID
+    #         findPA.save()
+    #     except:
+    #         pass
+
+    #     sameData = Answer.objects.filter(session_code=self.session_code, testID=self.testID, questionID=self.questionID)
+    #     for i in sameData:
+    #         if i.id != self.id:
+    #             i.delete()
+    #         else:
+    #             pass
+    #     super(Answer, self).save(*args, **kwargs)
+
+    # def __str__(self):
+    #     return "{} for {}".format(self.testTakerID , self.questionID)
