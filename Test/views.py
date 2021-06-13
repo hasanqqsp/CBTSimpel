@@ -1,17 +1,13 @@
 from django.shortcuts import render,get_object_or_404
 from .models import (Question , TestPackage, Answer, TestTaker)
-#from .forms import (AnswerForm , CreateSessionForm, AuthTestForm2, 
-#     AuthTestForm1, CreateTestForm, ResumeTestForm, )
 from .forms import *
-from django.http import (HttpResponseRedirect ,HttpResponse)
+from django.http import (HttpResponseRedirect ,HttpResponse,HttpResponseNotFound)
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
-# from django.utils.translation import gettext as _
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-#from django.core import serializers
-# from wkhtmltopdf.views import PDFTemplateResponse
 import datetime
 
 
@@ -43,7 +39,8 @@ def joinTest(request):
         'form' : form
     }
     return render(request, 'Test/joinTest.html',context)
-            
+
+@login_required(login_url='/test/resume')            
 def changeTest(request,testID,testTakerInfo):
     q_testPackage = TestPackage.objects.get(testID=testID)
     if request.user.is_authenticated:
@@ -59,6 +56,7 @@ def changeTest(request,testID,testTakerInfo):
     }
     return render(request, 'Test/changeTest.html',context)
 
+@login_required(login_url='/test/resume')  
 def detailTest(request, testID):
     if testID == 'join':
         return joinTest(request)
@@ -99,13 +97,15 @@ def detailTest(request, testID):
             
         }
         return render(request, 'Test/overviewTest.html', context)
-
+        
+@login_required(login_url='/test/resume')  
 def welcomeTest(request,testID):
     q_testTaker = TestTaker.objects.get(session_code= request.user)                # session[0]
     q_testPackage = TestPackage.objects.get(testID=testID)
 
     if request.method == 'POST':
-        q_testTaker.timerStart()
+        if not q_testTaker.timeStart:
+            q_testTaker.timerStart()
         return HttpResponseRedirect("{}".format(q_testPackage.get_one_question(1,q_testTaker.sequences).questID))
     context = {
         'title' : q_testPackage.testTitle,
@@ -114,61 +114,45 @@ def welcomeTest(request,testID):
     }
     return render(request,'Test/welcomeTest.html',context)
 
-# def verifyAnswer(request, testID):
-#     try:
-#         takerQuery = TestTaker.objects.get(session_code=request.user, testID=testID)
-#     except:
-#         return HttpResponseRedirect('/test/resume')
-#     getLastAnsweredQuest = Question.objects.get(testID=takerQuery.testID,questionNum=takerQuery.lastAnswered or 1) # session[2]
-#     packQuery = TestPackage.objects.get(testID=testID)
-#     answerQuery = Answer.objects.filter(testID=testID,session_code=request.user).order_by('num_ofAnswer')
-#     questQuery = Question.objects.filter(testID=testID).order_by('questionNum')
-#     query = []
-#     for i in range(len(questQuery)):
-#         try:
-#             i_answer = Answer.objects.get(testID=testID,session_code=request.user,num_ofAnswer=i+1)
-#             i_answer = i_answer.answer
-#             print(i_answer)
-#         except: 
-#             i_answer = ""
-#         if i_answer == 'A':
-#                 answer = '{}'.format(questQuery[i].choiceFirst)
-#         elif i_answer == 'B':
-#             answer = '{}'.format(questQuery[i].choiceSecond)
-#         elif i_answer == 'C':
-#             answer = '{}'.format(questQuery[i].choiceThird)
-#         elif i_answer == 'D':
-#             answer = '{}'.format(questQuery[i].choiceFourth)
-#         elif i_answer == 'E':
-#             answer = '{}'.format(questQuery[i].choiceFifth)
-#         elif i_answer == 'F':
-#             answer = '{}'.format(questQuery[i].choiceSixth)
-#         else:
-#             answer = 'Error'
-            
-#         query.append({'num':'{}'.format(questQuery[i].questionNum),'question':'{}'.format(questQuery[i].question),'answer':"{}".format(answer),'questID':'{}'.format(questQuery[i].questID)})
+@login_required(login_url='/test/resume')  
+def verifyAnswer(request, testID):
+    q_testPackage = TestPackage.objects.filter(testID=testID)
+    if len(q_testPackage) > 0:
+        q_testPackage = q_testPackage[0]
+    else:
+        return HttpResponseNotFound()
 
-#     if request.method == "POST":
-#         takerQuery.timeFinish = datetime.datetime.now()
-#         user = User.objects.get(username = request.user)
-#         user.delete()
-#         return HttpResponseRedirect ('../../join')
-#     context = {
-#         'takerQuery' : takerQuery,
-#         'packQuery' : packQuery,
-#         'answerQuery' : answerQuery,
-#         'questQuery' : questQuery,
-#         'query' : query,
-#         'ob': takerQuery.timeStart,
-#         'lastQuest' : getLastAnsweredQuest.questID
-#     }
+    q_testTaker = TestTaker.objects.filter(session_code=request.user) 
 
-#     return render(request, 'Test/verifyAnswer.html',context)
+    if len(q_testTaker) > 0:
+        q_testTaker = q_testTaker[0]
+    else:
+        return HttpResponseRedirect('/test/resume')
+        
+    q_last_answered_quest = q_testTaker.get_last_answered()
+    q_answer = q_testTaker.get_all_answer()
+    q_question = testPackage.get_all_question(q_testTaker.sequences)
+    query = []
+    
 
+    if request.method == "POST":
+        q_testTaker.timerEnd()      
+        return HttpResponseRedirect ('../../join')
+    context = {
+        'takerQuery' : q_testTaker,
+        'packQuery' : q_testPackage,
+        'answerQuery' : q_answer,
+        'questQuery' : q_question,
+        'ob': q_testTaker.timeStart,
+        'lastQuest' : q_last_answered_quest.testID
+    }
+
+    return render(request, 'Test/verifyAnswer.html',context)
+
+@login_required(login_url='/test/resume')  
 def doTest(request, testID, questID):
     q_testPackage = TestPackage.objects.get(testID=testID)
     q_question = q_testPackage.question_set.get(questID=questID)
-    print(request.user)
     q_testTaker = TestTaker.objects.get(session_code = request.user)
     try:
         q_testTaker = TestTaker.objects.get(session_code = request.user)
@@ -184,16 +168,19 @@ def doTest(request, testID, questID):
         query = q_question.get_next_question(q_testTaker.sequences).questID
     if request.method == 'POST':
         form = AnswerForm(request.POST)
-        
+        if len(q_answer) > 0:
+            q_answer[0].delete()
+             
         if form.is_valid():
             user = request.user
             Answer.objects.create(
                 question = q_question,
-     #     testPackage=q_testPackage,
                 testTaker=q_testTaker,
                 answer=request.POST['answer']
             )
-
+            if request.POST['is_timeout']:
+                return HttpResponseRedirect('../q/{}'.format('verify'))
+           
             return HttpResponseRedirect('../q/{}'.format(query))
         else:
             form = AnswerForm
@@ -283,6 +270,7 @@ def resumeTest(request,*args, **kwargs):
     }
     return render(request,'Test/resume.html',context)
 
+@login_required(login_url='/test/resume')  
 def cancelTest(request,**kwargs):
     q_user = User.objects.get(username = request.user)
     q_user.delete()

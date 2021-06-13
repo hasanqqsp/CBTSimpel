@@ -98,10 +98,25 @@ class TestTaker(models.Model):
         
     def timerEnd(self):
         self.timeFinish = datetime.datetime.now()
+        user = User.objects.get(username = self.session_code)
+        user.delete()
         super().save()
-        
-    # def __str__(self):
-    #     return "{}({})".format(self.testTakerID,self.testTakerName)
+
+    def get_all_answer(self):
+        list = []
+        for i in json.loads(self.sequences):
+            q_question = self.testPackage.get_all_question(self.sequences)[i]
+            list.append(self.answer_set.filter(question = q_question)[0])
+        return list
+
+    def get_last_answered(self):
+        if self.answer_set.all().exists():
+            return self.answer_set.all().order_by('timestamp')[0] 
+        else:
+            return self.testPackage.get_one_question(1,self.sequences)
+
+    def __str__(self):
+        return "{}".format(self.testTakerName)
 
 class Question(models.Model):
     questID = models.CharField(max_length=16, unique = True, blank=True,editable=True)
@@ -177,10 +192,11 @@ q.get_next_question("[4, 3, 2, 0, 1]").get_prev_question("[4, 3, 2, 0, 1]")
 
 class Answer(models.Model):
     answerID =  models.CharField(max_length=16, unique=True,editable=True,blank=True)
-    testTaker = models.ForeignKey(TestTaker,on_delete=models.CASCADE,related_name='f_testTaker')
-    question = models.ForeignKey(Question,on_delete=models.CASCADE,related_name='f_question')
+    testTaker = models.ForeignKey(TestTaker,on_delete=models.CASCADE,related_name='answer_set')
+    question = models.ForeignKey(Question,on_delete=models.CASCADE,related_name='answer_set')
     answer = models.CharField(max_length=4096,null=True, blank= True )
     isTrue = models.BooleanField(default=None,null=True,blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     def save(self, *args, **kwargs):
         if not self.answerID:
             self.answerID = generate_id(Answer,'answerID',16)

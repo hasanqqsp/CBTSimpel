@@ -1,6 +1,6 @@
 {% extends 'snippets/base.html' %}
 {% block web_title %}
- (Soal ke {{question.questionNum}}/{{question_list.count}}) {{testInfo.testTitle}}
+ (Soal ke {{indexOf}}/{{question_list|length}}) {{testInfo.testTitle}}
 {% endblock web_title %}
 
 {% block no_card_header %}
@@ -19,9 +19,10 @@
 
 {% endblock no_card_header %}
 {% block no_card_body %}
+
     <div class="card-body py-1">
         <ul class="list-group block list-group-flush">
-            <li class="p-0 pb-2 list-group-item d-flex justify-content-between flex-row text-nowrap ">
+            <li class="p-0 pb-2 d-flex justify-content-between flex-row text-nowrap ">
                 {{testInfo.testTitle}}
                 
                 {% if testInfo.timeLimit == 0 %}
@@ -31,15 +32,61 @@
                     
             </li> 
             <div class="ql-container ql-snow">
-                <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question"></li>
+                <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{question.question}}</li>
             </div>
             <form method="post" accept-charset="utf-8">
                 
-            {% csrf_token %}
-                {{form.answer}}
-        </ul>
-    </div>
+            {% comment %} {{form}} {% endcomment %}
+             {% for form in form  %}
+                    {% csrf_token %}
+                    {% if form.errors %}
+                        {% for error in form.errors %} 
+                        {% if error == 'Bidang ini tidak boleh kosong.'%}
+                        {% else %}
+                        <script>location.reload()</script>
+                        <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+                            <p>{{error}} Coba Refresh</p>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                            
+                    <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
+                    
+                    {% for radio  in form %}
+                            <label for="id_answer_{{forloop.counter0}}" class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+                            {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span></label>
+                            </label>
+                            {% endfor %}
+                            <input type="hidden" name="is_timeout">                    
+                        </div>
+                </li>
+                </ul>
 
+                {% endfor %}
+                </div>
+        </ul> 
+    </div>
+    <div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+              <div class="modal-content">
+                
+                <div class="modal-body">
+                    <h3 class="d-flex justify-content-between"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+                        <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
+                        <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
+                      </svg><div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                      </div></h3>
+                  <h1>Waktu Habis</h1>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+      
 
 
         
@@ -88,24 +135,11 @@
     {{question.answerKey}}
     </div>
     {% endif %}
-        
+    
     {% endblock after_footer %}   
     {% block user_script %}
-        {% comment %} <script>
-            {% comment %} var question_now = JSON.parse('{{ json_q | escapejs }}')[{{question.questionNum}}-1]['fields']
-            let question_contents = JSON.parse('{{ json_q | escapejs }}')[{{question.questionNum}}-1]['fields']['question'];
-            var questionChoiceAll = [];
-            document.getElementById("question").innerHTML = question_contents;
+        <script>
 
-            var choice = Object.keys(question_now)
-            .map(function(key) {
-                return question_now[key];
-            });
-            for (i = 1; i <= 6; i++) {
-                var id = "choice" + i.toString()
-                document.getElementById(id).innerHTML = choice[i+4]
-            };
-            delete question_now.answerKey 
 
         function makeTimer() {
         var endTime = (
@@ -127,7 +161,14 @@
                 if (minutes < "10") { minutes = "0" + minutes; }
                 if (seconds < "10") { seconds = "0" + seconds; }
                 if(days < "0"){
+                form = document.getElementsByTagName('form')
+                form[0].is_timeout.value = true
                 timeLeft = 'bg-danger p-1 px-2 rounded ">Waktu Habis'
+                $('#modal-timeout').modal('show').modal('handleUpdate')
+                setTimeout(() => {
+                    form[0].submit()
+                }, 1000);
+                    
                 }else{
                 timeLeft = 'bg-primary p-1 px-2 rounded ">Sisa Waktu : ' + hours + " : " + minutes+ " : " + seconds
 
@@ -136,5 +177,5 @@
 
         }
         setInterval(function() { makeTimer(); }, 1000);
-        </script> {% endcomment %}
+        </script>
         {% endblock user_script %}
