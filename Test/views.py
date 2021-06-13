@@ -13,12 +13,6 @@ from django.contrib.auth.views import LoginView
 #from django.core import serializers
 # from wkhtmltopdf.views import PDFTemplateResponse
 import datetime
-# import pdfkit
-# import random 
-# import string
-# from django.template.loader import render_to_string
-# from weasyprint import HTML
-# import tempfile
 
 
 
@@ -187,18 +181,17 @@ def doTest(request, testID, questID):
         query = "verify"
     else: 
         # if next question not found 
-        query = Question.objects.get(questID=questID).get_next_question(q_testTaker.sequences)
+        query = q_question.get_next_question(q_testTaker.sequences).questID
     if request.method == 'POST':
         form = AnswerForm(request.POST)
         
         if form.is_valid():
             user = request.user
             Answer.objects.create(
-                testID=testID,
-                session_code = str(user),
+                question = q_question,
+     #     testPackage=q_testPackage,
                 testTaker=q_testTaker,
-                num_ofAnswer=queryset.questionNum,
-                answer=request.POST['answer'],
+                answer=request.POST['answer']
             )
 
             return HttpResponseRedirect('../q/{}'.format(query))
@@ -213,14 +206,19 @@ def doTest(request, testID, questID):
     CHOICES = []
     for i in q_question.choices:
         CHOICES.append((i['choiceCode'],i['choiceLabel']))
-    print(CHOICES)
+    
     form.base_fields['answer'].choices = CHOICES
+
     context = {
         'takerQuery' : q_testTaker,
         'question' : q_question,
         'form' : form,
         'testInfo': q_testPackage,
-        'question_list' : q_testPackage.get_all_question(),
+        'question_list' : q_testPackage.get_all_question(q_testTaker.sequences),
+        'next_question' : q_question.get_next_question(q_testTaker.sequences),
+        'prev_question' : q_question.get_prev_question(q_testTaker.sequences),
+        'indexOf' : q_question.get_question_num(q_testTaker.sequences)
+        
     }
     return render(request,'Test/doTest.html',context)
 
@@ -251,30 +249,30 @@ def createSession(request,*args, **kwargs):
     return render(request,'Test/createSession.html',context)
 
 def resumeTest(request,*args, **kwargs):
-    q_testTaker = TestTaker.objects.get(session_code=request.user or request.POST.get("username"))                # session[0]                                       # session[1]
-    q_lastAnsweredQuest = q_testTaker.testPackage.get_one_question(1,q_testTaker.sequences)
+    q_testTaker = TestTaker.objects.filter(session_code=request.user or request.POST.get("username"))                           
     
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/test/{}/q/{}'.format(q_testTaker.testPackage.testID,  q_lastAnsweredQuest.questID))
+    #print(q_testTaker)
+    if request.user.is_authenticated and len(q_testTaker) > 0:
+        return HttpResponseRedirect('/test/{}/q/{}'.format(q_testTaker[0].testPackage.testID,  'welcome'))
 
     else :
+        
         loginForm = ResumeTestForm(request.POST or None)
         if request.method == 'POST':
             loginForm = ResumeTestForm(request.POST or None)
             if loginForm.is_valid():
                 loginForm = ResumeTestForm(request.POST)
                 credential = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'),)
-                # print(credential)
+                print(credential)
+                User.objects.get(username=request.POST.get("username"))
                 try:
-                    User.objects.get(session_code=request.POST.get("username"))
-                    #print(User.objects.get(session_code=request.POST.get("username")))
+                    
                     if credential == None:
                         loginForm.add_error(error=ValidationError(''),field='password')
                     else:
                         login(request,credential)
-                        session = getUserSession(request)
-                        print(session)
-                        return HttpResponseRedirect('/test/{}/q/{}'.format(session[0].testID, session[2].questID))
+                        
+                        return HttpResponseRedirect('/test/{}/q/{}'.format(q_testTaker.testPackage.testID, 'welcome'))
                 except:
                     loginForm.add_error(error=ValidationError(''),field='username')
                         

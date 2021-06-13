@@ -5,7 +5,7 @@
 
 {% block no_card_header %}
 <div class="card-header d-flex  flex-row flex-wrap justify-content-between bg-success ">
-        <h6 class="bg-primary align-self-center border-primary rounded p-1 mb-0  text-nowrap">Soal Ke-{{question.questionNum}} dari {{question_list.count}}</h3>
+        <h6 class="bg-primary align-self-center border-primary rounded p-1 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</h3>
         
         {% if is_preview %}
         <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : Pratinjau</h3>
@@ -33,6 +33,10 @@
             <div class="ql-container ql-snow">
                 <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question"></li>
             </div>
+            <form method="post" accept-charset="utf-8">
+                
+            {% csrf_token %}
+                {{form.answer}}
         </ul>
     </div>
 
@@ -54,13 +58,13 @@
     </div>
 {% else %}
     <div class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-    {% if question.prevQuestID == None %}
+    {% if prev_question == None %}
     {% else %}
-    <a href="{{question.prevQuestID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+    <a href="{{prev_question.questID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
     {% endif %}
-    {% if question.nextQuestID == None %}
+    {% if next_question == None %}
     {% else %}
-    <a href="{{question.nextQuestID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+    <a href="{{next_question.questID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
     {% endif %}
         <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
     </div>
@@ -74,7 +78,7 @@
     <div class="d-flex flex-wrap card-footer">
         <nav aria-label="Quest navigation">
         {% for i in question_list %}
-            {% if i.questionNum == question.questionNum %}
+            {% if indexOf == forloop.counter %}
             <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
             {% else %}
             <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>

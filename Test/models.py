@@ -45,8 +45,11 @@ class TestPackage(models.Model):
                 list.append(r)
         return list
     
-    def get_all_question(self):
-        return self.question_set.all()
+    def get_all_question(self,*args):
+        list = []
+        for i in json.loads(args[0]):
+            list.append(self.question_set.all()[i])
+        return list
 
     def get_one_question(self,num,*args):
         if len(args) > 0:
@@ -125,6 +128,12 @@ class Question(models.Model):
     #         max_score += i.trueScore
     #     findPack.maxScore = max_score
     #     super().save(*args, **kwargs)
+    def get_question_num(self,*args):
+        q_question = list(Question.objects.filter(testPackage=self.testPackage))
+        sequence = json.loads(args[0])
+        inIndex = q_question.index(self)
+        inSequence = sequence.index(inIndex)
+        return inSequence + 1
     def get_next_question(self,*args):
         q_question = list(Question.objects.filter(testPackage=self.testPackage))
         sequence = json.loads(args[0])
@@ -133,15 +142,15 @@ class Question(models.Model):
         if inSequence  == len(sequence)-1:
             return None
         num = sequence[inSequence+1]
-        print(num)
         return q_question[num]
+
 
     def get_prev_question(self,*args):
         q_question = list(Question.objects.filter(testPackage=self.testPackage))
         sequence = json.loads(args[0])
         inIndex = q_question.index(self)
         inSequence = sequence.index(inIndex)
-        if inSequence  == len(sequence)-1:
+        if inSequence  == 0:
             return None
         num = sequence[inSequence-1]
         return q_question[num]
