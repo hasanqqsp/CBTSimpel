@@ -11,6 +11,18 @@ from utils.generate_id import generate_id,generate_numeric_code
 import json
 
 class TestPackage(models.Model):
+    defaultSettings = '''{
+    "completeRequired": true,
+    "randomSequences": true,
+    "viewScore": true,
+    "viewDetail": true,
+    "viewAnswerKey": true,
+    "limitByScheduleStart": true,
+    "limitByScheduleFinish": false,
+    "onlyRegistered": false,
+    "canViewScorePage": true,
+    "canViewScorePageAuth": false
+}'''
     testID = models.CharField(max_length=16, unique=True,editable=True,blank=True)
     testTitle = models.CharField(max_length=1024)
     testAuthor = models.CharField(max_length=1024)
@@ -20,7 +32,7 @@ class TestPackage(models.Model):
     passwordAdminTest = models.CharField(max_length=16,default=None, null=True)
     passwordTest = models.CharField(max_length=16, default="123456")
     welcomeMessage = models.TextField()
-    settings = models.JSONField(blank=True,null=True)
+    settings = models.JSONField(default=dict(json.loads(defaultSettings)) ,blank=True,null=True)
     def save(self, *args, **kwargs):
         if not self.testID:
             self.testID = generate_id(TestPackage,'testID',16)
@@ -106,12 +118,13 @@ class TestTaker(models.Model):
         list = []
         for i in json.loads(self.sequences):
             q_question = self.testPackage.get_all_question(self.sequences)[i]
-            list.append(self.answer_set.filter(question = q_question)[0])
+            if self.answer_set.filter(question = q_question).exists():
+                list.append(self.answer_set.filter(question = q_question)[0])
         return list
 
     def get_last_answered(self):
         if self.answer_set.all().exists():
-            return self.answer_set.all().order_by('timestamp')[0] 
+            return self.answer_set.all().order_by('timestamp')[0].question 
         else:
             return self.testPackage.get_one_question(1,self.sequences)
 

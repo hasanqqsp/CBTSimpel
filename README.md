@@ -7,3 +7,4 @@ Aplikasi Tes Berbasis Web Gratis dan opensource dibuat dengan Django 3
 * Bisa digunakan pada internet kecepatan rendah
 * Backend cepat dengan Python3
 * Sepenuhnya gratis dan *opensource*
+* Bahasa Indonesia

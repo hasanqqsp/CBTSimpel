@@ -131,7 +131,7 @@ def verifyAnswer(request, testID):
         
     q_last_answered_quest = q_testTaker.get_last_answered()
     q_answer = q_testTaker.get_all_answer()
-    q_question = testPackage.get_all_question(q_testTaker.sequences)
+    q_question = q_testPackage.get_all_question(q_testTaker.sequences)
     query = []
     
 
@@ -144,7 +144,7 @@ def verifyAnswer(request, testID):
         'answerQuery' : q_answer,
         'questQuery' : q_question,
         'ob': q_testTaker.timeStart,
-        'lastQuest' : q_last_answered_quest.testID
+        'lastQuest' : q_last_answered_quest.questID
     }
 
     return render(request, 'Test/verifyAnswer.html',context)
@@ -159,7 +159,7 @@ def doTest(request, testID, questID):
     except:
         return HttpResponseRedirect('/test/resume')
 
-    q_answer = q_testTaker.f_testTaker.filter(question=q_question)
+    q_answer = q_testTaker.answer_set.filter(question=q_question)
 
     if Question.objects.get(questID=questID).get_next_question(q_testTaker.sequences) == None:
         query = "verify"
