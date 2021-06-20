@@ -3,7 +3,7 @@ from .models import TestTaker , Question,TestPackage
 # from django.contrib.auth.forms import AuthenticationForm
 
 class AnswerForm(forms.Form):
-    answer =forms.ChoiceField(choices=(("",""),), widget=forms.RadioSelect())
+    answer = forms.ChoiceField(choices=(("",""),), widget=forms.RadioSelect())
 
 class CreateSessionForm(forms.ModelForm):
     class Meta:

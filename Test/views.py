@@ -56,7 +56,7 @@ def changeTest(request,testID,testTakerInfo):
     }
     return render(request, 'Test/changeTest.html',context)
 
-@login_required(login_url='/test/resume')  
+#@login_required(login_url='/test/resume')  
 def detailTest(request, testID):
     if testID == 'join':
         return joinTest(request)
@@ -243,16 +243,15 @@ def resumeTest(request,*args, **kwargs):
         return HttpResponseRedirect('/test/{}/q/{}'.format(q_testTaker[0].testPackage.testID,  'welcome'))
 
     else :
-        
         loginForm = ResumeTestForm(request.POST or None)
         if request.method == 'POST':
             loginForm = ResumeTestForm(request.POST or None)
             if loginForm.is_valid():
                 loginForm = ResumeTestForm(request.POST)
                 credential = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'),)
-                print(credential)
-                User.objects.get(username=request.POST.get("username"))
+                
                 try:
+                    User.objects.get(username=request.POST.get("username"))
                     
                     if credential == None:
                         loginForm.add_error(error=ValidationError(''),field='password')

@@ -3,38 +3,72 @@
 {% block web_title %}
 Lanjutkan Tes
 {% endblock web_title %}
-{% block card_header %}
-    <h3 class="m-1"><strong>INFORMASI PESERTA DAN TES</strong></h3>
-{% endblock card_header %}
-{% block card_body %}
-    <form method="post">
+{% block no_container %}
+    <div class="container-lg px-3 h-100">
+      <div class="row py-4 h-100">
+           <div class=" m-auto d-flex align-items-center flex-wrap text-center">
+            <div class="align-items-center">
+            <div class="row d-flex justify-content-center site-banner-mini">
+                <div class="site-banner-logo">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
+  <path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
+</svg>
+                    
+                </div>
+                <div class="site-banner-text">
+                   <h1 class="mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
+            </div>
+            </div>
+                <div class="text-center my-auto align-items-center flex-fill font-weight-bold">
+           
+                    <h2 class="col-sm-12 text-center my-auto align-items-center flex-fill"><strong>Login untuk Melanjutkan Tes</strong></h2>
+                </div>
+                    <div class="row mx-1">
+        <form method="post" class="flex-fill">
         {% csrf_token %}
         {% if form.errors.password %}
             <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
-            <p> Verifikasi Sesi Gagal, Kunci Sesi mungkin salah</p>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+                <p> Verifikasi Sesi Gagal, Kunci Sesi mungkin salah</p>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
             </div>
         {% endif %}
         {% if form.errors.username %}
-            <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+            <div class="alert alert-danger mt-2 fade show pb-0" role="alert">
             <p> Kode Sesi Tidak ditemukan, mungkin salah atau sesi telah kadaluarsa </p>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
             </div>
         {% endif %}
-        <label for="session_key">Kode Sesi</label>
-        {{form.username|add_class:"form-control"}}
-        <label for="password">Kunci Sesi</label>
-        {{form.password}}
-{% endblock card_body %}
-{% block card_footer %}
-<div class="row">
-    <a class=" col-md-6 h6 my-auto text-center text-muted" href="/test/join">Belum Mulai Mengerjakan? Mulai Disini</a>
-    <div class="col-md-3"></div>
-        <button class="col-md-3 btn btn-primary " type="submit">Lanjutkan</button>
+        <div class="col-sm-12">
+            
+      
+        {{form.username|add_class:"form-control form-control-lg my-4" |attr:"placeholder:Kode Sesi"}}
+
+        {{form.password |add_class:"form-control-lg" |attr:"placeholder:Kunci Sesi"}}
+        </div>
+</div>
+
+                <div class="row mt-3">
+                    <div class="col-sm-9">
+    <a class="h6 text-center text-muted" href="/test/join">Belum Mulai Mengerjakan? Mulai Disini</a>
+                        
+                    </div>
+    <div class="col-sm-3 mx-0 px-0">
+        
+        <button class="btn btn-success " type="submit">Lanjutkan</button>
+    </div>
     </form>
     </div>
-{% endblock card_footer %}
+
+    </div>
+                </div>
+                 </div>
+                  
+              </div>
+            
+          
+      
+
+{% endblock no_container%}
 </body>
 </html>

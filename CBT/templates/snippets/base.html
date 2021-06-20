@@ -23,7 +23,8 @@
       <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
       <style>
         body {
-          font-family: 'Montserrat';font-size: 18px;
+          font-family: 'Montserrat';
+          font-size: 18px;
         }</style>
       {% endblock default_fonts %}
 
@@ -33,40 +34,15 @@
       {% endblock head_script %}
 
   </head>
-  <body style="height:100vh">
+  <body style="height:100vh; overflow:hidden">
 {% block no_container %}
-    {% block navbar %}
-    <nav class="navbar navbar-dark bg-success">
-            <div class="container-fluid">
-              <span class="navbar-brand mb-0 h1">CBT Simpel</span>
-        </div>
-      </nav>
-       {% endblock navbar %}
-       <div class="container-lg rounded-2 mt-4">
-         {% block main_container %}
-         <div class="card">
-           {% block no_card_header %}
-           <div class="card-header">
-             {% block card_header %}
-             {% endblock card_header %}
-            </div>
-            {% endblock no_card_header %}
-            {% block no_card_body %}
-            <div class="card-body" id="card-body">
-              {% block card_body %}
-        {% endblock card_body %}
-      </div>
-      {% endblock  %}
-        <div class="card-footer text-right">
-          {% block card_footer %}
-        {% endblock card_footer %}
-      </div>
-      <div class="after-footer">
-        {% block after_footer %}
-        {% endblock after_footer %}
-      </div>
-    </div>
+       <div class="container-lg h-100 mt-4">
+         <div class="d-flex container-fluid h-100">
+    {% block main_container %}
+    {% block card %}  
+    {% endblock card %}
     {% endblock main_container %}<br><br>
+    </div>      
   </div>
   {% endblock no_container %}
 {% block Footer %}
