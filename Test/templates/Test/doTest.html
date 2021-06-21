@@ -2,8 +2,175 @@
 {% block web_title %}
  (Soal ke {{indexOf}}/{{question_list|length}}) {{testInfo.testTitle}}
 {% endblock web_title %}
+{% block no_container%}
+<div class="container-lg px-3">
+    <div class="row py-4 h-100">
+          <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center">
+            <div class="align-items-center flex-fill">
+          <div class="row d-flex justify-content-center site-banner-mini">
+              <div class="">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
+<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
+</svg>
+                  
+              </div>
+              
+              <div class="pb-2">
+                  
+                 <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
+              </div>
+               </div>
 
-{% block no_card_header %}
+  {% block header %}
+    <h3 class="m-1 text-uppercase"><strong>{{testInfo.testTitle}}</strong></h3>
+  {% endblock header %}
+{% block body %}
+<ul class="list-group block list-group-flush text-left flex-fill">
+    <li class="list-group-item"><div class="row">
+
+        <div class="card-header d-flex flex-fill  flex-row flex-wrap justify-content-between bg-success ">
+            <h6 class="bg-primary align-self-center border-primary rounded p-1 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</h3>
+            
+            {% if is_preview %}
+            <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : Pratinjau</h3>
+    
+            {% else %}
+                   
+            {% if testInfo.timeLimit == 0 %}
+            {% else %}  
+            <span id="now"></span>
+            {% endif %}
+            <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : {{user}}</h3>
+            {% endif %}
+                
+    </div></li>
+    <li class="p-0 pb-2 d-flex justify-content-between flex-row text-nowrap ">
+        {{testInfo.testTitle}}
+        
+        {% if testInfo.timeLimit == 0 %}
+        {% else %}  
+        <span id="now"></span>
+        {% endif %}
+            
+    </li>
+    
+    <div class="ql-container ql-snow">
+        <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{question.question}}</li>
+    </div>
+    <form method="post" accept-charset="utf-8">
+        
+    {% comment %} {{form}} {% endcomment %}
+     {% for form in form  %}
+            {% csrf_token %}
+            {% if form.errors %}
+                {% for error in form.errors %} 
+                {% if error == 'Bidang ini tidak boleh kosong.'%}
+                {% else %}
+                <script>location.reload()</script>
+                <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+                    <p>{{error}} Coba Refresh</p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    
+            <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
+            
+            {% for radio  in form %}
+                    <label for="id_answer_{{forloop.counter0}}" class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+                    {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span></label>
+                    </label>
+                    {% endfor %}
+                    <input type="hidden" name="is_timeout">                    
+                </div>
+        </li>
+        <li class="p-0 pb-2 d-flex justify-content-around flex-row text-nowrap ">
+        {% if is_preview %}
+            <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
+            {% if question.questionNum == 1 %}
+            {% else %}
+            <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+            {% endif %}
+            <a href="#" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+                <a class="btn rounded my-1  btn-primary" href="#">Kirim</a>
+            </li>
+        {% else %}
+            <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
+            {% if prev_question == None %}
+            {% else %}
+            <a href="{{prev_question.questID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+            {% endif %}
+            {% if next_question == None %}
+            {% else %}
+            <a href="{{next_question.questID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+            {% endif %}
+                <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
+            </li>
+    {% endif %}
+    </li>
+    <li>
+        {% if is_preview %}
+            {% else %}
+        <div class="d-flex flex-wrap">
+            <nav aria-label="Quest navigation">
+            {% for i in question_list %}
+                {% if indexOf == forloop.counter %}
+                <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                {% else %}
+                <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                {% endif %}
+                {% endfor %}
+            </nav>
+        {{question.answerKey}}
+        </div>
+        {% endif %}
+    </li>
+        </ul>
+
+        {% endfor %}
+        {{takerQuery.timeStart | date:"U"}}
+        </div>
+</ul> 
+</div>
+<div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        
+        <div class="modal-body">
+            <h3 class="d-flex justify-content-between"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+                <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
+                <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
+              </svg><div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+              </div></h3>
+          <h1>Waktu Habis</h1>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+      </ul>
+
+{% endblock body %}      
+{% block footer %}
+
+    
+        {% endblock footer %} 
+    {% block after_footer %}
+        
+        
+        
+    {% endblock after_footer %}    
+{% endblock no_container%}
+{% block main_container %}
 <div class="card-header d-flex  flex-row flex-wrap justify-content-between bg-success ">
         <h6 class="bg-primary align-self-center border-primary rounded p-1 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</h3>
         
@@ -14,11 +181,11 @@
         <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : {{user}}</h3>
         {% endif %}
             
-</div>
+</div> 
 {% include 'django_quill/media.html' %}
 
-{% endblock no_card_header %}
-{% block no_card_body %}
+
+
 
     <div class="card-body py-1">
         <ul class="list-group block list-group-flush">
@@ -31,119 +198,16 @@
                 {% endif %}
                     
             </li> 
-            <div class="ql-container ql-snow">
-                <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{question.question}}</li>
-            </div>
-            <form method="post" accept-charset="utf-8">
-                
-            {% comment %} {{form}} {% endcomment %}
-             {% for form in form  %}
-                    {% csrf_token %}
-                    {% if form.errors %}
-                        {% for error in form.errors %} 
-                        {% if error == 'Bidang ini tidak boleh kosong.'%}
-                        {% else %}
-                        <script>location.reload()</script>
-                        <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
-                            <p>{{error}} Coba Refresh</p>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </div>
-                            {% endif %}
-                            {% endfor %}
-                            {% endif %}
-                            
-                    <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
-                    
-                    {% for radio  in form %}
-                            <label for="id_answer_{{forloop.counter0}}" class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
-                            {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span></label>
-                            </label>
-                            {% endfor %}
-                            <input type="hidden" name="is_timeout">                    
-                        </div>
-                </li>
-                </ul>
+            
 
-                {% endfor %}
-                </div>
-        </ul> 
-    </div>
-    <div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-              <div class="modal-content">
-                
-                <div class="modal-body">
-                    <h3 class="d-flex justify-content-between"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
-                        <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
-                        <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
-                      </svg><div class="spinner-border text-primary" role="status">
-                        <span class="sr-only">Loading...</span>
-                      </div></h3>
-                  <h1>Waktu Habis</h1>
-                </div>
-                
-              </div>
-            </div>
-          </div>
-      
-
-
-        
-
-    {% endblock no_card_body %}
-{% block card_footer %}
-
-{% if is_preview %}
-    <div class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-    {% if question.questionNum == 1 %}
-    {% else %}
-    <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
-    {% endif %}
-    <a href="#" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
-        <a class="btn rounded my-1  btn-primary" href="#">Kirim</a>
-    </div>
-{% else %}
-    <div class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-    {% if prev_question == None %}
-    {% else %}
-    <a href="{{prev_question.questID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
-    {% endif %}
-    {% if next_question == None %}
-    {% else %}
-    <a href="{{next_question.questID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
-    {% endif %}
-        <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
-    </div>
-{% endif %}
-    
-    {% endblock card_footer %} 
-{% block after_footer %}
-    
-    {% if is_preview %}
-        {% else %}
-    <div class="d-flex flex-wrap card-footer">
-        <nav aria-label="Quest navigation">
-        {% for i in question_list %}
-            {% if indexOf == forloop.counter %}
-            <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
-            {% else %}
-            <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
-            {% endif %}
-            {% endfor %}
-        </nav>
-    {{question.answerKey}}
-    </div>
-    {% endif %}
-    
-    {% endblock after_footer %}   
+    {% endblock main_container %}    
     {% block user_script %}
         <script>
 
 
         function makeTimer() {
         var endTime = (
-                {takerQuery.timeStart | date:"U"}}
+            {{takerQuery.timeStart | date:"U"}}
                 +
                 ({{testInfo.timeLimit}}*60) 
                 );

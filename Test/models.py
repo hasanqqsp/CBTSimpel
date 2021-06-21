@@ -9,7 +9,7 @@ import string
 import datetime
 from utils.generate_id import generate_id,generate_numeric_code
 import json
-
+from django.utils import timezone
 class TestPackage(models.Model):
     defaultSettings = '''{
     "completeRequired": true,
@@ -105,11 +105,11 @@ class TestTaker(models.Model):
             
         super().save(*args, **kwargs)
     def timerStart(self):
-        self.timeStart = datetime.datetime.now()
+        self.timeStart = timezone.now()
         super().save()
         
     def timerEnd(self):
-        self.timeFinish = datetime.datetime.now()
+        self.timeFinish = timezone.now()
         user = User.objects.get(username = self.session_code)
         user.delete()
         super().save()

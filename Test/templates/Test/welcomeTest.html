@@ -1,13 +1,9 @@
 {% extends 'snippets/base.html' %}
-{% block card_header %}
-<h3 class="m-1 text-uppercase"><strong>{{title}}</strong></h3>
-{% endblock card_header %}
-{% block card_body %}
+{% block main_container %}
+        <h3 class="m-1 text-uppercase"><strong>{{title}}</strong></h3>
         {{ welcome.welcomeMessage |safe }}
-{% endblock card_body %}
-{% block card_footer %}
         <form method="post">
                 {% csrf_token %}
                 <input type="submit" class="btn btn-primary" value="Kerjakan &raquo;">
         </form>
-{% endblock card_footer %}
+        {% endblock main_container %}

@@ -82,7 +82,7 @@ def detailTest(request, testID):
                     if str(password) == str(q_testPackage.passwordTest):
                         return HttpResponseRedirect("q/welcome")
                     else:
-                        form.add_error(error=ValidationError('Terjadi Kesalahan, Password Mungkin Salah'),field='passw')
+                        form.add_error(error=ValidationError(''),field='password')
         try : 
             q_testTaker = TestTaker.objects.get(session_code= request.user) 
         except : 
@@ -170,7 +170,8 @@ def doTest(request, testID, questID):
         form = AnswerForm(request.POST)
         if len(q_answer) > 0:
             q_answer[0].delete()
-             
+        if request.POST['is_timeout']:
+            return HttpResponseRedirect('../q/{}'.format('verify'))    
         if form.is_valid():
             user = request.user
             Answer.objects.create(
@@ -178,8 +179,7 @@ def doTest(request, testID, questID):
                 testTaker=q_testTaker,
                 answer=request.POST['answer']
             )
-            if request.POST['is_timeout']:
-                return HttpResponseRedirect('../q/{}'.format('verify'))
+            
            
             return HttpResponseRedirect('../q/{}'.format(query))
         else:
