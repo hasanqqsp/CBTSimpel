@@ -1,9 +1,48 @@
 {% extends 'snippets/base.html' %}
-{% block main_container %}
+{% load static %}
+{% block no_container %}
+
+        <div class="d-flex flex-wrap container-lg p-2 align-items-end " style="min-height:100vh">
+          <div class="m-auto d-flex align-items-center flex-wrap text-center">
+            <div class="align-items-center">
+          <div class="row d-flex justify-content-center site-banner-mini">
+              <div class="">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
+<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
+</svg>
+                  
+              </div>
+              
+              <div class="pb-2">
+                  
+                 <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
+              </div>
+               </div>
         <h3 class="m-1 text-uppercase"><strong>{{title}}</strong></h3>
-        {{ welcome.welcomeMessage |safe }}
+        
+        <div class="container-fluid border my-2" style="height:60vh;overflow-y: auto;">
+        {% if now < quest.testScheduleOpen%}
+                <h1 class="text-center font-weight-bold">TES BELUM DIMULAI</h1>
+                <h4 class="text-center font-weight-bold">Akan dimulai pada : {{quest.testScheduleOpen |date:"l, j F Y H:i:s T"}}</h4>
+                <br><br>
+
+
+                <h1 style="font-size: 4em;" class="time text-center font-weight-bold">12:30:40</h1>
+                <script>
+                setInterval(() => { 
+                    now = (Date.parse(new Date) / 1000)    
+                    makeTimer({{quest.testScheduleOpen |date:"U"}},now,'.time',() =>  { location.reload()})
+                },1000)
+                </script>
+                {% else %}
+                {{ welcomeMessage |safe }}
+        </div>
         <form method="post">
                 {% csrf_token %}
                 <input type="submit" class="btn btn-primary" value="Kerjakan &raquo;">
         </form>
-        {% endblock main_container %}
+        {% endif %}
+        {% endblock no_container %}
+        {% block user_script %}
+        
+        {% endblock user_script %}

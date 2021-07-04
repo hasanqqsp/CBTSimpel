@@ -55,10 +55,30 @@
     $(window).scroll(navbarCollapse);
 })(jQuery); // End of use strict
 
-import Quill from 'quill';
-import { ImageResize } from 'quill-image-resize-module';
+// import Quill from 'quill';
+// import { ImageResize } from 'quill-image-resize-module';
 
-Quill.register('modules/imageResize', ImageResize);
+// Quill.register('modules/imageResize', ImageResize);
 
+function makeTimer(timeEnd,timeStart,target,callback) {
 
+            let timeLeft = timeEnd - timeStart;
+
+            var days = Math.floor(timeLeft / 86400);
+            var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+            var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+            var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+            if (hours < "10") { hours = "0" + hours; }
+            if (minutes < "10") { minutes = "0" + minutes; }
+            if (seconds < "10") { seconds = "0" + seconds; }
+            if(days < "0"){
+                timeLeft = 'Waktu Habis'
+                callback()
+            }else{
+                timeLeft = hours + " : " + minutes+ " : " + seconds
+            }
+            $(target).html(timeLeft);
+
+    }
 

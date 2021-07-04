@@ -1,11 +1,11 @@
 {% extends 'snippets/base.html' %}
 {% load widget_tweaks %}
 {% block web_title %}
-INFORMASI PESERTA DAN TES
+INFORMASI TES
 {% endblock web_title %}
 {%block no_container%}
-<div class="d-flex flex-wrap container-lg px-2 align-items-end border border-dark" style="min-height:100vh">
-          <div class="border border-primary m-auto d-flex align-items-center flex-wrap text-center">
+<div class="d-flex flex-wrap container-lg p-2 align-items-end " style="min-height:100vh">
+          <div class="m-auto d-flex align-items-center flex-wrap text-center">
             <div class="align-items-center">
           <div class="row d-flex justify-content-center site-banner-mini">
               <div class="">
@@ -22,32 +22,30 @@ INFORMASI PESERTA DAN TES
                </div>
 
   {% block card_header %}
-    <h3 class="m-1"><strong>INFORMASI PESERTA DAN TES</strong></h3>
+    <h3 class="m-1"><strong>INFORMASI TES</strong></h3>
   {% endblock card_header %}
 {% block card_body %}
-{% include 'Test/snippets/detailtestsession.html' %}
+
+
+{% include 'Test/snippets/testInfoDetail.html' %}
+
 {% endblock card_body %}       
 {% block card_footer %}
- {% if testInfo.questionCount == '0' %}
+ {% if q_testPackage.get_question_count == '0' %}
         <p class="m-auto h5 strong text-center">Test ini belum memiliki Soal</p>
     {% else %}
-        {% if form == None %}
-            <a class="btn btn-primary" href="q/welcome">Lanjut&raquo;</a>
-        {% else %}
         {% if form.errors.password %}
             <div class="alert alert-danger mt-2  fade show pb-0" role="alert">
                 <p> Password mungkin salah</p>
-                
-                
             </div>
         {% endif %}
-        <form method="POST" class="row mx-1 ">
+        <form method="POST" class="row m-1 ">
             {% csrf_token %}
-            {{form.password|attr:"placeholder:Masukan Password Tes"|attr:"pattern:\d*" |attr:"maxlength:6" |add_class:"form-control form-control-lg col-sm-9"}}
-            <button class="btn btn-success mt-1 my-sm-0 col-sm-3 text-nowrap" type="submit">Mulai</button>
+            {{form.password|attr:"placeholder:Masukan Password Tes" |attr:"maxlength:6" |add_class:"form-control form-control-lg col-sm-9"}}
+            <button class="btn btn-success mt-1 my-sm-0 flex-fill text-nowrap" type="submit">Lanjut</button>
           </form>
             
         {% endif %}
-    {% endif %}
+    
 {% endblock card_footer %}
 {%endblock no_container%}

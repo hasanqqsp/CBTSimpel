@@ -1,0 +1,47 @@
+{% extends 'snippets/base.html' %}
+{% load widget_tweaks %}
+{% block web_title %}
+INFORMASI PESERTA DAN SESI
+{% endblock web_title %}
+{%block no_container%}
+<div class="d-flex flex-wrap container-lg p-2 align-items-end " style="min-height:100vh">
+          <div class="m-auto d-flex align-items-center flex-wrap text-center">
+            <div class="align-items-center">
+          <div class="row d-flex justify-content-center site-banner-mini">
+              <div class="">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
+<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
+</svg>
+                  
+              </div>
+              
+              <div class="pb-2">
+                  
+                 <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
+              </div>
+               </div>
+
+    <h3 class="m-1"><strong>INFORMASI PESERTA DAN SESI</strong></h3>
+    <ul class="list-group block list-group-flush text-left">
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.testTakerName}}</div></div>
+            </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kelas / Grup</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.testTakerGroup}}</div></div>
+            </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Sesi</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{user}}</div></div>
+            </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kunci Sesi Anda</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.session_password}}</div></div>
+            <small id="emailHelp" class="form-text text-muted">Catatlah Kunci Sesi ini. Ini akan digunakan untuk melanjutkan tes jika terjadi galat. 
+            <strong>Catatlah bersama Kode Sesi yang dibuat dihalaman sebelumnya</strong> </small>
+            </div></li>
+          </ul>
+    
+
+{%endblock no_container%}

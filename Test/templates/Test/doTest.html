@@ -28,11 +28,11 @@
 <ul class="list-group block list-group-flush text-left flex-fill">
     <li class="list-group-item"><div class="row">
 
-        <div class="card-header d-flex flex-fill  flex-row flex-wrap justify-content-between bg-success ">
-            <h6 class="bg-primary align-self-center border-primary rounded p-1 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</h3>
+        <div class=" d-flex flex-fill  flex-row flex-wrap justify-content-between ">
+            <div class="bg-primary align-self-center border-primary rounded py-1 px-2 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</div>
             
             {% if is_preview %}
-            <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : Pratinjau</h3>
+            <div class="bg-secondary  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : Pratinjau</div>
     
             {% else %}
                    
@@ -40,13 +40,11 @@
             {% else %}  
             <span id="now"></span>
             {% endif %}
-            <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : {{user}}</h3>
+            <div class="bg-secondary  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : {{user}}</div>
             {% endif %}
                 
     </div></li>
     <li class="p-0 pb-2 d-flex justify-content-between flex-row text-nowrap ">
-        {{testInfo.testTitle}}
-        
         {% if testInfo.timeLimit == 0 %}
         {% else %}  
         <span id="now"></span>
@@ -172,7 +170,7 @@
 {% endblock no_container%}
 {% block main_container %}
 <div class="card-header d-flex  flex-row flex-wrap justify-content-between bg-success ">
-        <h6 class="bg-primary align-self-center border-primary rounded p-1 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</h3>
+        <h6 class="bg-primary align-self-center border-primary rounded px- mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</h3>
         
         {% if is_preview %}
         <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : Pratinjau</h3>

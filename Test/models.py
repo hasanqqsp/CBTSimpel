@@ -12,22 +12,24 @@ import json
 from django.utils import timezone
 class TestPackage(models.Model):
     defaultSettings = '''{
-    "completeRequired": true,
-    "randomSequences": true,
-    "viewScore": true,
-    "viewDetail": true,
-    "viewAnswerKey": true,
-    "limitByScheduleStart": true,
-    "limitByScheduleFinish": false,
-    "onlyRegistered": false,
-    "canViewScorePage": true,
-    "canViewScorePageAuth": false
-}'''
+        "isActive": true,
+        "completeRequired": true,
+        "randomSequences": true,
+        "viewScore": true,
+        "viewDetail": true,
+        "viewAnswerKey": true,
+        "limitByScheduleStart": true,
+        "limitByScheduleFinish": false,
+        "onlyRegistered": false,
+        "canViewScorePage": true,
+        "canViewScorePageAuth": false
+        }'''
     testID = models.CharField(max_length=16, unique=True,editable=True,blank=True)
     testTitle = models.CharField(max_length=1024)
     testAuthor = models.CharField(max_length=1024)
     testCode = models.CharField(default=None, editable=True, max_length=6)
-    testSchedule = models.DateField()
+    testScheduleOpen = models.DateTimeField(default=None, editable=True,blank=True,null=True)
+    testScheduleClose = models.DateTimeField(default=None, editable=True,blank=True,null=True)
     timeLimit = models.IntegerField(default=0, null=True)
     passwordAdminTest = models.CharField(max_length=16,default=None, null=True)
     passwordTest = models.CharField(max_length=16, default="123456")
@@ -89,8 +91,8 @@ class TestTaker(models.Model):
     testTakerGroup = models.CharField(max_length=128 ,blank=True ,null=True)
     scoreObtained = models.IntegerField(default=0)
     lastAnswered = models.IntegerField(default=0, editable=True)
-    timeStart = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True,default=datetime.datetime.now())
-    timeFinish = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True,default=datetime.datetime.now())
+    timeStart = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True)
+    timeFinish = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True)
     sequences = models.JSONField(blank=True,null=True)
     def save(self,*args, **kwargs):
         if not self.session_code:
@@ -105,6 +107,7 @@ class TestTaker(models.Model):
             
         super().save(*args, **kwargs)
     def timerStart(self):
+        print(timezone.now())
         self.timeStart = timezone.now()
         super().save()
         
@@ -113,7 +116,9 @@ class TestTaker(models.Model):
         user = User.objects.get(username = self.session_code)
         user.delete()
         super().save()
-
+    '''
+    query.append({'num':'{}'.format(questQuery[i].questionNum),'question':'{}'.format(questQuery[i].question),'answer':"{}".format(answer),'questID':'{}'.format(questQuery[i].questID)})
+    '''
     def get_all_answer(self):
         list = []
         for i in json.loads(self.sequences):
@@ -122,11 +127,29 @@ class TestTaker(models.Model):
                 list.append(self.answer_set.filter(question = q_question)[0])
         return list
 
+    def get_all_answer_and_question(self):
+        q_question = self.testPackage.get_all_question(self.sequences)
+        query = []
+        for q in q_question:
+            query.append({
+                'num':'{}'.format(q.get_question_num(self.sequences)),
+                'question':'{}'.format(q.question),
+                'answer':"{}".format(q.answer_set.filter(testTaker=self)[0].get_answer_text() if q.answer_set.filter(testTaker=self).exists() else 'Error' ),
+                'questID':'{}'.format(q.questID)
+                })
+        return query        
+
+            
+
     def get_last_answered(self):
         if self.answer_set.all().exists():
             return self.answer_set.all().order_by('timestamp')[0].question 
         else:
             return self.testPackage.get_one_question(1,self.sequences)
+
+    def delete(self):
+        User.objects.get(username=self.session_code).delete()
+        super().delete()
 
     def __str__(self):
         return "{}".format(self.testTakerName)
@@ -214,6 +237,11 @@ class Answer(models.Model):
         if not self.answerID:
             self.answerID = generate_id(Answer,'answerID',16)
         super(Answer, self).save(*args, **kwargs)
+
+    def get_answer_text(self):
+        list_choices = self.question.choices
+        return next((item["choiceLabel"] for item in list_choices if item["choiceCode"] == self.answer), False)
+
     # def save(self, *args, **kwargs):
     #     if not self.pk and self.questi == 1:
     #         findTaker = TestTaker.objects.get(testTakerID=self.testTakerID, session_code=self.session_code)

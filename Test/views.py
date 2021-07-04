@@ -3,11 +3,13 @@ from .models import (Question , TestPackage, Answer, TestTaker)
 from .forms import *
 from django.http import (HttpResponseRedirect ,HttpResponse,HttpResponseNotFound)
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.urls import reverse
+from django.utils import timezone
 import datetime
 
 
@@ -29,7 +31,9 @@ def joinTest(request):
         if form.is_valid():
             testCode = request.POST.get('testCode')
             try:
-                query = TestPackage.objects.get(testCode=testCode)
+                query = TestPackage.objects.get(testCode=testCode,settings__isActive = True)
+                if query.settings['onlyRegistered']:
+                    return HttpResponseRedirect('/test/resume')
                 return HttpResponseRedirect('/test/{}'.format(query.testID))
             except :
                 form.add_error(error=ValidationError(''),field='testCode')
@@ -43,7 +47,7 @@ def joinTest(request):
 @login_required(login_url='/test/resume')            
 def changeTest(request,testID,testTakerInfo):
     q_testPackage = TestPackage.objects.get(testID=testID)
-    if request.user.is_authenticated:
+    if request.user.is_authenticated :
         q_testTaker = TestTaker.objects.get(session_code = request.user)
     else :
         return HttpResponseRedirect('/test/createsession/{}'.format(testID))
@@ -56,50 +60,46 @@ def changeTest(request,testID,testTakerInfo):
     }
     return render(request, 'Test/changeTest.html',context)
 
-#@login_required(login_url='/test/resume')  
 def detailTest(request, testID):
-    if testID == 'join':
-        return joinTest(request)
-    #print(TestTaker.objects.get(session_code = request.user) )
-    try : 
-        q_testTaker = TestTaker.objects.get(session_code = request.user) 
-    except : 
-        return HttpResponseRedirect('/test/createsession/{}'.format(testID))
+    if testID == 'createsession':
+        return HttpResponseRedirect(reverse('test:createSession', kwargs={'testID':'404'}))
+    if testID == 'sessioninfo':
+        return HttpResponseRedirect(reverse('test:sessionInfo'))
 
-    if testID != q_testTaker.testPackage.testID:
+    q_testPackage = TestPackage.objects.get(testID=testID)
+    q_testTaker = TestTaker.objects.filter(session_code = request.user) 
+
+    if q_testTaker.exists() and q_testPackage != q_testTaker[0].testPackage:
         return changeTest(request,testID,q_testTaker)
+    elif q_testTaker.exists():
+        return HttpResponseRedirect('/test/resume')    
 
+    form = AuthTestForm2(request.POST or None)
+    if q_testPackage.passwordTest == 'None':
+        form = None
+        if request.method == 'POST':
+            return HttpResponseRedirect(f"/test/createsession/{testID}") 
     else :
-        form = AuthTestForm2(request.POST or None)
-        q_testPackage = TestPackage.objects.get(testID=testID)
-        if q_testPackage.passwordTest == 'None':
-            form = None
-        else :
-            if request.method == 'POST':
-                form = AuthTestForm2(request.POST or None)
-                if form.is_valid():
-                    password = request.POST.get('password')
-                    if str(password) == str(q_testPackage.passwordTest):
-                        return HttpResponseRedirect("q/welcome")
-                    else:
-                        form.add_error(error=ValidationError(''),field='password')
-        try : 
-            q_testTaker = TestTaker.objects.get(session_code= request.user) 
-        except : 
-            return HttpResponseRedirect('/test/createsession/{}'.format(testID))
-
-        context = {
-            'form' : form,
-            'testInfo': q_testPackage,
-            'testTakerInfo': q_testTaker,
-            'questionCount':q_testPackage.get_question_count(),
+        if request.method == 'POST':
+            form = AuthTestForm2(request.POST or None)
+            if form.is_valid():
+                password = request.POST.get('password')
+                if str(password) == str(q_testPackage.passwordTest):
+                    return HttpResponseRedirect(reverse('test:createSession', kwargs={'testID':testID}))
+                else:
+                    form.add_error(error=ValidationError(''),field='password')
         
-            
-        }
-        return render(request, 'Test/overviewTest.html', context)
+    context = {
+            'form' : form,
+            'q_testPackage': q_testPackage,
+        
+    }
+    return render(request, 'Test/overviewTest.html', context)
         
 @login_required(login_url='/test/resume')  
 def welcomeTest(request,testID):
+    if not TestTaker.objects.filter(session_code = request.user).exists():
+        pass
     q_testTaker = TestTaker.objects.get(session_code= request.user)                # session[0]
     q_testPackage = TestPackage.objects.get(testID=testID)
 
@@ -110,7 +110,8 @@ def welcomeTest(request,testID):
     context = {
         'title' : q_testPackage.testTitle,
         'quest' : q_testPackage,
-        'welcome' : q_testPackage.welcomeMessage,
+        'welcomeMessage' : q_testPackage.welcomeMessage,
+        'now' : timezone.now()
     }
     return render(request,'Test/welcomeTest.html',context)
 
@@ -138,13 +139,17 @@ def verifyAnswer(request, testID):
     if request.method == "POST":
         q_testTaker.timerEnd()      
         return HttpResponseRedirect ('../../join')
+
     context = {
         'takerQuery' : q_testTaker,
         'packQuery' : q_testPackage,
         'answerQuery' : q_answer,
         'questQuery' : q_question,
-        'ob': q_testTaker.timeStart,
-        'lastQuest' : q_last_answered_quest.questID
+        
+        'timeNow' : timezone.now(),
+        'lastQuest' : q_last_answered_quest.questID,
+        'questionCount' : q_testPackage.get_question_count(),
+        'query' : q_testTaker.get_all_answer_and_question(),
     }
 
     return render(request, 'Test/verifyAnswer.html',context)
@@ -201,6 +206,7 @@ def doTest(request, testID, questID):
         'question' : q_question,
         'form' : form,
         'testInfo': q_testPackage,
+        'timeNow' : timezone.now(),
         'question_list' : q_testPackage.get_all_question(q_testTaker.sequences),
         'next_question' : q_question.get_next_question(q_testTaker.sequences),
         'prev_question' : q_question.get_prev_question(q_testTaker.sequences),
@@ -209,24 +215,23 @@ def doTest(request, testID, questID):
     }
     return render(request,'Test/doTest.html',context)
 
-def createSession(request,*args, **kwargs):
-
-    check = get_object_or_404(TestPackage,testID=kwargs['testID'])
-        
+def createSession(request,testID):
+    check = get_object_or_404(TestPackage,testID=testID)
+      
     if request.method == 'POST':
         createSessionForm = CreateSessionForm(request.POST or None)
         if createSessionForm.is_valid():
-            print(request.POST.get('session_password'))
+            
             q_testTaker = TestTaker.objects.create(
                 testTakerName = request.POST.get('testTakerName'),
                 testTakerGroup = request.POST.get('testTakerGroup'),
                 session_password = request.POST.get('session_password'),
-                testPackage = TestPackage.objects.get(testID=kwargs['testID'])
+                testPackage = TestPackage.objects.get(testID=testID)
             )
             
             credential = authenticate(request, username=q_testTaker.session_code, password=request.POST.get('session_password'),)
             login(request,credential)
-        return HttpResponseRedirect('../{}'.format(kwargs['testID']))
+        return HttpResponseRedirect('../{}'.format(testID))
     else :
         createSessionForm = CreateSessionForm
     context = {
@@ -234,6 +239,18 @@ def createSession(request,*args, **kwargs):
     }
 
     return render(request,'Test/createSession.html',context)
+
+@login_required(login_url='/test/resume')  
+def sessionInfo(request):
+    q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)
+    if not TestTaker.objects.filter(session_code=request.user,timeFinish=None).exists:
+        return HttpResponseRedirect('/test/resume')
+    context = {
+        'q_testTaker' : q_testTaker[0], 
+        }   
+    return render(request,'Test/sessionInfo.html',context)     
+
+
 
 def resumeTest(request,*args, **kwargs):
     q_testTaker = TestTaker.objects.filter(session_code=request.user or request.POST.get("username"))                           
@@ -269,17 +286,17 @@ def resumeTest(request,*args, **kwargs):
     }
     return render(request,'Test/resume.html',context)
 
-@login_required(login_url='/test/resume')  
-def cancelTest(request,**kwargs):
+@login_required(login_url='/test/resume',redirect_field_name=None)  
+def cancelTest(request,redirID):
     q_user = User.objects.get(username = request.user)
     q_user.delete()
     q_testTaker = TestTaker.objects.get(session_code=request.user,)
     q_testTaker.delete()
-    if kwargs['redirID'] == 'none':
+    if redirID == 'none':
         return HttpResponseRedirect('/test/join')
         
     else:
-        return HttpResponseRedirect('/test/{}'.format(kwargs['redirID']))
+        return HttpResponseRedirect('/test/{}'.format(redirID))
 
 # def viewScore(request,session_code):
 #     q_testTaker = get_object_or_404(TestTaker, session_code = session_code)
