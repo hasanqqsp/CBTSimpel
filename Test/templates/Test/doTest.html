@@ -1,6 +1,6 @@
 {% extends 'snippets/base.html' %}
 {% block web_title %}
- (Soal ke {{indexOf}}/{{question_list|length}}) {{testInfo.testTitle}}
+ (Soal ke {{indexOf}}/{{question_list|length}}) {{q_testPackage.testTitle}}
 {% endblock web_title %}
 {% block no_container%}
 <div class="container-lg px-3">
@@ -22,7 +22,7 @@
                </div>
 
   {% block header %}
-    <h3 class="m-1 text-uppercase"><strong>{{testInfo.testTitle}}</strong></h3>
+    <h3 class="m-1 text-uppercase"><strong>{{q_testPackage.testTitle}}</strong></h3>
   {% endblock header %}
 {% block body %}
 <ul class="list-group block list-group-flush text-left flex-fill">
@@ -36,35 +36,28 @@
     
             {% else %}
                    
-            {% if testInfo.timeLimit == 0 %}
+            {% if q_testTaker.timeLimit == 0 %}
             {% else %}  
-            <span id="now"></span>
+            <div class="bg-primary p-1 px-2 rounded ">Sisa Waktu : <span class="time"></span></div>
+
             {% endif %}
             <div class="bg-secondary  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : {{user}}</div>
             {% endif %}
                 
     </div></li>
-    <li class="p-0 pb-2 d-flex justify-content-between flex-row text-nowrap ">
-        {% if testInfo.timeLimit == 0 %}
-        {% else %}  
-        <span id="now"></span>
-        {% endif %}
-            
-    </li>
     
     <div class="ql-container ql-snow">
-        <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{question.question}}</li>
+        <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{q_question.question}}</li>
     </div>
     <form method="post" accept-charset="utf-8">
         
-    {% comment %} {{form}} {% endcomment %}
      {% for form in form  %}
             {% csrf_token %}
             {% if form.errors %}
                 {% for error in form.errors %} 
                 {% if error == 'Bidang ini tidak boleh kosong.'%}
                 {% else %}
-                <script>location.reload()</script>
+                
                 <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
                     <p>{{error}} Coba Refresh</p>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -79,7 +72,7 @@
             {% for radio  in form %}
                     <label for="id_answer_{{forloop.counter0}}" class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
                     {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span></label>
-                    </label>
+                    </label > 
                     {% endfor %}
                     <input type="hidden" name="is_timeout">                    
                 </div>
@@ -87,7 +80,7 @@
         <li class="p-0 pb-2 d-flex justify-content-around flex-row text-nowrap ">
         {% if is_preview %}
             <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-            {% if question.questionNum == 1 %}
+            {% if q_question.questionNum == 1 %}
             {% else %}
             <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
             {% endif %}
@@ -121,14 +114,13 @@
                 {% endif %}
                 {% endfor %}
             </nav>
-        {{question.answerKey}}
+        {{q_question.answerKey}}
         </div>
         {% endif %}
     </li>
         </ul>
 
         {% endfor %}
-        {{takerQuery.timeStart | date:"U"}}
         </div>
 </ul> 
 </div>
@@ -188,9 +180,9 @@
     <div class="card-body py-1">
         <ul class="list-group block list-group-flush">
             <li class="p-0 pb-2 d-flex justify-content-between flex-row text-nowrap ">
-                {{testInfo.testTitle}}
+                {{q_testPackage.testTitle}}
                 
-                {% if testInfo.timeLimit == 0 %}
+                {% if q_testTaker.timeLimit == 0 %}
                 {% else %}  
                 <span id="now"></span>
                 {% endif %}
@@ -202,42 +194,9 @@
     {% block user_script %}
         <script>
 
+            {% if not q_testTaker.timeLimit == 0 %}
 
-        function makeTimer() {
-        var endTime = (
-            {{takerQuery.timeStart | date:"U"}}
-                +
-                ({{testInfo.timeLimit}}*60) 
-                );
-                var now = new Date();
-                now = (Date.parse(now) / 1000);
-
-                let timeLeft = endTime - now;
-
-                var days = Math.floor(timeLeft / 86400);
-                var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
-                var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
-                var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
-
-                if (hours < "10") { hours = "0" + hours; }
-                if (minutes < "10") { minutes = "0" + minutes; }
-                if (seconds < "10") { seconds = "0" + seconds; }
-                if(days < "0"){
-                form = document.getElementsByTagName('form')
-                form[0].is_timeout.value = true
-                timeLeft = 'bg-danger p-1 px-2 rounded ">Waktu Habis'
-                $('#modal-timeout').modal('show').modal('handleUpdate')
-                setTimeout(() => {
-                    form[0].submit()
-                }, 1000);
-                    
-                }else{
-                timeLeft = 'bg-primary p-1 px-2 rounded ">Sisa Waktu : ' + hours + " : " + minutes+ " : " + seconds
-
-                }
-                $("#now").html(`<div class="`+ timeLeft +`</span></div>`);
-
-        }
-        setInterval(function() { makeTimer(); }, 1000);
+        const _0x315f=['43599ihoYLy','1tgloGo','34764QpyOgp','value','39626TaZjVJ','1KzQQQY','1052773BvchpC','.time','74194RizoZa','submit','getElementsByTagName','798269TOyHeJ','is_timeout','965199rmOsAp','3MgAJni'];function _0xff6e(_0x2277c0,_0x1af5d2){return _0xff6e=function(_0x315f07,_0xff6e1b){_0x315f07=_0x315f07-0x1de;let _0x598f03=_0x315f[_0x315f07];return _0x598f03;},_0xff6e(_0x2277c0,_0x1af5d2);}(function(_0x258e6c,_0x30d6b6){const _0x20d4ae=_0xff6e;while(!![]){try{const _0xc5e2af=-parseInt(_0x20d4ae(0x1df))*parseInt(_0x20d4ae(0x1e0))+parseInt(_0x20d4ae(0x1de))+-parseInt(_0x20d4ae(0x1e6))*parseInt(_0x20d4ae(0x1e1))+-parseInt(_0x20d4ae(0x1e4))+parseInt(_0x20d4ae(0x1eb))+parseInt(_0x20d4ae(0x1e2))+parseInt(_0x20d4ae(0x1e5))*parseInt(_0x20d4ae(0x1e8));if(_0xc5e2af===_0x30d6b6)break;else _0x258e6c['push'](_0x258e6c['shift']());}catch(_0x127d81){_0x258e6c['push'](_0x258e6c['shift']());}}}(_0x315f,0x9e80e),function(){const _0x560087=_0xff6e,_0x50d5b8=document[_0x560087(0x1ea)]('form')[0x0];let _0x54d49b={{timeNow |date:"U"}};setInterval(()=>{const _0x2231e9=_0x560087;makeTimer({{q_testTaker.timeStart |date:"U"}}+{{q_testTaker.timeLimit}}*0x3c,_0x54d49b,_0x2231e9(0x1e7),()=>{const _0x44f783=_0x2231e9;_0x50d5b8[_0x44f783(0x1ec)][_0x44f783(0x1e3)]=!![],_0x50d5b8[_0x44f783(0x1e9)]();}),_0x54d49b+=0x1;},0x3e8);}());
+            {% endif %}  
         </script>
         {% endblock user_script %}

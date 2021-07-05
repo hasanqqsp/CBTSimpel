@@ -39,7 +39,7 @@ KONFIRMASI IDENTITAS DAN JAWABAN
   </div>    
     <ul class="list-group block text-left list-group-flush">
         <li class="list-group-item justify-content-left"><div class="row">
-            <span class="time"></span>
+            <div class="bg-primary p-1 px-2 rounded ">Sisa Waktu : <span class="time"></span></div>
             </div></li>
       <li class="list-group-item"><div class="row">
           <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
@@ -112,10 +112,11 @@ KONFIRMASI IDENTITAS DAN JAWABAN
     <script>
         
         form = document.getElementsByTagName('form')[0] 
-        setInterval(async () => { 
-            now = (Date.parse(new Date) / 1000)    
-            makeTimer(({{takerQuery.timeStart |date:"U"}}+{{packQuery.timeLimit}}*60),{{timeNow |date:"U"}},'.time',() =>  { form.submit()})
-        },1000)
+        now = {{timeNow |date:"U"}} 
+        setInterval(() => {
+            makeTimer(({{takerQuery.timeStart |date:"U"}}+{{takerQuery.timeLimit}}*60),now,'.time',() =>  { form.submit()})
+            now += 1
+        }, 1000)
     </script>    
 
 </div>

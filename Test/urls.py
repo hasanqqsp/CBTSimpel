@@ -6,7 +6,7 @@ from CreateTest import views as createViews
 app_name = 'test'
 urlpatterns = [
 #     path('viewscore/<str:session_key>/print',testViews.generate_pdf, name='viewscoreprint'),    
-#     path('viewscore/<str:session_key>/',testViews.viewScore, name='viewscore'),
+    path('viewscore/<str:session_code>/',testViews.viewScore, name='viewscore'),
     path('sessioninfo/', testViews.sessionInfo, name = 'sessionInfo'),
     path('createsession/<str:testID>', testViews.createSession, name = 'createSession'),
     path('<str:testID>/q/welcome' ,testViews.welcomeTest, name='welcome'),

@@ -1,131 +1,162 @@
 {% extends 'snippets/base.html' %}
-{% load static %}
 {% block web_title %}
-  Rincian Skor {{packQuery.testTitle}} : {{takerQuery.testTakerName}}
+JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
 {% endblock web_title %}
-  
-{% block card_header %}
-  <h3 class="m-1"><strong>Rincian Skor {{packQuery.testTitle}}</strong></h3>
-{% endblock card_header %}
-  
-{% block card_body %}
-<ul class="list-group block list-group-flush">
-  <li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{takerQuery.testTakerName}}</div></div>
-    </div></li>
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kelas / Grup</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{takerQuery.testTakerGroup}}</div></div>
-    </div></li>
-  <li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Tes</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.testCode}}</div></div>
-    </div></li>
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Penyedia Tes</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.testAuthor}}</div></div>
-    </div></li>
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Judul Tes</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.testTitle}}</div></div>
-    </div></li>
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jumlah Soal</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.questionCount}}</div></div>
-    </div></li>
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Waktu Mulai Mengerjakan</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{takerQuery.timeStart | date:"l, d F Y h:i:s"}}</div></div>
-    </div></li>
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Waktu Selesai Mengerjakan</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{takerQuery.timeFinish | date:"l, d F Y h:i:s"}}</div></div>
-    </div></li>
+{% block no_container %}
+<div class="container-lg px-3">
+    <div class="row py-4 h-100">
+          <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center">
+            <div class="align-items-center flex-fill">
+
+          <div class="row d-flex justify-content-center site-banner-mini">
+              <div class="">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
+<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
+</svg>
+                  
+              </div>
+              
+              <div class="pb-2">
+                  
+                 <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
+              </div>
+               </div>
+
+  {% block header %}
+    <h3 class="m-1 text-uppercase"><strong>JAWABAN {{q_testPackage.testTitle}}</strong></h3>
+  {% endblock header %}
+  </div>    
+    <ul class="list-group block text-left list-group-flush">
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.testTakerName}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kelas / Grup</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.testTakerGroup}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Tes</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testCode}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Penyedia Tes</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testAuthor}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Judul Tes</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testTitle}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jumlah Soal</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.get_question_count}}</div></div>
+          </div></li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-3 pl-2 my-auto">
+                <div class="card-title text-muted my-auto h6 text-uppercase">
+                  Jadwal Mulai Tes
+                </div>
+              </div>
+              <div class="col-md-9 pl-2">
+                <div class="card-text my-auto">
+                  {{q_testPackage.testScheduleOpen |date:"l, j F Y H:i:s T"}}
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-3 pl-2 my-auto">
+                <div class="card-title text-muted my-auto h6 text-uppercase">
+                  Jadwal Selesai Tes
+                </div>
+              </div>
+              <div class="col-md-9 pl-2">
+                <div class="card-text my-auto">
+                  {{q_testPackage.testScheduleClose |date:"l, j F Y H:i:s T"}}
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-3 pl-2 my-auto">
+                <div class="card-title text-muted my-auto h6 text-uppercase">
+                  Waktu Peserta Mulai Tes
+                </div>
+              </div>
+              <div class="col-md-9 pl-2">
+                <div class="card-text my-auto">
+                  {{q_testTaker.timeStart |date:"l, j F Y H:i:s T"}}
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-3 pl-2 my-auto">
+                <div class="card-title text-muted my-auto h6 text-uppercase">
+                  Waktu Peserta Selesai Tes
+                </div>
+              </div>
+              <div class="col-md-9 pl-2">
+                <div class="card-text my-auto">
+                  {{q_testTaker.timeFinish |date:"l, j F Y H:i:s T"}}
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="list-group-item">
+            <div class="row">
+              <div class="col-md-3 pl-2 my-auto">
+                <div class="card-title text-muted my-auto h6 text-uppercase">
+                  Batas Waktu Pengerjaan
+                </div>
+              </div>
+              <div class="col-md-9 pl-2">
+                <div class="card-text my-auto">
+                  {{q_testTaker.timeLimit}} Menit 
+                </div>
+              </div>
+            </div>
+          </li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Sesi</div></div>
+          <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.session_code}}</div></div>
+          </div></li>
+      <li class="list-group-item"><div class="row">
+          <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted mt-auto mb-3 h6 text-uppercase">Jawaban Anda :</div></div>
+            <ul class="flex-fill d-flex justify-content-between list-group block list-group-flush">
+            {% for q in q_testTaker.get_all_answer_question_and_score %}
+              <li class="list-group-item d-flex flex-column py-1  "><div class="row">
+                  <div class="col-md-2 pl-2 my-auto"><div class="card-title text-muted my-auto  h6 text-uppercase">Soal Ke-{{q.num}}</div></div>
+                  <div class="col-md-4 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">{{q.question}}</div></div>
+                  {% if q.answer == "Error"%}
+                    <div class="col-md-4 pl-2"><a  class="card-text btn btn-danger btn-block text-left rounded h6 my-1 p-2">Tidak Diisi</a></div>
+                  {% else %}
+                    {% if q.isTrue == 'True' %}
+                    <div class="col-md-4 pl-2"><a  class="card-text btn btn-info btn-block text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</a></div>
+                    {% else %}
+                    <div class="col-md-4 pl-2"><a  class="card-text btn btn-danger btn-block text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</a></div>
+                    {% endif %}
+                  {% endif %}
+                      
+                  <div class="col-md-2 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">Skor : {{q.score}}</div></div>
+                  </div>
+                  </li>
+        
+                {% endfor %}
+            </ul>
+          </div>
+          </li>
+          <li class="list-group-item"><div class="row">
+              <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Total Skor</div></div>
+              <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.get_total_score}}</div></div>
+          </div></li>
+       
     
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Batas Waktu Pengerjaan</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.timeLimit}} Menit</div></div>
-    </div></li>
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Sesi</div></div>
-      <div class="col-md-9 pl-2"><div class="card-text my-auto">{{packQuery.testCode}}</div></div>
-    </div></li>
-    
-    <li class="list-group-item"><div class="row">
-      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted mt-auto mb-3 h6 text-uppercase">Jawaban Anda :</div></div>
-      <ul class="list-group block list-group-flush">
-        {% for q in query %}
-        <li class="list-group-item d-flex flex-column py-1  "><div class="row">
-          <div class="col-md-2 pl-2 my-auto"><div class="card-title text-muted my-auto  h6 text-uppercase">Soal Ke-{{q.num}}</div></div>
-          <div class="col-md-4 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">{{q.question}}</div></div>
-          
-          {% if q.answer == "Error"%}
-          <div class="col-md-4 pl-2"><div class="card-text bg-primary text-left rounded h6 my-1 p-2">Tidak Diisi</div></div>
-          {% else %}
-          <div class="col-md-4 pl-2"><div class="card-text bg-primary text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</div></div>
-          {% endif %}
-          
-          <div class="col-md-2 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">Skor : {{q.score}}</div></div>
-        </div></li>
-        {% endfor %}
-      </ul>
-    </div>
-  </li>
-  <li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Total Skor</div></div>
-    <div class="col-md-9 pl-2"><div class="card-text my-auto">{{takerQuery.scoreObtained}}</div></div>
-  </div></li>
-</div>    
-  
-{% endblock card_body %}
 
-{% block card_footer %}
-<a class="btn btn-success" href="javascript:print()">Unduh Sebagai PDF</a>  
-{% endblock card_footer %}
-  
-{% block add_vendor %}
-<script src="{% static 'script/jspdf.min.js' %}"></script>
-<script src="{% static 'script/html2canvas.min.js' %}"></script>
-
-{% endblock add_vendor %}
-
-{% block after_footer %}
-<div id="elementH"></div>
-{% endblock after_footer %}
-  
-
-{% block user_script %}
-<script>
-  function downloadpdf(){
-    var doc = new jsPDF();
-    var elementHTML = $('#card-body').html();
-    elementHTML.focus();
-    elementHTML.print();
-    var specialElementHandlers = {
-        '#elementH': function (element, renderer) {
-            return true;
-        }
-    };
-    doc.fromHTML(elementHTML, 15, 15, {
-        'width': 170,
-        'elementHandlers': specialElementHandlers
-    });
-    
-    // Save the PDF
-    // doc.save('sample-document.pdf');
-  }
-  downloadpdf()
-  function print() {
-		const filename  = 'ThisIsYourPDFFilename.pdf';
-
-		html2canvas(document.querySelector('#card-body'),{scale:1}).then(canvas => {
-			let pdf = new jsPDF('p', 'mm', 'a4');
-			pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 211, 298);
-			pdf.save(filename);
-		});
-	}
-
-</script>
-{% endblock user_script %}
-  
+</div>
+{% endblock no_container %}

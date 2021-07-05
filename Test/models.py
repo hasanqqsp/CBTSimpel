@@ -6,10 +6,12 @@ from django.contrib.auth import authenticate, login
 import uuid
 import random
 import string
+import time 
 import datetime
-from utils.generate_id import generate_id,generate_numeric_code
+from utils.generate_id import generate_id, generate_numeric_code
 import json
 from django.utils import timezone
+from functools import reduce
 class TestPackage(models.Model):
     defaultSettings = '''{
         "isActive": true,
@@ -34,7 +36,7 @@ class TestPackage(models.Model):
     passwordAdminTest = models.CharField(max_length=16,default=None, null=True)
     passwordTest = models.CharField(max_length=16, default="123456")
     welcomeMessage = models.TextField()
-    settings = models.JSONField(default=dict(json.loads(defaultSettings)) ,blank=True,null=True)
+    settings = models.JSONField(default=json.loads(defaultSettings) ,blank=True,null=True)
     def save(self, *args, **kwargs):
         if not self.testID:
             self.testID = generate_id(TestPackage,'testID',16)
@@ -49,6 +51,15 @@ class TestPackage(models.Model):
             user.save()
         super().save(*args, **kwargs)
 
+    def get_time_limit(self):
+        if self.settings["limitByScheduleFinish"] and self.testScheduleClose:
+            beforeClose = self.testScheduleClose - timezone.now()
+            if beforeClose < datetime.timedelta(minutes=self.timeLimit):
+                return int(beforeClose.total_seconds()/60)
+ 
+        return self.timeLimit    
+
+
     def get_question_count(self):
         return self.question_set.all().count()
     def get_random_sequence(self):
@@ -58,7 +69,12 @@ class TestPackage(models.Model):
             if r not in list :
                 list.append(r)
         return list
-    
+    '''
+from Test.models import *;
+all = TestPackage.objects.all();
+q = all[2];
+q.get_time_limit();
+    '''
     def get_all_question(self,*args):
         list = []
         for i in json.loads(args[0]):
@@ -74,25 +90,20 @@ class TestPackage(models.Model):
         
     def __str__(self):
         return f"{self.testID}_{self.testTitle}"
-'''
-from Test.models import *
-all = TestPackage.objects.all()
-a1=all[1]
-a1.get_one_question(1,a1.get_random_sequence())
-'''
 
 
 class TestTaker(models.Model):
-    testTakerID = models.CharField(max_length=16, unique=True,editable=True)
-    session_code = models.CharField(max_length=16, unique=True, editable=True)
+    testTakerID = models.CharField(max_length=16, unique=True)
+    session_code = models.CharField(max_length=16, unique=True)
     session_password = models.CharField(max_length=16)
     testPackage = models.ForeignKey(TestPackage,on_delete=models.CASCADE)
     testTakerName = models.CharField(max_length=128)
     testTakerGroup = models.CharField(max_length=128 ,blank=True ,null=True)
     scoreObtained = models.IntegerField(default=0)
     lastAnswered = models.IntegerField(default=0, editable=True)
-    timeStart = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True)
-    timeFinish = models.DateTimeField(auto_now_add=False,editable=True, null=True,blank=True)
+    timeLimit = models.IntegerField(default=None, blank=True,null=True)
+    timeStart = models.DateTimeField(auto_now_add=False,null=True,blank=True)
+    timeFinish = models.DateTimeField(auto_now_add=False,null=True,blank=True)
     sequences = models.JSONField(blank=True,null=True)
     def save(self,*args, **kwargs):
         if not self.session_code:
@@ -137,9 +148,28 @@ class TestTaker(models.Model):
                 'answer':"{}".format(q.answer_set.filter(testTaker=self)[0].get_answer_text() if q.answer_set.filter(testTaker=self).exists() else 'Error' ),
                 'questID':'{}'.format(q.questID)
                 })
-        return query        
+        return query
 
-            
+    def get_all_answer_question_and_score(self):
+        q_question = self.testPackage.get_all_question(self.sequences)
+        query = []
+        for q in q_question:
+            score = q.defaultScore
+            if q.answer_set.filter(testTaker=self).exists():
+                if q.answer_set.filter(testTaker=self)[0].get_check_result():
+                    score = q.trueScore
+                elif q.answer_set.filter(testTaker=self)[0].get_check_result() == False:
+                    score = q.falseScore
+
+            query.append({
+                'num':'{}'.format(q.get_question_num(self.sequences)),
+                'question':'{}'.format(q.question),
+                'answer':"{}".format(q.answer_set.filter(testTaker=self)[0].get_answer_text() if q.answer_set.filter(testTaker=self).exists() else 'Error' ),
+                'questID':'{}'.format(q.questID),
+                'isTrue':'{}'.format(q.answer_set.filter(testTaker=self)[0].get_check_result() if q.answer_set.filter(testTaker=self).exists() else 'Error' ),
+                'score':'{}'.format(score)
+                })
+        return query        
 
     def get_last_answered(self):
         if self.answer_set.all().exists():
@@ -150,6 +180,15 @@ class TestTaker(models.Model):
     def delete(self):
         User.objects.get(username=self.session_code).delete()
         super().delete()
+
+    def set_time_limit(self):
+        self.timeLimit = self.testPackage.get_time_limit()
+        self.save()
+
+    def get_total_score(self):
+        scores = [x.get_score() for x in self.get_all_answer()]
+        return reduce((lambda x, y: x + y), scores)
+
 
     def __str__(self):
         return "{}".format(self.testTakerName)
@@ -241,6 +280,25 @@ class Answer(models.Model):
     def get_answer_text(self):
         list_choices = self.question.choices
         return next((item["choiceLabel"] for item in list_choices if item["choiceCode"] == self.answer), False)
+
+    def get_check_result(self):
+        if self.answer == None:
+            return None
+        if self.answer == self.question.answerKey:
+            self.isTrue = True
+            super().save()
+            return True
+        else:
+            self.isTrue = False
+            super().save()
+            return False
+
+    def get_score(self):
+        if self.get_check_result():
+            return self.question.trueScore
+        if self.get_check_result() == False:
+            return self.question.falseScore
+        return self.question.defaultScore
 
     # def save(self, *args, **kwargs):
     #     if not self.pk and self.questi == 1:

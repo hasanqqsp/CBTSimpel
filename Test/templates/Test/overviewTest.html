@@ -31,21 +31,27 @@ INFORMASI TES
 
 {% endblock card_body %}       
 {% block card_footer %}
- {% if q_testPackage.get_question_count == '0' %}
-        <p class="m-auto h5 strong text-center">Test ini belum memiliki Soal</p>
+
+{% if q_testPackage.testScheduleClose > timeNow or q_testPackage.testScheduleClose == None %}
+    {% if q_testPackage.get_question_count == '0' %}
+          <p class="m-auto h5 strong text-center">Test ini belum memiliki Soal</p>
     {% else %}
-        {% if form.errors.password %}
-            <div class="alert alert-danger mt-2  fade show pb-0" role="alert">
-                <p> Password mungkin salah</p>
-            </div>
-        {% endif %}
-        <form method="POST" class="row m-1 ">
-            {% csrf_token %}
-            {{form.password|attr:"placeholder:Masukan Password Tes" |attr:"maxlength:6" |add_class:"form-control form-control-lg col-sm-9"}}
-            <button class="btn btn-success mt-1 my-sm-0 flex-fill text-nowrap" type="submit">Lanjut</button>
-          </form>
-            
-        {% endif %}
+      {% if form.errors.password %}
+              <div class="alert alert-danger mt-2  fade show pb-0" role="alert">
+                  <p> Password mungkin salah</p>
+              </div>
+      {% endif %}
+          <form method="POST" class="row m-1 ">
+              {% csrf_token %}
+              {{form.password|attr:"placeholder:Masukan Password Tes" |attr:"maxlength:6" |add_class:"form-control form-control-lg col-sm-9"}}
+              <button class="btn btn-success mt-1 my-sm-0 flex-fill text-nowrap" type="submit">Lanjut</button>
+            </form>
+              
+    {% endif %}
+{% else %}
+  <p class="m-auto h5 strong text-center">Test ini sudah Berakhir dan ditutup</p>
+{% endif %}
+  
     
 {% endblock card_footer %}
 {%endblock no_container%}

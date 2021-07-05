@@ -20,22 +20,27 @@
                </div>
         <h3 class="m-1 text-uppercase"><strong>{{title}}</strong></h3>
         
-        <div class="container-fluid border my-2" style="height:60vh;overflow-y: auto;">
+        <div class="container-fluid border my-2" >
         {% if now < quest.testScheduleOpen%}
                 <h1 class="text-center font-weight-bold">TES BELUM DIMULAI</h1>
                 <h4 class="text-center font-weight-bold">Akan dimulai pada : {{quest.testScheduleOpen |date:"l, j F Y H:i:s T"}}</h4>
                 <br><br>
 
 
-                <h1 style="font-size: 4em;" class="time text-center font-weight-bold">12:30:40</h1>
+                <h1 style="font-size: 4em;" class="time text-center font-weight-bold"></h1>
                 <script>
-                setInterval(() => { 
-                    now = (Date.parse(new Date) / 1000)    
-                    makeTimer({{quest.testScheduleOpen |date:"U"}},now,'.time',() =>  { location.reload()})
-                },1000)
+                (function(){
+
+                    setInterval(() => { 
+                        now = (Date.parse(new Date) / 1000)    
+                        makeTimer({{quest.testScheduleOpen |date:"U"}},now,'.time',() =>  { location.reload()})
+                    },1000)
+
+                }
+                )()        
                 </script>
                 {% else %}
-                {{ welcomeMessage |safe }}
+                {{ welcomeMessage | safe }}
         </div>
         <form method="post">
                 {% csrf_token %}

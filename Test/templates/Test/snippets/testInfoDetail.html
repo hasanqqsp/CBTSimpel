@@ -1,30 +1,97 @@
 <ul class="list-group block list-group-flush text-left">
-    <li class="list-group-item"><div class="row">
-        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Tes</div></div>
-        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testCode}}</div></div>
-        </div></li>
-    <li class="list-group-item"><div class="row">
-        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Penyedia Tes</div></div>
-        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testAuthor}}</div></div>
-        </div></li>
-    <li class="list-group-item"><div class="row">
-        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Judul Tes</div></div>
-        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testTitle}}</div></div>
-        </div></li>
-    <li class="list-group-item"><div class="row">
-        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jumlah Soal</div></div>
-        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.get_question_count}}</div></div>
-        </div></li>
-    <li class="list-group-item"><div class="row">
-        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jadwal Mulai Tes</div></div>
-        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testScheduleOpen |date:"l, j F Y H:i:s T"}}</div></div>
-        </div></li>
-    <li class="list-group-item"><div class="row">
-        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jadwal Selesai Tes</div></div>
-        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testScheduleClose |date:"l, j F Y H:i:s T"}}</div></div>
-        </div></li>    
-    <li class="list-group-item"><div class="row">
-        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Batas Waktu Pengerjaan</div></div>
-        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.timeLimit}} Menit</div></div>
-        </div></li>
-      </ul>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-md-3 pl-2 my-auto">
+        <div class="card-title text-muted my-auto h6 text-uppercase">
+          Kode Tes
+        </div>
+      </div>
+      <div class="col-md-9 pl-2">
+        <div class="card-text my-auto">{{q_testPackage.testCode}}</div>
+      </div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-md-3 pl-2 my-auto">
+        <div class="card-title text-muted my-auto h6 text-uppercase">
+          Penyedia Tes
+        </div>
+      </div>
+      <div class="col-md-9 pl-2">
+        <div class="card-text my-auto">{{q_testPackage.testAuthor}}</div>
+      </div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-md-3 pl-2 my-auto">
+        <div class="card-title text-muted my-auto h6 text-uppercase">
+          Judul Tes
+        </div>
+      </div>
+      <div class="col-md-9 pl-2">
+        <div class="card-text my-auto">{{q_testPackage.testTitle}}</div>
+      </div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-md-3 pl-2 my-auto">
+        <div class="card-title text-muted my-auto h6 text-uppercase">
+          Jumlah Soal
+        </div>
+      </div>
+      <div class="col-md-9 pl-2">
+        <div class="card-text my-auto">
+          {{q_testPackage.get_question_count}}
+        </div>
+      </div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-md-3 pl-2 my-auto">
+        <div class="card-title text-muted my-auto h6 text-uppercase">
+          Jadwal Mulai Tes
+        </div>
+      </div>
+      <div class="col-md-9 pl-2">
+        <div class="card-text my-auto">
+          {{q_testPackage.testScheduleOpen |date:"l, j F Y H:i:s T"}}
+        </div>
+      </div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-md-3 pl-2 my-auto">
+        <div class="card-title text-muted my-auto h6 text-uppercase">
+          Jadwal Selesai Tes
+        </div>
+      </div>
+      <div class="col-md-9 pl-2">
+        <div class="card-text my-auto">
+          {{q_testPackage.testScheduleClose |date:"l, j F Y H:i:s T"}}
+        </div>
+      </div>
+    </div>
+  </li>
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-md-3 pl-2 my-auto">
+        <div class="card-title text-muted my-auto h6 text-uppercase">
+          Batas Waktu Pengerjaan
+        </div>
+      </div>
+      <div class="col-md-9 pl-2">
+        <div class="card-text my-auto">
+          {{q_testPackage.timeLimit}} Menit 
+          {% if q_testPackage.settings.limitByScheduleFinish and q_testPackage.testScheduleClose%} atau s/d
+          {{q_testPackage.testScheduleClose |date:"l, j F Y H:i:s T"}} 
+          {% endif%}
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>

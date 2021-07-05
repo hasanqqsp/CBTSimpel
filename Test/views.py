@@ -92,6 +92,7 @@ def detailTest(request, testID):
     context = {
             'form' : form,
             'q_testPackage': q_testPackage,
+            'timeNow' : timezone.now()
         
     }
     return render(request, 'Test/overviewTest.html', context)
@@ -133,11 +134,14 @@ def verifyAnswer(request, testID):
     q_last_answered_quest = q_testTaker.get_last_answered()
     q_answer = q_testTaker.get_all_answer()
     q_question = q_testPackage.get_all_question(q_testTaker.sequences)
-    query = []
+    
     
 
     if request.method == "POST":
-        q_testTaker.timerEnd()      
+        q_testTaker.timerEnd()
+        if q_testPackage.settings["canViewScorePage"]:
+            return HttpResponseRedirect('/test/viewscore/{}'.format(q_testTaker.session_code))
+                  
         return HttpResponseRedirect ('../../join')
 
     context = {
@@ -178,7 +182,6 @@ def doTest(request, testID, questID):
         if request.POST['is_timeout']:
             return HttpResponseRedirect('../q/{}'.format('verify'))    
         if form.is_valid():
-            user = request.user
             Answer.objects.create(
                 question = q_question,
                 testTaker=q_testTaker,
@@ -202,10 +205,10 @@ def doTest(request, testID, questID):
     form.base_fields['answer'].choices = CHOICES
 
     context = {
-        'takerQuery' : q_testTaker,
-        'question' : q_question,
+        'q_testTaker' : q_testTaker,
+        'q_question' : q_question,
         'form' : form,
-        'testInfo': q_testPackage,
+        'q_testPackage': q_testPackage,
         'timeNow' : timezone.now(),
         'question_list' : q_testPackage.get_all_question(q_testTaker.sequences),
         'next_question' : q_question.get_next_question(q_testTaker.sequences),
@@ -216,7 +219,7 @@ def doTest(request, testID, questID):
     return render(request,'Test/doTest.html',context)
 
 def createSession(request,testID):
-    check = get_object_or_404(TestPackage,testID=testID)
+    get_object_or_404(TestPackage,testID=testID)
       
     if request.method == 'POST':
         createSessionForm = CreateSessionForm(request.POST or None)
@@ -228,7 +231,7 @@ def createSession(request,testID):
                 session_password = request.POST.get('session_password'),
                 testPackage = TestPackage.objects.get(testID=testID)
             )
-            
+            q_testTaker.set_time_limit()
             credential = authenticate(request, username=q_testTaker.session_code, password=request.POST.get('session_password'),)
             login(request,credential)
         return HttpResponseRedirect('../{}'.format(testID))
@@ -250,7 +253,14 @@ def sessionInfo(request):
         }   
     return render(request,'Test/sessionInfo.html',context)     
 
-
+def sessionEdit(request):
+    q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)
+    if not TestTaker.objects.filter(session_code=request.user,timeFinish=None).exists:
+        return HttpResponseRedirect('/test/resume')
+    context = {
+        'q_testTaker' : q_testTaker[0], 
+        }   
+    return render(request,'Test/sessionInfo.html',context)
 
 def resumeTest(request,*args, **kwargs):
     q_testTaker = TestTaker.objects.filter(session_code=request.user or request.POST.get("username"))                           
@@ -298,13 +308,35 @@ def cancelTest(request,redirID):
     else:
         return HttpResponseRedirect('/test/{}'.format(redirID))
 
+def viewScore(request, session_code):
+    q_testTaker = TestTaker.objects.filter(session_code=session_code) 
+    q_testPackage = q_testTaker[0].testPackage
+    if len(q_testTaker) > 0 and q_testTaker[0].timeFinish and q_testPackage.settings["canViewScorePage"]:
+        q_testTaker = q_testTaker[0]
+    else:
+        return HttpResponseNotFound()
+
+      
+    q_last_answered_quest = q_testTaker.get_last_answered()
+    q_answers = q_testTaker.get_all_answer()
+    q_question = q_testPackage.get_all_question(q_testTaker.sequences)
+   
+    context = {
+        'q_testTaker' : q_testTaker,
+        'q_testPackage' : q_testPackage,
+        'q_answer' : q_answers,
+        'q_question' : q_question,
+    }
+
+    return render(request, 'Test/viewScore.html',context)
+
+
 # def viewScore(request,session_code):
 #     q_testTaker = get_object_or_404(TestTaker, session_code = session_code)
 #     answerQuery = Answer.objects.filter(session_code=session_code)
 #     packQuery = TestPackage.objects.get(testID=q_testTaker.testID)
 #     questQuery = Question.objects.filter(testID=q_testTaker.testID).order_by('questionNum')
-#     query = []
-#     score_obtained = 0
+
 #     for i in answerQuery:
 #         score_obtained += i.scoreObtain
 #     q_testTaker.scoreObtained = score_obtained
@@ -346,65 +378,31 @@ def cancelTest(request,redirID):
 #     }
 #     return render(request,'Test/viewScore.html',context)
 
-# def generate_pdf(request, session_code):
-#     q_testTaker = get_object_or_404(TestTaker, session_code = session_code)
-#     answerQuery = Answer.objects.filter(session_code=session_code)
-#     packQuery = TestPackage.objects.get(testID=q_testTaker.testID)
-#     questQuery = Question.objects.filter(testID=q_testTaker.testID).order_by('questionNum')
-#     query = []
-#     score_obtained = 0
-#     for i in answerQuery:
-#         score_obtained += i.scoreObtain
-#     q_testTaker.scoreObtained = score_obtained
-#     q_testTaker.save()
-#     for i in range(len(questQuery)):
-#         try:
-#             nth_answer = Answer.objects.get(testID=q_testTaker.testID,session_code=session_code,num_ofAnswer=i+1)
-#             i_answer = nth_answer.answer
-#             print(i_answer)
-#         except: 
-#             i_answer = ""
-#         print(i_answer)
-#         if i_answer == 'A':
-#                 answer = '{}'.format(questQuery[i].choiceFirst)
-#         elif i_answer == 'B':
-#             answer = '{}'.format(questQuery[i].choiceSecond)
-#         elif i_answer == 'C':
-#             answer = '{}'.format(questQuery[i].choiceThird)
-#         elif i_answer == 'D':
-#             answer = '{}'.format(questQuery[i].choiceFourth)
-#         elif i_answer == 'E':
-#             answer = '{}'.format(questQuery[i].choiceFifth)
-#         elif i_answer == 'F':
-#             answer = '{}'.format(questQuery[i].choiceSixth)
-#         else:
-#             answer = 'Error'
-            
-#         query.append({
-#             'num':'{}'.format(questQuery[i].questionNum),
-#             'question':'{}'.format(questQuery[i].question),
-#             'answer':"{}".format(answer),
-#             'questID':'{}'.format(questQuery[i].questID),
-#             'score':"{}".format(nth_answer.scoreObtain)})
-#     context = {
-#         'answerQuery': answerQuery,
-#         'takerQuery' : q_testTaker ,
-#         'packQuery' : packQuery,
-#         'query': query
-#     }
+def generate_pdf(request, session_code):
+    q_testTaker = get_object_or_404(TestTaker, session_code = session_code)
+    q_answers = Answer.objects.filter(session_code=session_code)
+    q_testPackage = TestPackage.objects.get(testID=q_testTaker.testID)
+   
+    
+    q_testTaker.save()
+    context = {
+        'q_answers': q_answers,
+        'q_testTaker' : q_testTaker ,
+        'q_testPackage' : q_testPackage,
+    }
 
-#     # Rendered
-#     html_string = render_to_string('Test/viewScore.html', context)
-#     html = HTML(string=html_string)
-#     result = html.write_pdf()
+    # Rendered
+    html_string = render_to_string('Test/viewScore.html', context)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
 
-#     # Creating http response
-#     response = HttpResponse(content_type='application/pdf;')
-#     response['Content-Disposition'] = 'inline; filename=list_people.pdf'
-#     response['Content-Transfer-Encoding'] = 'utf-8'
-#     with tempfile.NamedTemporaryFile(delete=True) as output:
-#         output.write(result)
-#         output.flush()
-#         output = open(output.name, 'rb')
-#         response.write(output.read()) 
-#     return response
+    # Creating http response
+    response = HttpResponse(content_type='application/pdf;')
+    response['Content-Disposition'] = 'inline; filename=list_people.pdf'
+    response['Content-Transfer-Encoding'] = 'utf-8'
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, 'rb')
+        response.write(output.read()) 
+    return response
