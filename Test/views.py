@@ -11,6 +11,18 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse
 from django.utils import timezone
 import datetime
+from django.template.loader import get_template
+from io import BytesIO
+from xhtml2pdf import pisa
+
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
 
 
 
@@ -107,7 +119,7 @@ def welcomeTest(request,testID):
     if request.method == 'POST':
         if not q_testTaker.timeStart:
             q_testTaker.timerStart()
-        return HttpResponseRedirect("{}".format(q_testPackage.get_one_question(1,q_testTaker.sequences).questID))
+        return HttpResponseRedirect("{}".format(q_testTaker.get_last_answered().questID))
     context = {
         'title' : q_testPackage.testTitle,
         'quest' : q_testPackage,
@@ -205,6 +217,7 @@ def doTest(request, testID, questID):
     form.base_fields['answer'].choices = CHOICES
 
     context = {
+        'q_answers_questions':q_testTaker.get_all_answer_and_question(),
         'q_testTaker' : q_testTaker,
         'q_question' : q_question,
         'form' : form,
@@ -315,6 +328,71 @@ def viewScore(request, session_code):
         q_testTaker = q_testTaker[0]
     else:
         return HttpResponseNotFound()
+    
+    if request.method == 'POST':
+        
+        form = AuthScoreForm(request.POST or None)
+        
+        if form.is_valid():
+            if q_testTaker.session_password == request.POST.get('session_password'):
+                q_last_answered_quest = q_testTaker.get_last_answered()
+                q_answers = q_testTaker.get_all_answer()
+                q_question = q_testPackage.get_all_question(q_testTaker.sequences)
+            
+                context = {
+                    'q_testTaker' : q_testTaker,
+                    'q_testPackage' : q_testPackage,
+                    'q_answer' : q_answers,
+                    'q_question' : q_question,
+                    'is_authenticated' : True,
+                }
+
+                return render(request, 'Test/viewScore.html',context)
+            else:
+                form.add_error(error=ValidationError('Wrong Password'),field='session_password')
+        context = {
+            'is_authenticated' : False,
+            'form' : form
+        }
+        print('yes')
+        return render(request, 'Test/viewScore.html',context)
+
+
+    if q_testPackage.settings["canViewScorePageAuth"]:
+        context = {
+            'is_authenticated' : False,
+            'form' : AuthScoreForm()
+        }
+        return render(request, 'Test/viewScore.html',context)
+
+def findScore(request):
+    form = FindScoreForm()
+    if request.method == 'POST':
+        form = FindScoreForm(request.POST or None)
+        if form.is_valid():
+            sessionCode=request.POST.get('sessionCode')
+            try:
+                query = TestTaker.objects.get(session_code=sessionCode)
+                if query.testPackage.settings['canViewScorePage']:
+                    return HttpResponseRedirect(f"{sessionCode}")
+                form.add_error(error=ValidationError('FORBIDDEN'),field='sessionCode')
+            except :
+                form.add_error(error=ValidationError('NOT FOUND'),field='sessionCode')
+
+
+    context = {
+        'form' : form
+    }
+    return render(request, 'Test/findScore.html',context)
+
+
+def generate_pdf(request, session_code):
+    q_testTaker = TestTaker.objects.filter(session_code=session_code) 
+    q_testPackage = q_testTaker[0].testPackage
+    if len(q_testTaker) > 0 and q_testTaker[0].timeFinish and q_testPackage.settings["canViewScorePage"]:
+        q_testTaker = q_testTaker[0]
+    else:
+        return HttpResponseNotFound()
 
       
     q_last_answered_quest = q_testTaker.get_last_answered()
@@ -328,81 +406,17 @@ def viewScore(request, session_code):
         'q_question' : q_question,
     }
 
-    return render(request, 'Test/viewScore.html',context)
-
-
-# def viewScore(request,session_code):
-#     q_testTaker = get_object_or_404(TestTaker, session_code = session_code)
-#     answerQuery = Answer.objects.filter(session_code=session_code)
-#     packQuery = TestPackage.objects.get(testID=q_testTaker.testID)
-#     questQuery = Question.objects.filter(testID=q_testTaker.testID).order_by('questionNum')
-
-#     for i in answerQuery:
-#         score_obtained += i.scoreObtain
-#     q_testTaker.scoreObtained = score_obtained
-#     q_testTaker.save()
-#     for i in range(len(questQuery)):
-#         try:
-#             nth_answer = Answer.objects.get(testID=q_testTaker.testID,session_code=session_code,num_ofAnswer=i+1)
-#             i_answer = nth_answer.answer
-#             print(i_answer)
-#         except: 
-#             i_answer = ""
-#         print(i_answer)
-#         if i_answer == 'A':
-#                 answer = '{}'.format(questQuery[i].choiceFirst)
-#         elif i_answer == 'B':
-#             answer = '{}'.format(questQuery[i].choiceSecond)
-#         elif i_answer == 'C':
-#             answer = '{}'.format(questQuery[i].choiceThird)
-#         elif i_answer == 'D':
-#             answer = '{}'.format(questQuery[i].choiceFourth)
-#         elif i_answer == 'E':
-#             answer = '{}'.format(questQuery[i].choiceFifth)
-#         elif i_answer == 'F':
-#             answer = '{}'.format(questQuery[i].choiceSixth)
-#         else:
-#             answer = 'Error'
-            
-#         query.append({
-#             'num':'{}'.format(questQuery[i].questionNum),
-#             'question':'{}'.format(questQuery[i].question),
-#             'answer':"{}".format(answer),
-#             'questID':'{}'.format(questQuery[i].questID),
-#             'score':"{}".format(nth_answer.scoreObtain)})
-#     context = {
-#         'answerQuery': answerQuery,
-#         'takerQuery' : q_testTaker ,
-#         'packQuery' : packQuery,
-#         'query': query
-#     }
-#     return render(request,'Test/viewScore.html',context)
-
-def generate_pdf(request, session_code):
-    q_testTaker = get_object_or_404(TestTaker, session_code = session_code)
-    q_answers = Answer.objects.filter(session_code=session_code)
-    q_testPackage = TestPackage.objects.get(testID=q_testTaker.testID)
-   
-    
-    q_testTaker.save()
-    context = {
-        'q_answers': q_answers,
-        'q_testTaker' : q_testTaker ,
-        'q_testPackage' : q_testPackage,
-    }
-
-    # Rendered
-    html_string = render_to_string('Test/viewScore.html', context)
-    html = HTML(string=html_string)
-    result = html.write_pdf()
-
+    template = get_template('Test/viewScorePDF.html')
     # Creating http response
-    response = HttpResponse(content_type='application/pdf;')
-    response['Content-Disposition'] = 'inline; filename=list_people.pdf'
-    response['Content-Transfer-Encoding'] = 'utf-8'
-    with tempfile.NamedTemporaryFile(delete=True) as output:
-        output.write(result)
-        output.flush()
-        output = open(output.name, 'rb')
-        response.write(output.read()) 
-    return response
+    html = template.render(context)
+    pdf = render_to_pdf('Test/viewScorePDF.html', context)
+    if pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = f"{q_testTaker.testTakerName}_Result_{q_testPackage.testTitle}"[0:59]+".pdf" 
+        content = "inline; filename=%s" %(filename)
+        download = request.GET.get("download")
+        if download:
+            content = "attachment; filename='%s'" %(filename)
+        response['Content-Disposition'] = content
+        return response
+    return HttpResponse("Not found")

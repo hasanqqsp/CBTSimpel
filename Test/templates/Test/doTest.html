@@ -5,8 +5,8 @@
 {% block no_container%}
 <div class="container-lg px-3">
     <div class="row py-4 h-100">
-          <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center">
-            <div class="align-items-center flex-fill">
+          <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center mw-100">
+            <div class="align-items-center flex-fill mw-100">
           <div class="row d-flex justify-content-center site-banner-mini">
               <div class="">
                      <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
@@ -50,7 +50,7 @@
         <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{q_question.question}}</li>
     </div>
     <form method="post" accept-charset="utf-8">
-        
+    {{q_answers}}    
      {% for form in form  %}
             {% csrf_token %}
             {% if form.errors %}
@@ -70,7 +70,7 @@
             <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
             
             {% for radio  in form %}
-                    <label for="id_answer_{{forloop.counter0}}" class="px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+                    <label for="id_answer_{{forloop.counter0}}" id="label_answer_{{forloop.counter0}}" class="label_answer px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
                     {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span></label>
                     </label > 
                     {% endfor %}
@@ -101,16 +101,22 @@
             </li>
     {% endif %}
     </li>
-    <li>
+    <li class="list-group-item px-0">
         {% if is_preview %}
             {% else %}
         <div class="d-flex flex-wrap">
             <nav aria-label="Quest navigation">
-            {% for i in question_list %}
+            {% for i in q_answers_questions %}
                 {% if indexOf == forloop.counter %}
                 <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
                 {% else %}
-                <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                
+                    {% if i.answer == 'Error' %}
+                    <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                    {% else %}
+                    <a class="btn btn-success my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                    {% endif %}
+                    
                 {% endif %}
                 {% endfor %}
             </nav>
@@ -198,5 +204,21 @@
 
         const _0x315f=['43599ihoYLy','1tgloGo','34764QpyOgp','value','39626TaZjVJ','1KzQQQY','1052773BvchpC','.time','74194RizoZa','submit','getElementsByTagName','798269TOyHeJ','is_timeout','965199rmOsAp','3MgAJni'];function _0xff6e(_0x2277c0,_0x1af5d2){return _0xff6e=function(_0x315f07,_0xff6e1b){_0x315f07=_0x315f07-0x1de;let _0x598f03=_0x315f[_0x315f07];return _0x598f03;},_0xff6e(_0x2277c0,_0x1af5d2);}(function(_0x258e6c,_0x30d6b6){const _0x20d4ae=_0xff6e;while(!![]){try{const _0xc5e2af=-parseInt(_0x20d4ae(0x1df))*parseInt(_0x20d4ae(0x1e0))+parseInt(_0x20d4ae(0x1de))+-parseInt(_0x20d4ae(0x1e6))*parseInt(_0x20d4ae(0x1e1))+-parseInt(_0x20d4ae(0x1e4))+parseInt(_0x20d4ae(0x1eb))+parseInt(_0x20d4ae(0x1e2))+parseInt(_0x20d4ae(0x1e5))*parseInt(_0x20d4ae(0x1e8));if(_0xc5e2af===_0x30d6b6)break;else _0x258e6c['push'](_0x258e6c['shift']());}catch(_0x127d81){_0x258e6c['push'](_0x258e6c['shift']());}}}(_0x315f,0x9e80e),function(){const _0x560087=_0xff6e,_0x50d5b8=document[_0x560087(0x1ea)]('form')[0x0];let _0x54d49b={{timeNow |date:"U"}};setInterval(()=>{const _0x2231e9=_0x560087;makeTimer({{q_testTaker.timeStart |date:"U"}}+{{q_testTaker.timeLimit}}*0x3c,_0x54d49b,_0x2231e9(0x1e7),()=>{const _0x44f783=_0x2231e9;_0x50d5b8[_0x44f783(0x1ec)][_0x44f783(0x1e3)]=!![],_0x50d5b8[_0x44f783(0x1e9)]();}),_0x54d49b+=0x1;},0x3e8);}());
             {% endif %}  
+            allLabel = document.querySelectorAll('.label_answer')
+            document.addEventListener("keydown", function(event) {
+            if (event.which-49 >= 0 && event.which-49<allLabel.length-1){
+                target = document.getElementById(`id_answer_${event.which-49}`)
+                for( i = 0 ; i< allLabel.length ;i++){
+                    if (allLabel[i].classList.contains('active')){
+                        allLabel[i].classList.remove('active')
+                    }
+                }
+                targetLabel = document.getElementById(`label_answer_${event.which-49}`)
+                targetLabel.classList.add('active')
+                target.checked=true
+                console.log(target)
+            }
+            })
+
         </script>
         {% endblock user_script %}

@@ -1,0 +1,127 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>{{q_testTaker.testTakerName}}_Jawaban_{{q_testPackage.testTitle}}</title>
+
+<style type="text/css">
+*{
+  font-size : 22px;
+}
+table {
+    border-collapse: collapse;
+}
+.table-info > tbody > tr > td {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    border-right:0px solid white;
+    border-left:0px solid white;
+    padding-top:2px;
+    padding-bottom:0px  
+}
+
+.table-qa-detail > tbody > tr > td,th {
+  border : 1px solid black;
+}
+
+p.comment {
+	background: yellow;
+}
+</style>
+</head>
+<body>
+<h3 class="m-1 text-uppercase">
+    <strong>LEMBAR JAWABAN</strong>
+  </h3>
+<table width="100%" border="0" cellspacing="5" cellpadding="5" class="table-info">
+  <tr>
+    <td width="40%">Nama Peserta</td>
+    <td>{{q_testTaker.testTakerName}}</td>
+    
+  </tr>
+  <tr>
+    <td width="40%">Kelas / Grup</td>
+    <td>{{q_testTaker.testTakerGroup}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Kode Tes</td>
+    <td>{{q_testPackage.testCode}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Penyedia Tes</td>
+    <td>{{q_testPackage.testAuthor}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Judul Tes</td>
+    <td>{{q_testPackage.testTitle}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Jadwal Mulai Tes</td>
+    <td>{{q_testPackage.testScheduleOpen |date:"l, j F Y H:i:s T"}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Jadwal Selesai Tes</td>
+    <td>{{q_testPackage.testScheduleClose |date:"l, j F Y H:i:s T"}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Waktu Peserta Mulai Tes</td>
+    <td>{{q_testTaker.timeStart |date:"l, j F Y H:i:s T"}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Waktu Peserta Selesai Tes</td>
+    <td>{{q_testTaker.timeFinish |date:"l, j F Y H:i:s T"}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Batas Waktu Pengerjaan</td>
+    <td>{{q_testTaker.timeLimit}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Kode Sesi</td>
+    <td>{{q_testTaker.session_code}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Total Skor</td>
+    <td>{{q_testTaker.get_total_score}}</td>
+  </tr>
+  <tr>
+    <td width="40%">Jawaban :</td>
+    <td ></td>
+  </tr>
+</table>
+<br>
+<table cellpadding="4" class="table-qa-detail">
+  <tr>
+    <th width="8%">No</th>
+    <th>Pertanyaan</th>
+    <th>Jawaban</th>
+    <th>Skor</th>
+
+  </tr>
+  {% for q in q_testTaker.get_all_answer_question_and_score %}
+  <tr>
+    <td width="8%" style="text-align:center;padding-y:4px">{{q.num}}</td>
+    <td width="41%" style="padding-y:4px">{{q.question}}</td>                          
+    {% if q.answer == "Error"%}
+    <td width="41%">Tidak Diisi</td>
+    {% else %} 
+    {% if q.isTrue == 'True' %}
+    <td width="41%">{{q.answer}}</td>
+    {% else %}
+    <td width="41%">{{q.answer}}</td>
+    {% endif %} 
+    {% endif %}
+
+    <td width="10%" style="text-align:center;">{{q.score}}</td>  
+
+  </tr>
+                  {% endfor %}
+  <tr>
+    <td colspan="3" style="font-size:25px;font-weight:bold">Total Skor</td>
+    <td style="text-align:center;">{{q_testTaker.get_total_score}}</td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+</body>
+</html>

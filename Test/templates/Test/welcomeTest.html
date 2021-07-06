@@ -3,8 +3,8 @@
 {% block no_container %}
 
         <div class="d-flex flex-wrap container-lg p-2 align-items-end " style="min-height:100vh">
-          <div class="m-auto d-flex align-items-center flex-wrap text-center">
-            <div class="align-items-center">
+          <div class="m-auto d-flex align-items-center flex-wrap text-center mw-100">
+            <div class="align-items-center mw-100">
           <div class="row d-flex justify-content-center site-banner-mini">
               <div class="">
                      <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
@@ -20,7 +20,7 @@
                </div>
         <h3 class="m-1 text-uppercase"><strong>{{title}}</strong></h3>
         
-        <div class="container-fluid border my-2" >
+        <div class="container-fluid border my-2">
         {% if now < quest.testScheduleOpen%}
                 <h1 class="text-center font-weight-bold">TES BELUM DIMULAI</h1>
                 <h4 class="text-center font-weight-bold">Akan dimulai pada : {{quest.testScheduleOpen |date:"l, j F Y H:i:s T"}}</h4>
@@ -44,7 +44,7 @@
         </div>
         <form method="post">
                 {% csrf_token %}
-                <input type="submit" class="btn btn-primary" value="Kerjakan &raquo;">
+                <input type="submit" class="btn btn-success btn-block" value="Kerjakan &raquo;">
         </form>
         {% endif %}
         {% endblock no_container %}

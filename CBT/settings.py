@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'Test',
     'CreateTest',
     'widget_tweaks',
-    'wkhtmltopdf',
+    'xhtml2pdf',
     'django_quill'
 ]
 

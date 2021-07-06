@@ -13,15 +13,7 @@ class CreateSessionForm(forms.ModelForm):
             'session_password' : forms.PasswordInput()
         }
 
-# class CreateTestForm(forms.ModelForm):
-#     class Meta:
-#         model = TestPackage
-#         fields = ['testTitle','testAuthor','testSchedule','timeLimit',
-#         'passwordTest']
-#         widgets = {
-#             'passwordTest' : forms.PasswordInput(),
-#             'testSchedule' : forms.DateTimeInput(),
-#         }
+
 
 class AuthTestForm1(forms.Form):
     testCode = forms.CharField()
@@ -39,3 +31,9 @@ class ResumeTestForm(forms.Form):
             'id': 'password',
         }
 ))
+
+class FindScoreForm(forms.Form):
+    sessionCode = forms.CharField()
+
+class AuthScoreForm(forms.Form):
+    session_password = forms.CharField(widget=forms.PasswordInput())

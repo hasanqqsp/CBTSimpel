@@ -1,12 +1,20 @@
 {% extends 'snippets/base.html' %}
+{% load widget_tweaks %}
 {% block web_title %}
 JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
 {% endblock web_title %}
 {% block no_container %}
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js"
+      integrity="sha512-vDKWohFHe2vkVWXHp3tKvIxxXg0pJxeid5eo+UjdjME3DBFBn2F8yWOE0XmiFcFbXxrEOR1JriWEno5Ckpn15A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
 <div class="container-lg px-3">
     <div class="row py-4 h-100">
-          <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center">
-            <div class="align-items-center flex-fill">
+          <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center mw-100">
+            <div class="align-items-center flex-fill mw-100">
 
           <div class="row d-flex justify-content-center site-banner-mini">
               <div class="">
@@ -21,7 +29,9 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
                  <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
               </div>
                </div>
-
+  
+  {% if is_authenticated %}
+   
   {% block header %}
     <h3 class="m-1 text-uppercase"><strong>JAWABAN {{q_testPackage.testTitle}}</strong></h3>
   {% endblock header %}
@@ -155,8 +165,24 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
               <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Total Skor</div></div>
               <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.get_total_score}}</div></div>
           </div></li>
-       
-    
+      {% else %}
+      <h4 class=" pb-2 text-center my-auto align-items-center flex-fill font-weight-bold">Masukan Kunci Sesi</h4>
+                  
+                    {% if form.errors.session_password %}
+                    <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+                      <p>Kunci Sesi Salah</p>
+                  </div>
+                  {% endif %}
+                <form method="POST" class="row mx-1 ">
+                    {% csrf_token %}
+                    {{form.session_password|attr:"placeholder:Masukan Kunci Sesi"|add_class:"form-control form-control-lg col-sm-9"}}
+                    <button class="btn btn-success mt-1 my-sm-0 col-sm-3 text-nowrap" type="submit">Lihat</button>
+                  </form>
+                
+          
+      {% endif %}
+
 
 </div>
+
 {% endblock no_container %}
