@@ -4,7 +4,7 @@
 {% endblock web_title %}
 {% block no_container%}
 <div class="container-lg px-3">
-    <div class="row py-4 h-100">
+    <div class="row px-2 py-4 h-100">
           <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center mw-100">
             <div class="align-items-center flex-fill mw-100">
           <div class="row d-flex justify-content-center site-banner-mini">
@@ -24,201 +24,250 @@
   {% block header %}
     <h3 class="m-1 text-uppercase"><strong>{{q_testPackage.testTitle}}</strong></h3>
   {% endblock header %}
-{% block body %}
-<ul class="list-group block list-group-flush text-left flex-fill">
-    <li class="list-group-item"><div class="row">
 
-        <div class=" d-flex flex-fill  flex-row flex-wrap justify-content-between ">
-            <div class="bg-primary align-self-center border-primary rounded py-1 px-2 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</div>
-            
-            {% if is_preview %}
-            <div class="bg-secondary  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : Pratinjau</div>
+<main>
+    <ul class="list-group block list-group-flush text-left flex-fill">
+        <li class="list-group-item"><div class="row">
     
-            {% else %}
-                   
-            {% if q_testTaker.timeLimit == 0 %}
-            {% else %}  
-            <div class="bg-primary p-1 px-2 rounded ">Sisa Waktu : <span class="time"></span></div>
-
-            {% endif %}
-            <div class="bg-secondary  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : {{user}}</div>
-            {% endif %}
+            <div class=" d-flex flex-fill  flex-row flex-wrap justify-content-between ">
+                <div class="bg-success align-self-center border-primary rounded py-1 px-2 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</div>
                 
-    </div></li>
-    
-    <div class="ql-container ql-snow">
-        <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{q_question.question}}</li>
-    </div>
-    <form method="post" accept-charset="utf-8">
-    {{q_answers}}    
-     {% for form in form  %}
-            {% csrf_token %}
-            {% if form.errors %}
-                {% for error in form.errors %} 
-                {% if error == 'Bidang ini tidak boleh kosong.'%}
+                {% if is_preview %}
+                <div class="bg-secondary  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : Pratinjau</div>
+        
                 {% else %}
-                
-                <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
-                    <p>{{error}} Coba Refresh</p>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </div>
-                    {% endif %}
-                    {% endfor %}
-                    {% endif %}
-                    
-            <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
-            
-            {% for radio  in form %}
-                    <label for="id_answer_{{forloop.counter0}}" id="label_answer_{{forloop.counter0}}" class="label_answer px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
-                    {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span></label>
-                    </label > 
-                    {% endfor %}
-                    <input type="hidden" name="is_timeout">                    
-                </div>
-        </li>
-        <li class="p-0 pb-2 d-flex justify-content-around flex-row text-nowrap ">
-        {% if is_preview %}
-            <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-            {% if q_question.questionNum == 1 %}
-            {% else %}
-            <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
-            {% endif %}
-            <a href="#" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
-                <a class="btn rounded my-1  btn-primary" href="#">Kirim</a>
-            </li>
-        {% else %}
-            <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-            {% if prev_question == None %}
-            {% else %}
-            <a href="{{prev_question.questID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
-            {% endif %}
-            {% if next_question == None %}
-            {% else %}
-            <a href="{{next_question.questID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
-            {% endif %}
-                <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
-            </li>
-    {% endif %}
-    </li>
-    <li class="list-group-item px-0">
-        {% if is_preview %}
-            {% else %}
-        <div class="d-flex flex-wrap">
-            <nav aria-label="Quest navigation">
-            {% for i in q_answers_questions %}
-                {% if indexOf == forloop.counter %}
-                <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
-                {% else %}
-                
-                    {% if i.answer == 'Error' %}
-                    <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
-                    {% else %}
-                    <a class="btn btn-success my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
-                    {% endif %}
-                    
-                {% endif %}
-                {% endfor %}
-            </nav>
-        {{q_question.answerKey}}
-        </div>
-        {% endif %}
-    </li>
-        </ul>
-
-        {% endfor %}
-        </div>
-</ul> 
-</div>
-<div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-      <div class="modal-content">
-        
-        <div class="modal-body">
-            <h3 class="d-flex justify-content-between"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
-                <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
-                <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
-              </svg><div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
-              </div></h3>
-          <h1>Waktu Habis</h1>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-
-
-
-
-
-
-      </ul>
-
-{% endblock body %}      
-{% block footer %}
-
-    
-        {% endblock footer %} 
-    {% block after_footer %}
-        
-        
-        
-    {% endblock after_footer %}    
-{% endblock no_container%}
-{% block main_container %}
-<div class="card-header d-flex  flex-row flex-wrap justify-content-between bg-success ">
-        <h6 class="bg-primary align-self-center border-primary rounded px- mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</h3>
-        
-        {% if is_preview %}
-        <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : Pratinjau</h3>
-
-        {% else %}
-        <h6 class="bg-secondary  align-self-center border-secondary rounded p-1 mb-0  text-nowrap ">Kode Sesi : {{user}}</h3>
-        {% endif %}
-            
-</div> 
-{% include 'django_quill/media.html' %}
-
-
-
-
-    <div class="card-body py-1">
-        <ul class="list-group block list-group-flush">
-            <li class="p-0 pb-2 d-flex justify-content-between flex-row text-nowrap ">
-                {{q_testPackage.testTitle}}
-                
+                       
                 {% if q_testTaker.timeLimit == 0 %}
                 {% else %}  
-                <span id="now"></span>
+                <div class="bg-primary p-1 px-2 rounded text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+                        <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
+                        <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
+                      </svg>
+                    Sisa Waktu : <span class="time"></span></div>
+    
+                {% endif %}
+                <div class="bg-success  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : {{user}}</div>
                 {% endif %}
                     
-            </li> 
+        </div></li>
+        
+        <div class="ql-container ql-snow" autofocus>
+            <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{q_question.question}}</li>
+        </div>
+        <form method="post" accept-charset="utf-8">
+        {{q_answers}}    
+         {% for form in form  %}
+                {% csrf_token %}
+                {% if form.errors %}
+                    {% for error in form.errors %} 
+                    {% if error == 'Bidang ini tidak boleh kosong.'%}
+                    {% else %}
+                    
+                    <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+                        <p>{{error}} Coba Refresh</p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        
+                <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
+                
+                {% for radio  in form %}
+                        <label for="id_answer_{{forloop.counter0}}" id="label_answer_{{forloop.counter0}}" class="label_answer px-5 my-1 btn btn-outline-success btn-block rounded"><span class="btn-label h3"><span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+                        {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span></label>
+                        </label > 
+                        {% endfor %}
+                        <input type="hidden" name="is_timeout">                    
+                    </div>
+            </li>
+            <li class="p-0 pb-2 d-flex justify-content-around flex-row text-nowrap ">
             
+            <div class="mx-1 row flex-fill justify-content-start">
+                <button class="btn btn-outline-light button-cancel font-weight-bold d-none text-muted">Batalkan Pilihan</button>
+            </div>
+            {% if is_preview %}
+                <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
+                {% if q_question.questionNum == 1 %}
+                {% else %}
+                <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+                {% endif %}
+                <a href="#" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+                    <a class="btn rounded my-1  btn-primary" href="#">Kirim</a>
+                </li>
+            {% else %}
+                <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
+                {% if prev_question == None %}
+                {% else %}
+                <a href="{{prev_question.questID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+                {% endif %}
+                {% if next_question == None %}
+                {% else %}
+                <a href="{{next_question.questID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+                {% endif %}
+                    <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
+                </li>
+        {% endif %}
+        </li>
+        <li class="list-group-item px-0">
+            {% if is_preview %}
+                {% else %}
+            <div class="d-flex flex-wrap">
+                <nav class="question-list" aria-label="Quest navigation">
+                {% for i in q_answers_questions %}
+                    {% if indexOf == forloop.counter %}
+                    <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                    {% else %}
+                    
+                        {% if i.answer == 'Error' %}
+                        <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                        {% else %}
+                        <a class="btn btn-success my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                        {% endif %}
+                        
+                    {% endif %}
+                    {% endfor %}
+                </nav>
+            {{q_question.answerKey}}
+            
+            </div>
+            <div class="help justify-content-end d-flex flex-fill flex-row flex-wrap">
+                <button class="btn btn-info keybind-button mx-2">Pintasan Keyboard</button>
+                <button class="btn btn-primary session-info-button mx-2">Info Sesi</button>
+                <button class="btn btn-warning update-session-button mx-2 ">Ubah Data</button>
 
-    {% endblock main_container %}    
+            </div>         
+            {% endif %}
+        </li>
+            </ul>
+            {% endfor %}
+            </div>
+        </ul> 
+    </div>
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+  <label class="btn btn-secondary active">
+    <input type="radio" name="options" id="option1" autocomplete="off" checked> Active
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+  </label>
+</div>
+</main>
+    <div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+          <div class="modal-content">
+            
+            <div class="modal-body">
+                <h3 class="d-flex justify-content-between"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+                    <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
+                    <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
+                  </svg><div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div></h3>
+              <h1>Waktu Habis</h1>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+     </ul>
+
+    
+{% endblock no_container%}
     {% block user_script %}
         <script>
-
+            document.querySelector('.ql-snow').focus();
             {% if not q_testTaker.timeLimit == 0 %}
+            keybindHelpBtn = document.querySelector('.keybind-button')
+            if (localStorage.useTouch == "true") {
+                keybindHelpBtn.classList.add('d-none')
+            }
 
         const _0x315f=['43599ihoYLy','1tgloGo','34764QpyOgp','value','39626TaZjVJ','1KzQQQY','1052773BvchpC','.time','74194RizoZa','submit','getElementsByTagName','798269TOyHeJ','is_timeout','965199rmOsAp','3MgAJni'];function _0xff6e(_0x2277c0,_0x1af5d2){return _0xff6e=function(_0x315f07,_0xff6e1b){_0x315f07=_0x315f07-0x1de;let _0x598f03=_0x315f[_0x315f07];return _0x598f03;},_0xff6e(_0x2277c0,_0x1af5d2);}(function(_0x258e6c,_0x30d6b6){const _0x20d4ae=_0xff6e;while(!![]){try{const _0xc5e2af=-parseInt(_0x20d4ae(0x1df))*parseInt(_0x20d4ae(0x1e0))+parseInt(_0x20d4ae(0x1de))+-parseInt(_0x20d4ae(0x1e6))*parseInt(_0x20d4ae(0x1e1))+-parseInt(_0x20d4ae(0x1e4))+parseInt(_0x20d4ae(0x1eb))+parseInt(_0x20d4ae(0x1e2))+parseInt(_0x20d4ae(0x1e5))*parseInt(_0x20d4ae(0x1e8));if(_0xc5e2af===_0x30d6b6)break;else _0x258e6c['push'](_0x258e6c['shift']());}catch(_0x127d81){_0x258e6c['push'](_0x258e6c['shift']());}}}(_0x315f,0x9e80e),function(){const _0x560087=_0xff6e,_0x50d5b8=document[_0x560087(0x1ea)]('form')[0x0];let _0x54d49b={{timeNow |date:"U"}};setInterval(()=>{const _0x2231e9=_0x560087;makeTimer({{q_testTaker.timeStart |date:"U"}}+{{q_testTaker.timeLimit}}*0x3c,_0x54d49b,_0x2231e9(0x1e7),()=>{const _0x44f783=_0x2231e9;_0x50d5b8[_0x44f783(0x1ec)][_0x44f783(0x1e3)]=!![],_0x50d5b8[_0x44f783(0x1e9)]();}),_0x54d49b+=0x1;},0x3e8);}());
             {% endif %}  
-            allLabel = document.querySelectorAll('.label_answer')
-            document.addEventListener("keydown", function(event) {
-            if (event.which-49 >= 0 && event.which-49<allLabel.length-1){
-                target = document.getElementById(`id_answer_${event.which-49}`)
+            const cancelChoice = () => {
+                checked = document.querySelectorAll('[type=radio][checked=true]')
+                if (checked.length > 0){
+                    checked[0].removeAttribute('checked')
+                    console.log(checked)
+                }
                 for( i = 0 ; i< allLabel.length ;i++){
                     if (allLabel[i].classList.contains('active')){
                         allLabel[i].classList.remove('active')
                     }
                 }
-                targetLabel = document.getElementById(`label_answer_${event.which-49}`)
-                targetLabel.classList.add('active')
-                target.checked=true
-                console.log(target)
             }
-            })
+            
+            // buttonCancel = document.querySelector('.button-cancel')
+            // buttonCancel.addEventListener('click', (e) => {
+            //     e.preventDefault();
+            //     cancelChoice()
+            //     console.log('click')
+            //     buttonCancel.classList.add('d-none')
+            // })
+
+            // allRadioChoice = document.querySelector('.btn-group-toggle')
+            
+            
+            // if (document.querySelector('form').answer.value !== ""){
+            //     buttonCancel.classList.remove('d-none')
+            // }
+            // let callback = function(mutationsList, observer) {
+            //     console.log(mutationsList)
+            //     if (document.querySelector('form').answer.value !== ""){
+            //     buttonCancel.classList.remove('d-none')
+            //     console.log(document.querySelectorAll('label.active').length)
+            //     if (document.querySelectorAll('label.active').length == 0){
+            //         document.querySelector('form').answer.value = ""
+
+            //         console.log('value',document.querySelector('form').answer.value)
+            //     }
+            // }
+            // };
+            // let observer = new MutationObserver(callback);
+            // let config = { attributes:true,characterData:true,subtree:true };
+             
+            // observer.observe(allRadioChoice, config);
+            
+
+
+
+            // allLabel = document.querySelectorAll('.label_answer')
+            
+            // document.addEventListener("keydown", function(event) {
+            // if (event.which-49 >= 0 && event.which-49<allLabel.length){
+            //     target = document.getElementById(`id_answer_${event.which-49}`)
+            //     cancelChoice()
+            //     targetLabel = document.getElementById(`label_answer_${event.which-49}`)
+            //     targetLabel.classList.add('active')    
+            //     target.checked = true
+            //     if(document.createEvent){
+            //         event = document.createEvent("HTMLEvents");
+            //         event.initEvent("change", true, true);
+            //         event.eventName = "change";
+            //         target.dispatchEvent(event);
+            //     } else {
+            //         event = document.createEventObject();
+            //         event.eventName = "change";
+            //         event.eventType = "change";
+            //         target.fireEvent("on" + event.eventType, event);
+            //     }
+            //     console.log(target.checked)
+            // }
+            // if (event.which == 27){
+            //     cancelChoice()
+            //     buttonCancel.classList.add('d-none')
+            // }
+            // if (event.which == 81){
+            //     el = document.querySelectorAll('nav.question-list')[0].firstElementChild
+            //     el.focus()
+            // }
+            // })
 
         </script>
         {% endblock user_script %}

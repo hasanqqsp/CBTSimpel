@@ -3,7 +3,8 @@ from .models import TestTaker , Question,TestPackage
 # from django.contrib.auth.forms import AuthenticationForm
 
 class AnswerForm(forms.Form):
-    answer = forms.ChoiceField(choices=(("",""),), widget=forms.RadioSelect())
+    answer = forms.ChoiceField(choices=(("",""),), widget=forms.RadioSelect(),required=False)
+
 
 class CreateSessionForm(forms.ModelForm):
     class Meta:
@@ -13,7 +14,17 @@ class CreateSessionForm(forms.ModelForm):
             'session_password' : forms.PasswordInput()
         }
 
-
+class UpdateSessionForm(forms.ModelForm):
+    password_confirm =  forms.CharField(widget=forms.PasswordInput,required=False)
+    class Meta:
+        model = TestTaker
+        fields = ['testTakerName','testTakerGroup','session_password',]
+        widgets = {
+            'session_password' : forms.PasswordInput()
+        }
+        required = {
+            'session_password' : False
+        }
 
 class AuthTestForm1(forms.Form):
     testCode = forms.CharField()

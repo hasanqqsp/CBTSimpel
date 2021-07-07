@@ -11,16 +11,16 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
       referrerpolicy="no-referrer"
     ></script>
 
-<div class="container-lg px-3">
-    <div class="row py-4 h-100">
-          <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center mw-100">
-            <div class="align-items-center flex-fill mw-100">
+    <div class="container-lg px-3 h-100" >
+      <div class="row py-4 h-100" style="min-height:100vh;">
+            <div class=" m-auto d-flex align-items-center flex-wrap text-center">
+              <div class="align-items-center flex-fill">
 
           <div class="row d-flex justify-content-center site-banner-mini">
               <div class="">
                      <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
-<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
-</svg>
+                        <path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
+                        </svg>
                   
               </div>
               
@@ -35,7 +35,7 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
   {% block header %}
     <h3 class="m-1 text-uppercase"><strong>JAWABAN {{q_testPackage.testTitle}}</strong></h3>
   {% endblock header %}
-  </div>    
+
     <ul class="list-group block text-left list-group-flush">
       <li class="list-group-item"><div class="row">
           <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
@@ -138,33 +138,44 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
           </div></li>
       <li class="list-group-item"><div class="row">
           <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted mt-auto mb-3 h6 text-uppercase">Jawaban Anda :</div></div>
-            <ul class="flex-fill d-flex justify-content-between list-group block list-group-flush">
-            {% for q in q_testTaker.get_all_answer_question_and_score %}
-              <li class="list-group-item d-flex flex-column py-1  "><div class="row">
-                  <div class="col-md-2 pl-2 my-auto"><div class="card-title text-muted my-auto  h6 text-uppercase">Soal Ke-{{q.num}}</div></div>
-                  <div class="col-md-4 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">{{q.question}}</div></div>
-                  {% if q.answer == "Error"%}
-                    <div class="col-md-4 pl-2"><a  class="card-text btn btn-danger btn-block text-left rounded h6 my-1 p-2">Tidak Diisi</a></div>
-                  {% else %}
-                    {% if q.isTrue == 'True' %}
-                    <div class="col-md-4 pl-2"><a  class="card-text btn btn-info btn-block text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</a></div>
-                    {% else %}
-                    <div class="col-md-4 pl-2"><a  class="card-text btn btn-danger btn-block text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</a></div>
-                    {% endif %}
-                  {% endif %}
-                      
-                  <div class="col-md-2 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">Skor : {{q.score}}</div></div>
-                  </div>
-                  </li>
-        
-                {% endfor %}
-            </ul>
-          </div>
           </li>
-          <li class="list-group-item"><div class="row">
-              <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Total Skor</div></div>
-              <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.get_total_score}}</div></div>
+      <li class="list-group-item">
+        <ul class="flex-fill d-flex justify-content-between list-group block list-group-flush">
+          {% for q in q_testTaker.get_all_answer_question_and_score %}
+            <li class="list-group-item d-flex flex-column py-1  "><div class="row">
+              <div class="col-md-2 pl-2 my-auto"><div class="card-title text-muted my-auto  h6 text-uppercase">Soal Ke-{{q.num}}</div></div>
+              <div class="col-md-4 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">{{q.question}}</div></div>
+              {% if q.answer == "Error"%}
+                <div class="col-md-4 pl-2"><div  class="card-text bg-danger text-left rounded h6 my-1 p-2">Tidak Diisi</div></div>
+              {% else %}
+                {% if q.isTrue == 'True' %}
+                  <div class="col-md-4 pl-2"><div  class="card-text bg-info text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</div></div>
+                {% else %}
+                  <div class="col-md-4 pl-2"><div  class="card-text bg-danger text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</div></div>
+                {% endif %}
+              {% endif %}    
+              <div class="col-md-2 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">Skor : {{q.score}}</div></div>
+            </li>
+          {% endfor %}
+        </ul>
+      <li class="list-group-item mx-3 px-4"><div class="row">
+        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Total Skor</div></div>
+        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.get_total_score}}</div></div>
           </div></li>
+      </li>
+      
+
+          <footer class="mt-2 d-flex justify-content-end px-3">
+            <form action="pdf" method="post">
+              {% csrf_token %}
+              <button type="submit" value="true" name="is_authenticated" class="btn btn-success btn-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down-fill" viewBox="0 0 16 16">
+                  <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zm-1 4v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 11.293V7.5a.5.5 0 0 1 1 0z"/>
+                </svg>
+                Unduh PDF
+              </button>
+            </form>
+          </footer>
       {% else %}
       <h4 class=" pb-2 text-center my-auto align-items-center flex-fill font-weight-bold">Masukan Kunci Sesi</h4>
                   

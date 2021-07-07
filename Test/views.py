@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from .models import (Question , TestPackage, Answer, TestTaker)
 from .forms import *
-from django.http import (HttpResponseRedirect ,HttpResponse,HttpResponseNotFound)
+from django.http import (HttpResponseRedirect ,HttpResponse,HttpResponseNotFound,HttpResponseForbidden)
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login,logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -23,8 +23,6 @@ def render_to_pdf(template_src, context_dict={}):
     if not pdf.err:
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
-
-
 
 def index(request):
     return render(request, 'Test/index.html')
@@ -56,7 +54,7 @@ def joinTest(request):
     }
     return render(request, 'Test/joinTest.html',context)
 
-@login_required(login_url='/test/resume')            
+@login_required(login_url='/test/resume', redirect_field_name=None)            
 def changeTest(request,testID,testTakerInfo):
     q_testPackage = TestPackage.objects.get(testID=testID)
     if request.user.is_authenticated :
@@ -109,7 +107,7 @@ def detailTest(request, testID):
     }
     return render(request, 'Test/overviewTest.html', context)
         
-@login_required(login_url='/test/resume')  
+@login_required(login_url='/test/resume', redirect_field_name=None)  
 def welcomeTest(request,testID):
     if not TestTaker.objects.filter(session_code = request.user).exists():
         pass
@@ -128,7 +126,7 @@ def welcomeTest(request,testID):
     }
     return render(request,'Test/welcomeTest.html',context)
 
-@login_required(login_url='/test/resume')  
+@login_required(login_url='/test/resume', redirect_field_name=None)  
 def verifyAnswer(request, testID):
     q_testPackage = TestPackage.objects.filter(testID=testID)
     if len(q_testPackage) > 0:
@@ -170,7 +168,7 @@ def verifyAnswer(request, testID):
 
     return render(request, 'Test/verifyAnswer.html',context)
 
-@login_required(login_url='/test/resume')  
+@login_required(login_url='/test/resume', redirect_field_name=None)  
 def doTest(request, testID, questID):
     q_testPackage = TestPackage.objects.get(testID=testID)
     q_question = q_testPackage.question_set.get(questID=questID)
@@ -191,17 +189,18 @@ def doTest(request, testID, questID):
         form = AnswerForm(request.POST)
         if len(q_answer) > 0:
             q_answer[0].delete()
-        if request.POST['is_timeout']:
-            return HttpResponseRedirect('../q/{}'.format('verify'))    
         if form.is_valid():
-            Answer.objects.create(
-                question = q_question,
-                testTaker=q_testTaker,
-                answer=request.POST['answer']
-            )
-            
+            if request.POST.get('answer'):
+                Answer.objects.create(
+                    question = q_question,
+                    testTaker=q_testTaker,
+                    answer=request.POST['answer']
+                )
+            if request.POST['is_timeout']:
+                return HttpResponseRedirect('../q/{}'.format('verify'))    
            
             return HttpResponseRedirect('../q/{}'.format(query))
+            
         else:
             form = AnswerForm
     else:
@@ -256,7 +255,7 @@ def createSession(request,testID):
 
     return render(request,'Test/createSession.html',context)
 
-@login_required(login_url='/test/resume')  
+@login_required(login_url='/test/resume', redirect_field_name=None)  
 def sessionInfo(request):
     q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)
     if not TestTaker.objects.filter(session_code=request.user,timeFinish=None).exists:
@@ -265,6 +264,35 @@ def sessionInfo(request):
         'q_testTaker' : q_testTaker[0], 
         }   
     return render(request,'Test/sessionInfo.html',context)     
+
+@login_required(login_url='/test/resume', redirect_field_name=None)  
+def sessionUpdate(request):
+    q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)
+    if request.method == 'POST':
+        updateSessionForm = UpdateSessionForm(request.POST or None)
+        if updateSessionForm.is_valid():
+            q_testTaker.testTakerName = request.POST.get('testTakerName')
+            q_testTaker.testTakerGroup = request.POST.get('testTakerGroup')
+            if request.POST.get('session_password'):
+                if request.POST.get('session_password') == request.POST.get('password_confirm'):
+                    q_testTaker.session_password = request.POST.get('session_password'),
+            q_testTaker = TestTaker.objects.create(
+                testTakerName = request.POST.get('testTakerName'),
+                testTakerGroup = request.POST.get('testTakerGroup'),
+                session_password = request.POST.get('session_password'),
+                testPackage = TestPackage.objects.get(testID=testID)
+            )
+            q_testTaker.set_time_limit()
+            credential = authenticate(request, username=q_testTaker.session_code, password=request.POST.get('session_password'),)
+            login(request,credential)
+        return HttpResponseRedirect('../{}'.format(testID))
+    else :
+        updateSessionForm = UpdateSessionForm
+    context = {
+        'form' : updateSessionForm
+    }
+
+    return render(request,'Test/sessionUpdate.html',context)  
 
 def sessionEdit(request):
     q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)
@@ -309,7 +337,7 @@ def resumeTest(request,*args, **kwargs):
     }
     return render(request,'Test/resume.html',context)
 
-@login_required(login_url='/test/resume',redirect_field_name=None)  
+@login_required(login_url='/test/resume', redirect_field_name=None)  
 def cancelTest(request,redirID):
     q_user = User.objects.get(username = request.user)
     q_user.delete()
@@ -328,10 +356,9 @@ def viewScore(request, session_code):
         q_testTaker = q_testTaker[0]
     else:
         return HttpResponseNotFound()
-    
+    form = AuthScoreForm(request.POST or None)
     if request.method == 'POST':
         
-        form = AuthScoreForm(request.POST or None)
         
         if form.is_valid():
             if q_testTaker.session_password == request.POST.get('session_password'):
@@ -350,12 +377,11 @@ def viewScore(request, session_code):
                 return render(request, 'Test/viewScore.html',context)
             else:
                 form.add_error(error=ValidationError('Wrong Password'),field='session_password')
-        context = {
-            'is_authenticated' : False,
-            'form' : form
-        }
-        print('yes')
-        return render(request, 'Test/viewScore.html',context)
+    context = {
+        'is_authenticated' : False,
+        'form' : form
+    }
+    return render(request, 'Test/viewScore.html',context)
 
 
     if q_testPackage.settings["canViewScorePageAuth"]:
@@ -385,38 +411,39 @@ def findScore(request):
     }
     return render(request, 'Test/findScore.html',context)
 
-
 def generate_pdf(request, session_code):
-    q_testTaker = TestTaker.objects.filter(session_code=session_code) 
-    q_testPackage = q_testTaker[0].testPackage
-    if len(q_testTaker) > 0 and q_testTaker[0].timeFinish and q_testPackage.settings["canViewScorePage"]:
-        q_testTaker = q_testTaker[0]
-    else:
-        return HttpResponseNotFound()
+    if request.method == 'POST' and request.POST.get('is_authenticated'):
+        q_testTaker = TestTaker.objects.filter(session_code=session_code) 
+        q_testPackage = q_testTaker[0].testPackage
+        if len(q_testTaker) > 0 and q_testTaker[0].timeFinish and q_testPackage.settings["canViewScorePage"]:
+            q_testTaker = q_testTaker[0]
+        else:
+            return HttpResponseNotFound()
 
-      
-    q_last_answered_quest = q_testTaker.get_last_answered()
-    q_answers = q_testTaker.get_all_answer()
-    q_question = q_testPackage.get_all_question(q_testTaker.sequences)
-   
-    context = {
-        'q_testTaker' : q_testTaker,
-        'q_testPackage' : q_testPackage,
-        'q_answer' : q_answers,
-        'q_question' : q_question,
-    }
+        
+        q_last_answered_quest = q_testTaker.get_last_answered()
+        q_answers = q_testTaker.get_all_answer()
+        q_question = q_testPackage.get_all_question(q_testTaker.sequences)
+    
+        context = {
+            'q_testTaker' : q_testTaker,
+            'q_testPackage' : q_testPackage,
+            'q_answer' : q_answers,
+            'q_question' : q_question,
+        }
 
-    template = get_template('Test/viewScorePDF.html')
-    # Creating http response
-    html = template.render(context)
-    pdf = render_to_pdf('Test/viewScorePDF.html', context)
-    if pdf:
-        response = HttpResponse(pdf, content_type='application/pdf')
-        filename = f"{q_testTaker.testTakerName}_Result_{q_testPackage.testTitle}"[0:59]+".pdf" 
-        content = "inline; filename=%s" %(filename)
-        download = request.GET.get("download")
-        if download:
-            content = "attachment; filename='%s'" %(filename)
-        response['Content-Disposition'] = content
-        return response
-    return HttpResponse("Not found")
+        template = get_template('Test/viewScorePDF.html')
+        # Creating http response
+        html = template.render(context)
+        pdf = render_to_pdf('Test/viewScorePDF.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = f"{q_testTaker.testTakerName}_Result_{q_testPackage.testTitle}"[0:59]+".pdf" 
+            content = "inline; filename=%s" %(filename)
+            download = request.GET.get("download")
+            if download:
+                content = "attachment; filename='%s'" %(filename)
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")
+    return HttpResponseForbidden()
