@@ -100,8 +100,8 @@ p.comment {
   </tr>
   {% for q in q_testTaker.get_all_answer_question_and_score %}
   <tr>
-    <td width="8%" style="text-align:center;padding-y:4px">{{q.num}}</td>
-    <td width="41%" style="padding-y:4px">{{q.question}}</td>                          
+    <td width="8%" style="text-align:center;padding-top:4px">{{q.num}}</td>
+    <td width="41%" style="padding-top:4px">{{q.question | safe}}</td>                          
     {% if q.answer == "Error"%}
     <td width="41%">Tidak Diisi</td>
     {% else %} 
@@ -111,9 +111,12 @@ p.comment {
     <td width="41%">{{q.answer}}</td>
     {% endif %} 
     {% endif %}
-
-    <td width="10%" style="text-align:center;">{{q.score}}</td>  
-
+    
+    <td width="10%" style="text-align:center;">
+      {% if q_testPackage.settings.viewAnswerKey %}
+      {{q.score}}
+      {% endif%}
+    </td>  
   </tr>
                   {% endfor %}
   <tr>

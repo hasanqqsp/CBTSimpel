@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse
 from django.utils import timezone
-import datetime
+import json
+from datetime import timedelta
 from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
@@ -162,10 +163,10 @@ def verifyAnswer(request, testID):
         
         'timeNow' : timezone.now(),
         'lastQuest' : q_last_answered_quest.questID,
-        'questionCount' : q_testPackage.get_question_count(),
+        'questionCount' : len(json.loads(q_testTaker.sequences)),
         'query' : q_testTaker.get_all_answer_and_question(),
     }
-
+    print(context["questionCount"])
     return render(request, 'Test/verifyAnswer.html',context)
 
 @login_required(login_url='/test/resume', redirect_field_name=None)  
@@ -187,20 +188,21 @@ def doTest(request, testID, questID):
         query = q_question.get_next_question(q_testTaker.sequences).questID
     if request.method == 'POST':
         form = AnswerForm(request.POST)
-        if len(q_answer) > 0:
-            q_answer[0].delete()
-        if form.is_valid():
-            if request.POST.get('answer'):
-                Answer.objects.create(
-                    question = q_question,
-                    testTaker=q_testTaker,
-                    answer=request.POST['answer']
-                )
-            if request.POST['is_timeout']:
-                return HttpResponseRedirect('../q/{}'.format('verify'))    
-           
-            return HttpResponseRedirect('../q/{}'.format(query))
+        if (timezone.now() - timedelta(seconds=10)) <= q_testTaker.get_time_limit():
+            if len(q_answer) > 0:
+                q_answer[0].delete()
+            if form.is_valid():
+                if request.POST.get('answer'):
+                    Answer.objects.create(
+                        question = q_question,
+                        testTaker=q_testTaker,
+                        answer=request.POST['answer']
+                    )
+                if request.POST['is_timeout']:
+                    return HttpResponseRedirect('../q/{}'.format('verify'))    
             
+                return HttpResponseRedirect('../q/{}'.format(query))
+            return HttpResponseRedirect('../q/{}'.format('verify'))
         else:
             form = AnswerForm
     else:
@@ -212,7 +214,9 @@ def doTest(request, testID, questID):
     CHOICES = []
     for i in q_question.choices:
         CHOICES.append((i['choiceCode'],i['choiceLabel']))
-    
+    if not q_testPackage.settings["completeRequired"]:
+        CHOICES.append(("","Cancel"))
+        
     form.base_fields['answer'].choices = CHOICES
 
     context = {
@@ -266,42 +270,39 @@ def sessionInfo(request):
     return render(request,'Test/sessionInfo.html',context)     
 
 @login_required(login_url='/test/resume', redirect_field_name=None)  
-def sessionUpdate(request):
-    q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)
-    if request.method == 'POST':
-        updateSessionForm = UpdateSessionForm(request.POST or None)
-        if updateSessionForm.is_valid():
-            q_testTaker.testTakerName = request.POST.get('testTakerName')
-            q_testTaker.testTakerGroup = request.POST.get('testTakerGroup')
-            if request.POST.get('session_password'):
-                if request.POST.get('session_password') == request.POST.get('password_confirm'):
-                    q_testTaker.session_password = request.POST.get('session_password'),
-            q_testTaker = TestTaker.objects.create(
-                testTakerName = request.POST.get('testTakerName'),
-                testTakerGroup = request.POST.get('testTakerGroup'),
-                session_password = request.POST.get('session_password'),
-                testPackage = TestPackage.objects.get(testID=testID)
-            )
-            q_testTaker.set_time_limit()
-            credential = authenticate(request, username=q_testTaker.session_code, password=request.POST.get('session_password'),)
-            login(request,credential)
-        return HttpResponseRedirect('../{}'.format(testID))
-    else :
-        updateSessionForm = UpdateSessionForm
-    context = {
-        'form' : updateSessionForm
-    }
-
-    return render(request,'Test/sessionUpdate.html',context)  
-
 def sessionEdit(request):
-    q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)
     if not TestTaker.objects.filter(session_code=request.user,timeFinish=None).exists:
         return HttpResponseRedirect('/test/resume')
+    q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)[0]
+    form = None
+    if q_testTaker.testPackage.settings["allowEditData"]:
+
+        form = UpdateSessionForm(request.POST or None)
+        form.initial = {'testTakerName' : q_testTaker.testTakerName,
+                        'testTakerGroup' : q_testTaker.testTakerGroup,
+                        'session_password' : q_testTaker.session_password}
+        if request.method == "POST":
+            if form.is_valid():
+                if request.POST.get('session_password'):
+                    if request.POST.get('session_password') == request.POST.get('password_confirm'):
+                        q_testTaker.testTakerName = request.POST.get('testTakerName')
+                        q_testTaker.testTakerGroup = request.POST.get('testTakerGroup')
+                        print(request.POST.get('testTakerName'))
+                        q_testTaker.session_password = request.POST.get('session_password')
+                        q_testTaker.save()
+                        if request.GET.get("next"):
+                            return HttpResponseRedirect(request.GET.get("next"))
+                        return HttpResponseRedirect("test/resume")
+                    else:
+                        form.add_error(error=ValidationError("Confirmation Wrong"),field="password_confirm")
+
+    else:
+        return HttpResponseRedirect("/test/resume")
     context = {
-        'q_testTaker' : q_testTaker[0], 
+        'form' : form ,
+        'q_testTaker' : q_testTaker, 
         }   
-    return render(request,'Test/sessionInfo.html',context)
+    return render(request,'Test/sessionEdit.html',context)
 
 def resumeTest(request,*args, **kwargs):
     q_testTaker = TestTaker.objects.filter(session_code=request.user or request.POST.get("username"))                           
@@ -356,40 +357,31 @@ def viewScore(request, session_code):
         q_testTaker = q_testTaker[0]
     else:
         return HttpResponseNotFound()
-    form = AuthScoreForm(request.POST or None)
-    if request.method == 'POST':
-        
-        
-        if form.is_valid():
-            if q_testTaker.session_password == request.POST.get('session_password'):
-                q_last_answered_quest = q_testTaker.get_last_answered()
-                q_answers = q_testTaker.get_all_answer()
-                q_question = q_testPackage.get_all_question(q_testTaker.sequences)
+
+    q_answers = q_testTaker.get_all_answer()
+    q_question = q_testPackage.get_all_question(q_testTaker.sequences)
             
-                context = {
-                    'q_testTaker' : q_testTaker,
-                    'q_testPackage' : q_testPackage,
-                    'q_answer' : q_answers,
-                    'q_question' : q_question,
-                    'is_authenticated' : True,
-                }
-
-                return render(request, 'Test/viewScore.html',context)
-            else:
-                form.add_error(error=ValidationError('Wrong Password'),field='session_password')
-    context = {
-        'is_authenticated' : False,
-        'form' : form
-    }
-    return render(request, 'Test/viewScore.html',context)
-
-
     if q_testPackage.settings["canViewScorePageAuth"]:
         context = {
             'is_authenticated' : False,
             'form' : AuthScoreForm()
         }
         return render(request, 'Test/viewScore.html',context)
+    context = {
+        'q_testTaker' : q_testTaker,
+        'q_testPackage' : q_testPackage,
+        'q_answer' : q_answers,
+        'q_question' : q_question,
+        'is_authenticated' : True,
+    }
+    if request.method == 'POST':
+        if form.is_valid():
+            if q_testTaker.session_password == request.POST.get('session_password'):
+                return render(request, 'Test/viewScore.html',context)
+            else:
+                form.add_error(error=ValidationError('Wrong Password'),field='session_password')
+    
+    return render(request, 'Test/viewScore.html',context)
 
 def findScore(request):
     form = FindScoreForm()

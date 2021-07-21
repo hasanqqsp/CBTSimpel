@@ -20,7 +20,7 @@ class UpdateSessionForm(forms.ModelForm):
         model = TestTaker
         fields = ['testTakerName','testTakerGroup','session_password',]
         widgets = {
-            'session_password' : forms.PasswordInput()
+            'session_password' : forms.PasswordInput(render_value = True)
         }
         required = {
             'session_password' : False
@@ -41,7 +41,9 @@ class ResumeTestForm(forms.Form):
             'placeholder': '',
             'id': 'password',
         }
-))
+))  
+    
+
 
 class FindScoreForm(forms.Form):
     sessionCode = forms.CharField()

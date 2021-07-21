@@ -3,10 +3,7 @@ from django.db import models , IntegrityError
 from binascii import hexlify
 from django.contrib.auth.models import User,Group
 from django.contrib.auth import authenticate, login
-import uuid
 import random
-import string
-import time 
 import datetime
 from utils.generate_id import generate_id, generate_numeric_code
 import json
@@ -24,7 +21,8 @@ class TestPackage(models.Model):
         "limitByScheduleFinish": false,
         "onlyRegistered": false,
         "canViewScorePage": true,
-        "canViewScorePageAuth": false
+        "canViewScorePageAuth": false,
+        "allowEditData": true
         }'''
     testID = models.CharField(max_length=16, unique=True,editable=True,blank=True)
     testTitle = models.CharField(max_length=1024)
@@ -69,12 +67,7 @@ class TestPackage(models.Model):
             if r not in list :
                 list.append(r)
         return list
-    '''
-from Test.models import *;
-all = TestPackage.objects.all();
-q = all[2];
-q.get_time_limit();
-    '''
+    
     def get_all_question(self,*args):
         list = []
         for i in json.loads(args[0]):
@@ -90,7 +83,6 @@ q.get_time_limit();
         
     def __str__(self):
         return f"{self.testID}_{self.testTitle}"
-
 
 class TestTaker(models.Model):
     testTakerID = models.CharField(max_length=16, unique=True)
@@ -127,9 +119,10 @@ class TestTaker(models.Model):
         user = User.objects.get(username = self.session_code)
         user.delete()
         super().save()
-    '''
-    query.append({'num':'{}'.format(questQuery[i].questionNum),'question':'{}'.format(questQuery[i].question),'answer':"{}".format(answer),'questID':'{}'.format(questQuery[i].questID)})
-    '''
+    
+    def get_time_limit(self):
+        return self.timeStart + datetime.timedelta(minutes=self.timeLimit)
+
     def get_all_answer(self):
         list = []
         for i in json.loads(self.sequences):
