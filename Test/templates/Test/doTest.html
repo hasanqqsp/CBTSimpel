@@ -149,7 +149,7 @@
                 
                 {% if q_testPackage.settings.allowEditData %}
 
-                    <a href="{% url 'test:sessionEdit' %}" class="btn btn-warning update-session-button mx-2 ">Ubah Data</a>
+                    <a href="{% url 'test:sessionEdit' %}?next=/test/{{q_testPackage.testID}}/{{q_question.questID}}" class="btn btn-warning update-session-button mx-2 ">Ubah Data</a>
                     
                 {% endif %}
                     
