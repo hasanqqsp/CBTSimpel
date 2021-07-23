@@ -87,10 +87,11 @@ function makeTimer(timeEnd, timeStart, target, callback) {
   }
   $(target).html(timeLeft);
 }
-if ("ontouchstart" in document.documentElement) {
-  localStorage.setItem("useTouch", true);
-  console.log("set to touchscreen mode");
-} else {
-  localStorage.setItem("useTouch", false);
-  console.log("set to keyboard mode");
+function showHidePassword(target) {
+  var x = document.getElementById(target);
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
 }

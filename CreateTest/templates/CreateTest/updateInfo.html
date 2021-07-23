@@ -25,9 +25,24 @@
     </div>
     <div class="form-group">
     <label for="id_testSchedule">Jadwal Tes (Tahun/Bulan/Hari)</label>
-  <div class="input-group date" id="datepicker" data-date-format="dd.mm.yyyy">
-    {{form.testSchedule |add_class:"form-control datepicker" |attr:"placeholder:YYYY/MM/DD"}}
+  <div class="input-group date" id="datepicker" data-date-format="yyyy-mm-dd">
+    
+    {{form.testSchedule |add_class:"form-control" |attr:"placeholder:YYYY-MM-DD"}}
+      
+    
     <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div></div>
+  
+
+<script>
+  $.datetimepicker.setLocale('id');
+  jQuery('#id_testSchedule').datetimepicker({
+    
+      format:'Y-m-d H:i:s'
+    }
+    
+  );
+</script>
+
   <div class="form-group">
     <label for="id_timeLimit">Batas Waktu (menit)</label>
     {{form.timeLimit |add_class:"form-control"}}
@@ -53,7 +68,7 @@
     </div>
   <div class="form-group">
     <label for="id_passwordAdminTest">Password Admin Tes </label>
-    {{form.passwordAdminTest |add_class:"form-control"|attr:"type:text"}}
+    {{form.passwordAdminTest |add_class:"form-control"|attr:"type:password"}}
     <small  class="form-text text-muted">Buatlah Sebuah Password. Ini akan  digunakan peserta untuk mengakses administrasi tes. </small>
     </div>
 <button type="submit"class="btn btn-primary">Kirim</button>
@@ -61,10 +76,10 @@
 {% block user_script %}
 <script>
 
- $('.input-group.date#datepicker').datepicker({
-   format: "yyyy-mm-dd",
- }); 
- </script>
+//  $('.input-group.date#datepicker').datepicker({
+//    dateFormat: "yyyy-mm-dd",
+//  }); 
+//  </script>
 
 {% endblock user_script %}
     

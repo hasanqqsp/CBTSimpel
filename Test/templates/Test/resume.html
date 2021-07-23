@@ -1,28 +1,12 @@
 {% extends 'snippets/base.html' %}
 {% load widget_tweaks %}
 {% block web_title %}
-Lanjutkan Tes
+    Lanjutkan Tes
 {% endblock web_title %}
-{% block no_container %}
-    <div class="container-lg px-3 h-100" style="min-height:100vh;">
-      <div class="row py-4 h-100 d-flex align-items-center justify-content-center" style="min-height:100vh;">
-        <div class=" d-flex align-items-center flex-wrap">
-
-            <div class=" m-auto d-flex align-items-center flex-wrap ">
-              <div class="align-items-center">
-            <div class="row d-flex justify-content-center site-banner-mini flex-fill">
-                <div class="site-banner-logo">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16"><path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/></svg>
-                </div>
-                <div class="site-banner-text">
-                   <h1 class="mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
-                </div>
-            </div>
-
-            <div class="align-items-center flex-fill ">
-                <h2 class="text-center"><strong>Login untuk Melanjutkan Tes</strong></h2>
-                </div>
-        <form method="post" class="flex-fill">
+{% block main_container %}
+    <h2 class="text-center"><strong>Login untuk Melanjutkan Tes</strong></h2>
+            
+    <form method="post" class="flex-fill">
         {% csrf_token %}
         {% if form.errors.password %}
             <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
@@ -37,35 +21,15 @@ Lanjutkan Tes
             <p> Kode Sesi Tidak ditemukan, mungkin salah atau sesi telah kadaluarsa </p>
             </div>
         {% endif %}
-        
-            
-      
         {{form.username|add_class:"form-control form-control-lg my-4" |attr:"placeholder:Kode Sesi"}}
 
         {{form.password |add_class:"form-control-lg" |attr:"placeholder:Kunci Sesi"}}
+
         <div class="my-3 d-flex justify-content-between flex-wrap">
-
-        <a class="h6 text-center flex-fill text-muted px-1" href="/test/join">Belum Mulai Mengerjakan? Mulai Disini</a>  
-        
-        <button class="btn btn-success flex-fill px-1" type="submit">Lanjutkan</button>
-
-    
-
-
-    </div>
-
+            <a class="h6 text-center flex-fill text-muted px-1" href="/test/join">Belum Mulai Mengerjakan? Mulai Disini</a>  
+            <button class="btn btn-success flex-fill px-1" type="submit">Lanjutkan</button>
+        </div>
     </form>
 
 
-    </div>
-                </div>
-                 </div>
-                  
-              </div>
-            
-          
-      
-
-{% endblock no_container%}
-</body>
-</html>
+{% endblock main_container %}

@@ -1,0 +1,24 @@
+{% extends 'CreateTest/snippets/base.html' %}
+
+{% block nav_brand %}
+    Laporan Tes : {{testQuery.testTitle}}
+{% endblock nav_brand %}
+
+{% block main_container %}
+    <div class="d-flex flex-row flex-wrap justify-content-between">
+        <div class="w-40 m-1 notice notice-info">
+            <h3>Jumlah Peserta</h3>
+            <h2 class="text-muted">{{reportQuery.testTakerCount}}</h2>
+        </div>
+        <div class="w-40 m-1 notice notice-info">
+            <h2>Halo {{reportQuery.testID}}</h2>
+        </div>
+        <div class="w-40 m-1 notice notice-info">
+            <h2>Halo</h2>
+        </div>
+        <div class="w-40 m-1 notice notice-info">
+            <h2>Halo</h2>
+        </div>
+    </div>
+{% endblock main_container %}
+    

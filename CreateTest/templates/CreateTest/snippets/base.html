@@ -1,6 +1,7 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+  
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,154 +10,137 @@
     <meta name="generator" content="Jekyll v4.1.1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>
-        {% block web_title %}   
-        Dashboard Administrasi Tes
-        {% endblock web_title %}         
+      
+      Dashboard Administrasi Tes
+      
         </title>
-    {% block stylesheet %}
-      <link rel="stylesheet" type="text/css" href="{% static "/styles/styles.css" %}">
-      <link rel="stylesheet" type="text/css" href="{% static "/styles/simple-sidebar.css" %}">
-    {% endblock stylesheet %}
-    {% block vendor_css %}
-    <link href="{% static 'vendor/trix/trix.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'vendor/mathquill4quill/mathquill4quill.css' %}">
-    {% endblock vendor_css %}
-    {% block default_fonts %}
-    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
-    <style>
+        
+        <link rel="stylesheet" type="text/css" href="/static/styles/styles.css">
+        <link rel="stylesheet" type="text/css" href="/static/styles/simple-sidebar.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha512-f0tzWhCwVFS3WeYaofoLWkTP62ObhewQ1EZn65oSYDZUg1+CyywGKkWzm8BxaJj5HGKI72PnMH9jYyIFz+GH7g==" crossorigin="anonymous" />
+        
+        <link href="/static/vendor/trix/trix.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous">    
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+        <style>
       body {
         font-family: 'Montserrat';font-size: 18px;
       }</style>
-    {% endblock default_fonts %}
-      {% block head_script %}
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
       
-    <script src="{% static 'vendor/mathquill4quill/mathquill4quill.js' %}"></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
-
-    <!-- The loading of KaTeX is deferred to speed up page rendering -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
-
-    <!-- To automatically render math in text elements, include the auto-render extension: -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
-        onload="renderMathInElement(document.body);"></script>
-
-    {% comment %} <!-- Main Quill library
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>   
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+      
+      <!-- The loading of KaTeX is deferred to speed up page rendering -->
+      <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+      
+      <!-- To automatically render math in text elements, include the auto-render extension: -->
+      <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+      
+      
+      <!-- form.media -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/darcula.min.css" type="text/css" media="all" rel="stylesheet">
+      <link href="/static/django_quill/django_quill.css" type="text/css" media="all" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha512-AIOTidJAcHBH2G/oZv9viEGXRqDNmfdPVPYOYKGy3fti0xIplnlgMHUGfuNRzC6FkzIo0iIxgFnr9RikFxK+sw==" crossorigin="anonymous"></script>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" type="text/css" media="all" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<script src="/static/django_quill/django_quill.js"></script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-
-<!-- Theme included stylesheets -->
-<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-<link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet"> --> {% endcomment %}
-{% include 'django_quill/media.html' %}
-
-    {% endblock head_script %}
-    
-    {% block user_head_script %}
-      
-    {% endblock user_head_script %}
-      
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-    </style>
+<script src="/static/script/image-resize.js"></script>
+<script src="https://unpkg.com/quill-image-compress@1.2.11/dist/quill.imageCompressor.min.js"></script>
+<script>
+  Quill.register("modules/imageCompressor", imageCompressor)
+  
+</script>
 
     </head>
-<body>
+    
+    <body>
   <div class="d-flex" id="wrapper">
-  {% block sidebar %}
+    {% block sidebar %}
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">CBT Simpel</div>
+      <div class="sidebar-heading"><a href="{% url 'create:edit' %}"class="text-reset text-decoration-none"> CBT Simpel</a></div>
       <div class="list-group list-group-flush">
         <a href="{% url 'create:info' %}" class="list-group-item list-group-item-action bg-light">Update Info Tes</a>
         <a href="{% url 'create:welcome' %}" class="list-group-item list-group-item-action bg-light">Halaman Petunjuk</a>
         <a href="{% url 'create:question' %}" class="list-group-item list-group-item-action bg-light">Soal</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Peserta</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Laporan</a>
+        <a href="{% url 'create:testTaker' %}" class="list-group-item list-group-item-action bg-light">Peserta</a>
+        <a href="{% url 'create:testReport' %}" class="list-group-item list-group-item-action bg-light">Laporan</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Pengaturan</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Ekspor/Impor</a>
-        <a href="{% url 'create:authorLogout' %}" class="list-group-item list-group-item-action bg-light">Keluar</a>
+        <a href="{% url 'logout' %}" class="list-group-item list-group-item-action bg-light">Log Keluar</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
-  {% endblock sidebar %}
+    {% endblock sidebar %}
     <!-- Page Content -->
     <div id="page-content-wrapper">
-    {% block navbar %}
+      {% block navbar %}
       <nav class="navbar navbar-expand-lg navbar-light justify-content-start bg-light flex-nowrap border-bottom">
-       <button class="navbar-toggler" type="button" id="menu-toggle" data-toggle="collapse">
+        <button class="navbar-toggler" type="button" id="menu-toggle" data-toggle="collapse">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="navbar-brand pl-1 text-wrap">
         {% block nav_brand %}
         {% endblock nav_brand %}
-        </div>
-       </nav>
+      </div>
+    </nav>
 
     {% endblock navbar %}
     
     {% block no_container %}
-      
+    
     <div class="container-fluid ">
     {% block main_container %}
-        <h1 class="mt-4">Simple Sidebar</h1>
+    <h1 class="mt-4">Simple Sidebar</h1>
         <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
         <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>
       </div>
       {% endblock main_container %}
     </div>
     {% endblock no_container %}
-      
+    
     <!-- /#page-content-wrapper -->
-
+    
   </div>
   <!-- /#wrapper -->
-    {% block vendor_script %}
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-      <script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-        <script src="{% static 'script/dashboard.js' %}"></script></body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    {% endblock vendor_script %}
-<script>
-    $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-    });
-  </script>
+  <!-- Bootstrap, Popper and jQuery  -->
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+  {% block vendor_script %}
+  <script>
+      $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+    </script>
+      
+      {% endblock vendor_script %}
+      
 {% block user_script %}
 {% endblock user_script %}
 {% block wysiwyg_script %}
 <script>
-var quill = new Quill('#editor', {
-  modules: {
-    toolbar: [
-      [{ header: [1, 3, false] }],
-      ['bold', 'italic', 'underline'],
-      ['image', 'code-block']
-    ]
-  },
-  scrollingContainer: '#scrolling-container', 
-  placeholder: 'Compose an epic...',
-  theme: 'bubble'
-});
+  
+  if (document.querySelector('.django-quill-widget')){
+  Quill.register("modules/imageCompressor", imageCompressor)
+  var quill = new Quill('#editor', {
+    modules: {
+      toolbar: [
+        [{ header: [1, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        ['image', 'code-block']
+      ]
+    },
+    scrollingContainer: '#scrolling-container', 
+    placeholder: 'Compose an epic...',
+    theme: 'bubble'
+  });
+
+}
 </script>
 {% endblock wysiwyg_script %}
 </body>

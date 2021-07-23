@@ -1,26 +1,10 @@
 {% extends 'snippets/base.html' %}
 {% load static %}
-{% block no_container %}
-
-        <div class="d-flex flex-wrap container-lg p-2 align-items-end " style="min-height:100vh">
-          <div class="m-auto d-flex align-items-center flex-wrap text-center mw-100">
-            <div class="align-items-center mw-100">
-          <div class="row d-flex justify-content-center site-banner-mini">
-              <div class="">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
-<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
-</svg>
-                  
-              </div>
-              
-              <div class="pb-2">
-                  
-                 <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
-              </div>
-               </div>
-        <h3 class="m-1 text-uppercase"><strong>{{title}}</strong></h3>
         
-        <div class="container-fluid border my-2">
+        {% block main_container %}
+        <h2 class="m-1 text-uppercase"><strong>{{title}}</strong></h2>
+        
+        <div class="container-fluid border my-2 ql-container ql-editor">
         {% if now < quest.testScheduleOpen%}
                 <h1 class="text-center font-weight-bold">TES BELUM DIMULAI</h1>
                 <h4 class="text-center font-weight-bold">Akan dimulai pada : {{quest.testScheduleOpen |date:"l, j F Y H:i:s T"}}</h4>
@@ -47,7 +31,5 @@
                 <input type="submit" class="btn btn-success btn-block" value="Kerjakan &raquo;">
         </form>
         {% endif %}
-        {% endblock no_container %}
-        {% block user_script %}
-        
-        {% endblock user_script %}
+        {% endblock main_container%}
+          

@@ -1,53 +1,26 @@
-{% extends 'snippets/base.html' %} {% load widget_tweaks %} 
-{% block no_container%}
-
-<div
-  class="flex-wrap d-flex align-items-center container-lg px-1"
-  style="min-height: 100vh"
->
-  <div class="m-auto d-flex align-items-center flex-wrap text-center">
-    <div class="align-items-center">
-      <div class="d-flex justify-content-center site-banner-mini">
-        <div class="">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="40px"
-            height="40px"
-            fill="currentColor"
-            class="bi pr-2 bi-arrow-up-right-square-fill"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"
-            />
-          </svg>
-        </div>
-
-        <div class="pb-2">
-          <h1 class="mx-auto text-break font-weight-bold">
-            <span class="text-success">CBT</span> SIMPEL
-          </h1>
-        </div>
-      </div>
-      <h4
-        class="pb-2 text-center my-auto align-items-center flex-fill font-weight-bold"
-      >
-        IDENTITAS DAN OTENTIKASI
-      </h4>
-
+{% extends 'snippets/base.html' %} 
+{% load widget_tweaks %} 
+{% block main_container %}
+  <h2 class="my-1"><strong>IDENTITAS DAN AUTENTIKASI</strong></h2>
       <form class="mx-1" method="POST">
         {% csrf_token %}
-        <div class="form-group mx-1 flex-fill">
-          <label for="id_testTakerName">Nama Peserta Tes</label>
-          {{form.testTakerName |add_class:"form-control"}}
+        <div class="form-group text-left mx-1 flex-fill">
+          <label class="text-large" for="id_testTakerName">Nama Peserta Tes</label>
+          {{form.testTakerName |add_class:"form-control" |attr:"placeholder: Masukan Nama Anda"}}
         </div>
-        <div class="form-group mx-1 flex-fill">
-          <label for=":id_testTakerGroup">Kelas / Kelompok </label>
-          {{form.testTakerGroup |add_class:"form-control"}}
+        <div class="form-group text-left mx-1 flex-fill">
+          <label class="text-large" for=":id_testTakerGroup">Kelas / Kelompok </label>
+          {{form.testTakerGroup |add_class:"form-control" |attr:"placeholder: Masukan Nama Kelas / Kelompok Anda"}}
         </div>
-        <div class="form-group mx-1 flex-fill">
-          <label for="id_session_password">Kunci Sesi / Password </label>
-          {{form.session_password |add_class:"form-control"}}
+        <div class="form-group text-left mx-1 flex-fill">
+          <label class="text-large" for="id_session_password">Kunci Sesi / Password </label>
+          {{form.session_password |add_class:"form-control" |attr:"placeholder: Buatlah Password yang mudah diingat"}}
+          <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+            <input type="checkbox" class="custom-control-input" id="show-hide-password" onClick="showHidePassword('id_session_password')">
+            <label class="custom-control-label" for="show-hide-password">
+              Tampilkan Password
+            </label>
+          </div>
           <small class="form-text text-muted"
             >Buatlah Sebuah Password. Ini akan digunakan untuk melanjutkan tes
             jika terjadi galat.
@@ -68,37 +41,4 @@
           Lanjut &raquo;
         </button>
       </form>
-    </div>
-  </div>
-</div>
-{%endblock%} {%block card%} {% block card_header %}
-<h3 class="m-1"><strong>IDENTITAS dan OTENTIKASI</strong></h3>
-{% endblock card_header %}
-
-<form method="POST">
-  {% csrf_token %}
-  <div class="form-group">
-    <label for="id_testTakerName">Nama Peserta Tes</label>
-    {{form.testTakerName |add_class:"form-control"}}
-  </div>
-  <div class="form-group">
-    <label for="id_testTakerGroup">Kelas / Kelompok </label>
-    {{form.testTakerGroup |add_class:"form-control"}}
-  </div>
-  <div class="form-group">
-    <label for="id_session_password">Kunci Sesi / Password </label>
-    {{form.session_password |add_class:"form-control"}}
-    <small id="emailHelp" class="form-text text-muted"
-      >Buatlah Sebuah Password. Ini akan digunakan untuk melanjutkan tes jika
-      terjadi galat.
-      <strong
-        >Catatlah bersama Kode Sesi yang akan diberikan dihalaman
-        selanjutnya</strong
-      >
-    </small>
-  </div>
-
-  <button type="submit" class="btn btn-primary">Lanjut &raquo;</button>
-
-  {%endblock card%}
-</form>
+{% endblock main_container %}

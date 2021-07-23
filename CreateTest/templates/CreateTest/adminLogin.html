@@ -1,0 +1,115 @@
+{% extends 'snippets/base.html' %} 
+{% load widget_tweaks %} 
+{% block no_container%}
+
+<div
+  class="flex-wrap d-flex align-items-center container-lg px-1"
+  style="min-height: 100vh"
+>
+  <div class="m-auto d-flex align-items-center flex-wrap text-center">
+    <div class="align-items-center">
+      <div class="d-flex justify-content-center site-banner-mini">
+        <div class="">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="40px"
+            height="40px"
+            fill="currentColor"
+            class="bi pr-2 bi-arrow-up-right-square-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"
+            />
+          </svg>
+        </div>
+
+        <div class="pb-2">
+          <h1 class="mx-auto text-break font-weight-bold">
+            <span class="text-success">CBT</span> SIMPEL
+          </h1>
+        </div>
+      </div>
+      <h4
+        class="pb-2 text-center my-auto align-items-center flex-fill font-weight-bold"
+      >
+        Masuk ke Dashboard Administrasi Test
+      </h4>
+
+      <form method="post">
+        {% csrf_token %}
+        {% if form.errors.password %}
+            <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+            <p> Verifikasi Gagal, Password Admin mungkin salah</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </div>
+        {% endif %}
+        {% if form.errors.username %}
+            <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+            <p> Kode Test Tidak ditemukan</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </div>
+        {% endif %}
+        <label for="session_key">Kode Test</label>
+        {{form.username|attr:"pattern:\d*" |attr:"maxlength:6"|add_class:"form-control"}}
+        <label for="password">Password Administrasi Tes</label>
+        {{form.password}}
+        <p class="text-capitalize text-muted text-center h6">
+            Sudah mulai mengerjakan? <br /><a href="{% url 'test:resume' %}"
+              >Lanjutkan dengan kunci sesi yang anda miliki disini</a
+            >
+          </p>
+        
+
+        <button type="submit" class="btn-block flex-fill btn btn-success">
+          Lanjut &raquo;
+        </button>
+    </form>
+    </div>
+  </div>
+</div>
+{%endblock no_container%}
+
+
+{% comment %} {% extends 'snippets/base.html' %}
+{% load widget_tweaks %}
+{% block web_title %}
+Lanjutkan Tes
+{% endblock web_title %}
+{% block card_header %}
+    <h3 class="m-1"><strong>INFORMASI PESERTA DAN TES</strong></h3>
+{% endblock card_header %}
+{% block card_body %}
+    <form method="post">
+        {% csrf_token %}
+        {% if form.errors.password %}
+            <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+            <p> Verifikasi Gagal, Password Admin mungkin salah</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </div>
+        {% endif %}
+        {% if form.errors.username %}
+            <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+            <p> Kode Test Tidak ditemukan</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </div>
+        {% endif %}
+        <label for="session_key">Kode Test</label>
+        {{form.username|attr:"pattern:\d*" |attr:"maxlength:6"|add_class:"form-control"}}
+        <label for="password">Password Administrasi Tes</label>
+        {{form.password}}
+{% endblock card_body %}
+{% block card_footer %}
+<div class="row">
+    <a class=" col-md-6 h6 my-auto text-center text-muted" href="/test/join">Belum Memiliki Tes? Buat Disini</a>
+    <div class="col-md-3"></div>
+        <button class="col-md-3 btn btn-primary " type="submit">Lanjutkan</button>
+    </form>
+    </div>
+{% endblock card_footer %}
+</body>
+</html> {% endcomment %}

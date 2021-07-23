@@ -4,7 +4,29 @@
 Buat Sebuah Tes
     
 {% endblock web_title %}
+        
+{% block no_container %}
+<div class="container-lg " style="min-height:100vh;">
+  <div class="row py-4" style="min-height:100vh;">
+    {% block leftside %}
+      {% include 'leftside.html' %}
+      {% endblock leftside %}
+      <div class=" col-md-6 d-flex">
+        <div class="my-auto d-flex align-items-center flex-wrap text-center">
+          <div class="align-items-center">
+            <h2 class="text-center font-weight-bold pt-3 pb-3 flex-fill ">Administrasi Tes</h2>
+            <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="#">Buat Tes Baru</a>
+            <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="#">Kelola Tes Saya</a>
+            <p class="mt-1"><hr></p>
+            <a class=" btn btn-warning btn-lg text-uppercase js-scroll-trigger" href="{% url 'homepage' %}">Kerjakan Sebuah Test</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     
+    {% endblock no_container %}
+{% comment %} 
     {% block no_container %}
     {% block navbar %}
         <!-- Navigation-->
@@ -17,14 +39,14 @@ Buat Sebuah Tes
         <header class="masthead">
             <div class="container col-sm-12">
                 <div class="masthead-heading ">Administrasi Tes</div>
-                <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="{% url 'create:signup' %}">Buat Tes Baru</a>
-                <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="{% url 'create:login' %}">Kelola Tes Saya</a>
+                <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="#">Buat Tes Baru</a>
+                <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="#">Kelola Tes Saya</a>
                 <p class="mt-1"><hr></p>
-                <a class=" btn btn-warning btn-lg text-uppercase js-scroll-trigger" href="{% url 'test:join' %}">Kerjakan Sebuah Test</a>
+                <a class=" btn btn-warning btn-lg text-uppercase js-scroll-trigger" href="#">Kerjakan Sebuah Test</a>
             </div>
         </header>
         {% endblock no_container %}
 
 {% block user_script %}
 {% endblock user_script %}
-    
+     {% endcomment %}

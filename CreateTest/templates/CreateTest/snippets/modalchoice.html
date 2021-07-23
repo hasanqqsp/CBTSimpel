@@ -11,8 +11,8 @@
             {{form.choice1}}
         </div>
         <div class="modal-footer">
+            <a href="javascript:delChoice('choice1')"  class="btn btn-danger">Hapus</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
-            <input type="reset">
         </div>
         </div>
     </div>
@@ -30,6 +30,7 @@
             {{form.choice2}}
         </div>
         <div class="modal-footer">
+            <a href="javascript:delChoice('choice2')"  class="btn btn-danger">Hapus</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
         </div>
@@ -48,6 +49,7 @@
             {{form.choice3}}
         </div>
         <div class="modal-footer">
+            <a href="javascript:delChoice('choice3')"  class="btn btn-danger">Hapus</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
         </div>
@@ -66,6 +68,7 @@
             {{form.choice4}}
         </div>
         <div class="modal-footer">
+            <a href="javascript:delChoice('choice4')"  class="btn btn-danger">Hapus</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
         </div>
@@ -84,6 +87,7 @@
             {{form.choice5}}
         </div>
         <div class="modal-footer">
+            <a href="javascript:delChoice('choice5')"  class="btn btn-danger">Hapus</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
         </div>
@@ -102,11 +106,21 @@
             {{form.choice6}}
         </div>
         <div class="modal-footer">
+            <a href="javascript:delChoice('choice6')"  class="btn btn-danger">Hapus</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
         </div>
     </div>
     </div>
+
+    <script>
+    let quill_id = 'choice1'
+        const delChoice = quill_id => {
+            getQLEditor = document.querySelector(`#quill-id_${quill_id} .ql-editor`);
+            getQLEditor.innerText = "";
+         
+        }
+    </script>
 
 
 

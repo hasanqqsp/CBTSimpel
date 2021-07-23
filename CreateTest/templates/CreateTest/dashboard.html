@@ -5,40 +5,59 @@
     
 
 {% block main_container %}
-<div class="card-header text-right p-1">
-
-    <a href="{% url 'create:info' %}" class=" btn btn-success mx-2">EDIT</a>
-</div>
-<li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Judul Tes</div></div>
-    <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testTitle}}</div></div>
-    </div></li>
-<li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Tes</div></div>
-    <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testCode}}</div></div>
-</div></li>
-<li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Penyedia Tes</div></div>
-    <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testAuthor}}</div></div>
-    </div></li>
-<li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jumlah Soal</div></div>
-    <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.questionCount}}</div></div>
-    </div></li>
-<li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jadwal / Waktu Mulai Tes</div></div>
-    <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testSchedule | date:"l, d F Y"}}</div></div>
-    </div></li>
-<li class="list-group-item"><div class="row">
-    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Batas Waktu Pengerjaan</div></div>
-    
-    {% if testInfo.timeLimit == 0 %}
-    <div class="col-md-9 pl-2"><div class="card-text my-auto">Tanpa Batas Waktu</div></div>
-    {% else %}
-    <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.timeLimit}} Menit</div></div>
-    {% endif %}
-        
-    </div></li>
+<div class="card px-0 border-0">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item text-right p-1">
+            <a href="{% url 'create:info' %}" class=" btn btn-success mx-2">EDIT</a>
+        </li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Judul Tes</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testTitle}}</div></div>
+            </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Tes</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testCode}}</div></div>
+        </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Tautan</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto"><span id="invite-link"></span></div></div>
+        </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Penyedia Tes</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testAuthor}}</div></div>
+            </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jumlah Soal</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.questionCount}}</div></div>
+            </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Skor Maksimal</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.maxScore}}</div></div>
+            </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jadwal / Waktu Mulai Tes</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testSchedule | date:"l, d F Y H:i:s e"}}</div></div>
+            </div></li>
+        <li class="list-group-item"><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Batas Waktu Pengerjaan</div></div>
+            
+            {% if testInfo.timeLimit == 0 %}
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">Tanpa Batas Waktu</div></div>
+            {% else %}
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.timeLimit}} Menit</div></div>
+            {% endif %}
+ 
+            </div></li>
+    </ul>
+  </div>
 
 {% endblock main_container %}
+
+{% block user_script %}
+<script>
+
+    document.getElementById('invite-link').innerHTML = `${location.host}/test/join/{{testInfo.testCode}}`
+</script>
+{% endblock user_script %}
+    
     

@@ -33,8 +33,8 @@ label .glyphicon {
 
 
 
-.remove-all-styles {
-  all: revert!important;
+.remove-all-styles > * {
+  all: initial!important;
 }
 .ql-editor img {
   max-width: 100%;
@@ -106,3 +106,4 @@ label .glyphicon {
 .ql-container{
   font-size:120%!important;
 }
+

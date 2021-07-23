@@ -3,36 +3,10 @@
 {% block web_title %}
 INFORMASI TES
 {% endblock web_title %}
-{%block no_container%}
-<div class="d-flex flex-wrap container-lg p-2 align-items-end " style="min-height:100vh;min-width:80%">
-          <div class="m-auto d-flex align-items-center flex-wrap text-center flex-fill">
-            <div class="align-items-center flex-fill">
-          <div class="row d-flex justify-content-center site-banner-mini">
-              <div class="">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
-<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
-</svg>
-                  
-              </div>
-              
-              <div class="pb-2">
-                  
-                 <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
-              </div>
-               </div>
-
-  {% block card_header %}
-    <h3 class="m-1"><strong>INFORMASI TES</strong></h3>
-  {% endblock card_header %}
-{% block card_body %}
-
-
-{% include 'Test/snippets/testInfoDetail.html' %}
-
-{% endblock card_body %}       
-{% block card_footer %}
-
-{% if q_testPackage.testScheduleClose > timeNow or q_testPackage.testScheduleClose == None %}
+{% block main_container %}
+  <h2 class="m-1"><strong>INFORMASI TES</strong></h2>
+  {% include 'Test/snippets/testInfoDetail.html' %}
+  {% if q_testPackage.testScheduleClose > timeNow or q_testPackage.testScheduleClose == None %}
     {% if q_testPackage.get_question_count == '0' %}
           <p class="m-auto h5 strong text-center">Test ini belum memiliki Soal</p>
     {% else %}
@@ -41,17 +15,20 @@ INFORMASI TES
                   <p> Password mungkin salah</p>
               </div>
       {% endif %}
-          <form method="POST" class="row m-1 ">
-              {% csrf_token %}
-              {{form.password|attr:"placeholder:Masukan Password Tes" |attr:"maxlength:6" |add_class:"form-control form-control-lg col-sm-9"}}
-              <button class="btn btn-success mt-1 my-sm-0 flex-fill text-nowrap" type="submit">Lanjut</button>
-            </form>
-              
+      <form method="POST" class="row m-1 ">
+          {% csrf_token %}
+          {{form.password|attr:"placeholder:Masukan Password Tes" |attr:"maxlength:6" |add_class:"form-control form-control-lg"}}
+          <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+            <input type="checkbox" class="custom-control-input" id="show-hide-password" onClick="showHidePassword()">
+            <label class="custom-control-label" for="show-hide-password">
+              Tampilkan Password
+            </label>
+          </div>
+          <button class="btn btn-success mt-1 my-sm-0 flex-fill text-nowrap" type="submit">Lanjut</button>
+        </form>   
     {% endif %}
-{% else %}
-  <p class="m-auto h5 strong text-center">Test ini sudah Berakhir dan ditutup</p>
-{% endif %}
-  
-    
-{% endblock card_footer %}
-{%endblock no_container%}
+  {% else %}
+    <p class="m-auto h5 strong text-center">Test ini sudah Berakhir dan ditutup</p>
+  {% endif %}
+{% endblock main_container %}
+

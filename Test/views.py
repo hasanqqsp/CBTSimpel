@@ -235,7 +235,7 @@ def doTest(request, testID, questID):
     return render(request,'Test/doTest.html',context)
 
 def createSession(request,testID):
-    get_object_or_404(TestPackage,testID=testID)
+    q_testPackage = get_object_or_404(TestPackage,testID=testID)
       
     if request.method == 'POST':
         createSessionForm = CreateSessionForm(request.POST or None)
@@ -254,7 +254,8 @@ def createSession(request,testID):
     else :
         createSessionForm = CreateSessionForm
     context = {
-        'form' : createSessionForm
+        'form' : createSessionForm,
+        'title' : q_testPackage.testTitle
     }
 
     return render(request,'Test/createSession.html',context)
@@ -312,11 +313,11 @@ def resumeTest(request,*args, **kwargs):
         return HttpResponseRedirect('/test/{}/q/{}'.format(q_testTaker[0].testPackage.testID,  'welcome'))
 
     else :
-        loginForm = ResumeTestForm(request.POST or None)
+        loginForm = LoginForm(request.POST or None)
         if request.method == 'POST':
-            loginForm = ResumeTestForm(request.POST or None)
+            loginForm = LoginForm(request.POST or None)
             if loginForm.is_valid():
-                loginForm = ResumeTestForm(request.POST)
+                loginForm = LoginForm(request.POST)
                 credential = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'),)
                 
                 try:
@@ -332,7 +333,7 @@ def resumeTest(request,*args, **kwargs):
                     loginForm.add_error(error=ValidationError(''),field='username')
                         
         else :
-            loginForm = ResumeTestForm
+            loginForm = LoginForm
     context = {
         'form' : loginForm
     }

@@ -1,0 +1,87 @@
+{% extends 'CreateTest/snippets/base.html' %}
+{% load static %}
+
+{% block web_title %}
+Detail Peserta {{object.testTakerName}}
+
+{% endblock web_title %}
+    
+{% block nav_brand %}
+    Detail Peserta {{object.testTakerName}}
+    {% endblock nav_brand %}
+
+{% block main_container %}
+<div class="list-group-flush">
+
+    <li class="list-group-item "><div class="row">
+        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Sesi</div></div>
+        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{object.session_key}}</div></div>
+    </div></li>
+    <li class="list-group-item "><div class="row">
+        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
+        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{object.testTakerName}}</div></div>
+    </div></li>
+    <li class="list-group-item "><div class="row">
+        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kelas / Grup</div></div>
+        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{object.testTakerGroup}}</div></div>
+    </div></li>
+    <li class="list-group-item "><div class="row">
+        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kunci Sesi</div></div>
+        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{object.session_password}}</div></div>
+    </div></li>
+    <li class="list-group-item "><div class="row">
+        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Skor</div></div>
+        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{object.scoreObtained}}</div></div>
+    </div></li>
+    <li class="list-group-item "><div class="row">
+        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Waktu Mulai</div></div>
+        <div class="col-md-9 pl-2"><div class="card-text my-auto">{{object.timeStart | date:"l, d F Y H:i:s e"}}</div></div>
+    </div></li>
+    <li class="list-group-item "><div class="row">
+            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Waktu Selesai</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{object.timeFinish| date:"l, d F Y H:i:s e"}}</div></div>
+        </div></li>
+    <li class="list-group-item "><div class="row">
+        <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Waktu Tersisa</div></div>
+        
+        {% if object.isFinish %}
+        <div class="col-md-9 pl-2"><div class="card-text my-auto ">Selesai</div></div>
+        {% else %}
+        <div class="col-md-9 pl-2"><div class="card-text my-auto timer{{object.session_key}}">-- : -- : --</div></div>
+
+    <script src="{% static 'script/timer.js' %}"></script>
+    <script>
+        timer{{object.session_key}} = new Timer({{object.timeStart | date:"U"}},{{timeLimit}},'.timer{{object.session_key}}')
+        timer{{object.session_key}}.tick()
+            </script>   
+        {% endif %}
+    </div></li>
+        
+    <li class="list-group-item"><div class="row">
+      <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted mt-auto mb-3 h6 text-uppercase">Jawaban Peserta :</div></div>
+      </div>
+      <ul class="list-group block list-group-flush">  
+        {% for q in query %}
+        <li class="list-group-item d-flex flex-column py-1  "><div class="row">
+          <div class="col-md-2 pl-2 my-auto"><div class="card-title text-muted my-auto  h6 text-uppercase">Soal Ke-{{q.num}}</div></div>
+          <div class="col-md-4 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">{{q.question | striptags | truncatechars_html:160}}</div></div>
+          {% if q.answer == "Error"%}
+          <div class="col-md-4 pl-2"><div class="card-text bg-primary text-left rounded h6 my-1 p-2">Tidak Diisi</div></div>
+          {% else %}
+          <div class="col-md-4 pl-2"><div class="card-text bg-primary text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer | striptags | truncatechars_html:160}}</div></div>
+          {% endif %}
+          <div class="col-md-2 pl-2"><div class="card-text h5 border border-info rounded my-1 p-2">Skor : {{q.score}}</div></div>
+        </div></li>
+        {% endfor %}
+      </ul>
+    </li>
+    <li class="list-group-item"><div class="row">
+    <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Total Skor</div></div>
+    <div class="col-md-9 pl-2"><div class="card-text my-auto">{{object.scoreObtained}}</div></div>
+    </div></li>
+</div>
+
+
+  
+  {% endblock main_container %}
+    

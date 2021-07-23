@@ -1,0 +1,246 @@
+{% extends 'CreateTest/snippets/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block nav_brand %}
+    Daftar Peserta
+    {% endblock nav_brand %}
+    
+    {% block main_container %}
+    {{form.errors}}
+    <div class="d-flex flex-row">
+        <a href="#" class="btn btn-lg btn-block p-2 m-1 btn-outline-success"data-toggle="modal" data-target=".addTestTakerModal">TAMBAHKAN PESERTA</a>
+        <div class="btn-group">
+            <a href="javascript:location.reload()" class="btn btn-outline-secondary my-1  ">Muat Ulang</a>
+            
+            <button type="button" class="btn btn-lg btn-outline-secondary dropdown-toggle dropdown-toggle-split my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <div class="form-check mx-2">
+                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions0" value="0" checked>
+                    <label class="form-check-label" for="autoRefreshOptions1">
+                      Mati
+                    </label>
+                  </div>
+                  <div class="form-check mx-2">
+                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions3" value="3" checked>
+                    <label class="form-check-label" for="autoRefreshOptions3">
+                      3s
+                    </label>
+                  </div>
+                  <div class="form-check mx-2">
+                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions5" value="5">
+                    <label class="form-check-label" for="autoRefreshOptions2">
+                      5s
+                    </label>
+                  </div>
+                  <div class="form-check mx-2">
+                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions10" value="10">
+                    <label class="form-check-label" for="autoRefreshOptions2">
+                      10s
+                    </label>
+                  </div>
+                  <div class="form-check mx-2">
+                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions15" value="15">
+                    <label class="form-check-label" for="autoRefreshOptions3">
+                      15s
+                    </label>
+                  </div>
+                
+              </div>
+          </div>
+        </div>
+    
+    {% if object_list == None %}
+    Tidak Ada Peserta Terdaftar
+    {% else %}
+        <table class="table table-striped"  id="myTable">
+        <thead>
+            <tr>
+                <th scope="col">NO</th>
+                <th scope="col" class="d-none d-md-table-cell">Kode Sesi</th>
+                <th scope="col">Nama Peserta</th>
+                <th scope="col" class="d-none d-lg-table-cell">Waktu Mulai</th>
+                
+                {% if timeLimit == 0 %}
+                <th scope="col" class="d-none">Waktu Tersisa</th>
+                {% else %}
+                <th scope="col" class="d-none d-md-table-cell">Waktu Tersisa</th>
+
+                {% endif %}
+                    
+                <th scope="col">Skor</th>
+              </tr>
+        </thead>
+        <tbody class="panel">
+            {% for i in object_list %}
+            <tr data-toggle="collapse" data-target="#detail{{forloop.counter}}" data-parent="#myTable">
+                <td>{{forloop.counter}}</td>
+                <td class="d-none d-md-table-cell">{{i.session_key}}</td>
+                <td>{{i.testTakerName}}</td>
+                <td class="d-none d-lg-table-cell">{{i.timeStart | date:"d-m-Y H:i:s"}}</td>
+                
+                {% if timeLimit == 0 %}
+                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_key}}">-- : -- : --</td>
+                {% elif i.isFinish%}
+                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_key}}">Selesai</td>
+                {% else %}
+                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_key}}">--:--:--</td>
+                {% endif %}
+                
+                <td class="text-success">{{i.scoreObtained}}</td>
+            </tr>
+            <tr id="detail{{forloop.counter}}" class="table-light collapse">
+                <td colspan="6" class="hiddenRow">
+                    
+                    <div class="notice notice-info list-group-flush">
+                        <li class="list-group-item py-1"><div class="row">
+                            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Sesi</div></div>
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.session_key}}</div></div>
+                        </div></li>
+                        <li class="list-group-item py-1"><div class="row">
+                            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.testTakerName}}</div></div>
+                        </div></li>
+                        <li class="list-group-item py-1"><div class="row">
+                            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kelas / Grup</div></div>
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.testTakerGroup}}</div></div>
+                        </div></li>
+                        <li class="list-group-item py-1"><div class="row">
+                            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kunci Sesi</div></div>
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.session_password}}</div></div>
+                        </div></li>
+                        <li class="list-group-item py-1"><div class="row">
+                            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Skor</div></div>
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.scoreObtained}}</div></div>
+                        </div></li>
+                        <li class="list-group-item py-1"><div class="row">
+                            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Waktu Mulai</div></div>
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.timeStart | date:"l, d F Y H:i:s e"}}</div></div>
+                        </div></li>
+                        <li class="list-group-item py-1"><div class="row">
+                                <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Waktu Selesai</div></div>
+                                <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.timeFinish| date:"l, d F Y H:i:s e"}}</div></div>
+                            </div></li>
+                        <li class="list-group-item py-1"><div class="row">
+                            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Waktu Tersisa</div></div>
+                            {% if i.isFinish %}
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto ">Selesai</div></div>
+                            {% else %}
+                            
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto timer{{i.session_key}}">-- : -- : --</div></div>
+                            </div></li>
+                            
+                                {% if i.timeStart %}
+                                    
+                                    <script src="{% static 'script/timer.js' %}"></script>
+                                    <script>
+                                        timer{{i.session_key}} = new Timer({{i.timeStart | date:"U"}},{{timeLimit}},'.timer{{i.session_key}}')
+                                        timer{{i.session_key}}.tick()
+                                            </script>   
+                                {% endif %}
+                        {%endif%}
+                            
+                        <li class="list-group-item py-1"><div class="row">
+                            <div class="col-6 p-1">
+                                <a href="{% url 'create:takerDelete' i.testTakerID %}" class="mx-1 btn btn-block btn-danger">HAPUS</a>
+                
+                            </div>
+                            <div class="col-6 p-1">
+                                <a href="{% url 'create:takerDetail' i.testTakerID%}" class="mx-1 btn btn-block btn-primary">DETAIL</a>
+                
+                            </div>
+                                         
+                        </div></li> 
+                    </div>
+                </td>
+            </tr><tr></tr>
+            {%endfor%}
+        </tbody>
+    </table>
+    <br><br>
+    {% endif %}
+    <div class="modal fade addTestTakerModal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Tambahkan Peserta Manual</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form method = 'POST'>
+                    {% csrf_token %}
+                  <div class="form-group">
+                      <label for="id_session_key">Kode Sesi</label>
+                      {{form.session_key |attr:"pattern:\d*" |attr:"maxlength:10"|add_class:"form-control "}}
+                    </div>
+                  <div class="form-group">
+                    <label for="id_testTakerName">Nama Peserta Tes</label>
+                    {{form.testTakerName |add_class:"form-control"}}
+                    </div>
+                  <div class="form-group">
+                    <label for="id_testTakerGroup">Kelas / Kelompok </label>
+                    {{form.testTakerGroup |add_class:"form-control"}}
+                    </div>
+                  <div class="form-group">
+                    <label for="id_session_password">Kunci Sesi / Password </label>
+                    {{form.session_password |add_class:"form-control"}}
+                    </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+          </div>
+        </div>
+      </div>
+{% endblock main_container %}
+
+{% block user_script %}
+<script>
+let ab = document.querySelector('input[name="autoRefreshOptions"]')
+console.log(ab.value)
+var queryDict = {}
+location.search.substr(1).split("&").forEach(function(item) {queryDict[item.split("=")[0]] = item.split("=")[1]})
+console.log(location.href)
+function autoRefresh(delay) {
+    
+    if (delay != 0 && delay != undefined){
+        let a = queryDict.autoRefresh;
+        (["0","3","5","10","15"].includes(queryDict.autoRefresh)) ? a=a :a = 0
+        document.getElementById(`autoRefreshOptions${a}`).checked = true;
+        ref = setInterval(() =>{location = location.href   
+        }
+        ,delay*1000)
+        
+        }else if(delay == 0){
+            document.getElementById(`autoRefreshOptions${delay}`).checked = true;
+        }
+        
+        ; } 
+    autoRefresh(queryDict.autoRefresh);
+
+    $(document).ready(function() {
+        $('input[type=radio][name="autoRefreshOptions"]').on('change', function() {
+            console.log(queryDict.autoRefresh)
+            if (queryDict.autoRefresh == undefined){
+            console.log('autoRefresh undefined')
+            if (location.search == ""){
+                location = location.origin + location.pathname + "?autoRefresh=" + this.value;
+            }else{
+                console.log('search+')
+                location = location.origin + location.pathname + location.search + "&autoRefresh=" + this.value;
+            }
+            clearInterval(ref)
+            autoRefresh(queryDict.autoRefresh)
+
+        }else{
+            
+            location = location.origin + location.pathname + location.search.replace(`autoRefresh=${queryDict.autoRefresh}`,`autoRefresh=${this.value}`)
+            
+            clearInterval(ref)
+            // autoRefresh(queryDict.autoRefresh)
+        };
+});
+});
+</script>
+{% endblock user_script %}
+    
+    
