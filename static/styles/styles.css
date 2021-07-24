@@ -33,7 +33,7 @@ label .glyphicon {
 
 
 
-.remove-all-styles > * {
+.remove-all-styles{
   all: initial!important;
 }
 .ql-editor img {
@@ -105,5 +105,6 @@ label .glyphicon {
 
 .ql-container{
   font-size:120%!important;
+  font-family:Montserrat,'sans-serif'
 }
 

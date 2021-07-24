@@ -62,16 +62,16 @@
     {% block sidebar %}
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading"><a href="{% url 'create:edit' %}"class="text-reset text-decoration-none"> CBT Simpel</a></div>
+      {% comment %} <div class="sidebar-heading"><a href="{% url 'create:edit' %}"class="text-reset text-decoration-none"> CBT Simpel</a></div> {% endcomment %}
       <div class="list-group list-group-flush">
-        <a href="{% url 'create:info' %}" class="list-group-item list-group-item-action bg-light">Update Info Tes</a>
+        {% comment %} <a href="{% url 'create:info' %}" class="list-group-item list-group-item-action bg-light">Update Info Tes</a>
         <a href="{% url 'create:welcome' %}" class="list-group-item list-group-item-action bg-light">Halaman Petunjuk</a>
         <a href="{% url 'create:question' %}" class="list-group-item list-group-item-action bg-light">Soal</a>
         <a href="{% url 'create:testTaker' %}" class="list-group-item list-group-item-action bg-light">Peserta</a>
         <a href="{% url 'create:testReport' %}" class="list-group-item list-group-item-action bg-light">Laporan</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Pengaturan</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Ekspor/Impor</a>
-        <a href="{% url 'logout' %}" class="list-group-item list-group-item-action bg-light">Log Keluar</a>
+        <a href="{% url 'logout' %}" class="list-group-item list-group-item-action bg-light">Log Keluar</a> {% endcomment %}
       </div>
     </div>
     <!-- /#sidebar-wrapper -->

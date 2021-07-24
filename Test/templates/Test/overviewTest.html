@@ -17,9 +17,9 @@ INFORMASI TES
       {% endif %}
       <form method="POST" class="row m-1 ">
           {% csrf_token %}
-          {{form.password|attr:"placeholder:Masukan Password Tes" |attr:"maxlength:6" |add_class:"form-control form-control-lg"}}
+          {{form.password|attr:"placeholder:Masukan Password Tes" |add_class:"form-control form-control-lg"}}
           <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
-            <input type="checkbox" class="custom-control-input" id="show-hide-password" onClick="showHidePassword()">
+            <input type="checkbox" class="custom-control-input" id="show-hide-password" onClick="showHidePassword('id_password')">
             <label class="custom-control-label" for="show-hide-password">
               Tampilkan Password
             </label>

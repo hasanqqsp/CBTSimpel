@@ -2,210 +2,188 @@
 {% block web_title %}
  (Soal ke {{indexOf}}/{{question_list|length}}) {{q_testPackage.testTitle}}
 {% endblock web_title %}
-{% block no_container%}
-<div class="container-lg px-3">
-    <div class="row px-2 py-4 h-100">
-          <div class=" m-auto d-flex align-items-center flex-wrap flex-fill text-center mw-100">
-            <div class="align-items-center flex-fill mw-100">
-          <div class="row d-flex justify-content-center site-banner-mini">
-              <div class="">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
-<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
-</svg>
-                  
-              </div>
-              
-              <div class="pb-2">
-                  
-                 <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
-              </div>
-               </div>
 
-  {% block header %}
-    <h3 class="m-1 text-uppercase"><strong>{{q_testPackage.testTitle}}</strong></h3>
-  {% endblock header %}
-
-<main>
-    <ul class="list-group block list-group-flush text-left flex-fill">
-        <li class="list-group-item"><div class="row">
+{% block main_container %}
     
-            <div class=" d-flex flex-fill  flex-row flex-wrap justify-content-between ">
+<ul class="list-group block list-group-flush text-left flex-fill">
+    <li class="list-group-item">
+        <div class="row">
+            <div class=" d-flex flex-fill flex-row flex-wrap justify-content-between ">
                 <div class="bg-success align-self-center border-primary rounded py-1 px-2 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</div>
-                
-                {% if is_preview %}
+            
+            {% if is_preview %}
                 <div class="bg-secondary  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : Pratinjau</div>
-        
-                {% else %}
-                       
-                {% if q_testTaker.timeLimit == 0 %}
-                {% else %}  
+            {% else %}
+                {% if not q_testTaker.timeLimit == 0 %}
                 <div class="bg-primary p-1 px-2 rounded text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
                         <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
                         <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
-                      </svg>
+                    </svg>
                     Sisa Waktu : <span class="time"></span></div>
-                
                 {% endif %}
                 <div class="bg-success  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : {{user}}</div>
-                {% endif %}
-                    
-        </div></li>
+            {% endif %}
         
+        </div></li>
+    <li class="p-1 list-group-item ql-editor border-0 text-justify">
         <div class="ql-container ql-snow" autofocus>
-            <li class="p-1 list-group-item ql-editor border-0 text-justify" id="question">{{q_question.question | safe}}</li>
+            {{q_question.question | safe}}
         </div>
-        <form method="post" accept-charset="utf-8">
-        {{q_answers}}    
-         {% for form in form  %}
-                {% csrf_token %}
-                {% if form.errors %}
-                    {% for error in form.errors %} 
-                    {% if error == 'Bidang ini tidak boleh kosong.'%}
-                    {% else %}
-                    
-                    <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
-                        <p>{{error}} Coba Refresh</p>
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </div>
-                        {% endif %}
-                        {% endfor %}
-                        {% endif %}
-                        
-                <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
-
-                {% for radio  in form %}
-                        
-                        {% if radio.choice_label == "Cancel" %}
-                            {% if form.data == None %}
-                            <label for="id_answer_{{forloop.counter0}}"  class="button-cancel d-none px-5 my-1 btn btn-outline-cancel rounded">
-                            {% else %}
-                            <label for="id_answer_{{forloop.counter0}}"  class="button-cancel px-5 my-1 btn btn-outline-cancel rounded">
-                            {% endif %}
-                        {{radio.tag}}<span id="choice{{forloop.counter}}">Batalkan Pilihan</span>
-
-                        {% else %}
-                        <label for="id_answer_{{forloop.counter0}}"  class="label_answer px-5 my-1 btn btn-outline-success btn-block rounded">
-                        <span class="btn-label h3">
-                        <span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
-                            
-                        {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span>
-                        {% endif %}
-                        </label > 
-                        {% endfor %}
-                        <input type="hidden" name="is_timeout">                    
+    </li>
+    <form method="post" accept-charset="utf-8">
+    {{q_answers}}    
+     {% for form in form  %}
+            {% csrf_token %}
+            {% if form.errors %}
+                {% for error in form.errors %} 
+                {% if error == 'Bidang ini tidak boleh kosong.'%}
+                {% else %}
+                
+                <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
+                    <p>{{error}} Coba Refresh</p>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                     </div>
-            </li>
-            <li class="p-0 pb-2 d-flex justify-content-around flex-row text-nowrap ">
-            
-            {% if is_preview %}
-                <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-                {% if q_question.questionNum == 1 %}
-                {% else %}
-                <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
-                {% endif %}
-                <a href="#" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
-                    <a class="btn rounded my-1  btn-primary" href="#">Kirim</a>
-                </li>
-            {% else %}
-                <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-                {% if prev_question == None %}
-                {% else %}
-                <a href="{{prev_question.questID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
-                {% endif %}
-                {% if next_question == None %}
-                {% else %}
-                <a href="{{next_question.questID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
-                {% endif %}
-                    <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
-                </li>
-        {% endif %}
-        </li>
-        <li class="list-group-item px-0">
-            {% if is_preview %}
-                {% else %}
-            <div class="d-flex flex-wrap">
-                <nav class="question-list" aria-label="Quest navigation">
-                {% for i in q_answers_questions %}
-                    {% if indexOf == forloop.counter %}
-                    <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
-                    {% else %}
-                    
-                        {% if i.answer == 'Error' %}
-                        <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
-                        {% else %}
-                        <a class="btn btn-success my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
-                        {% endif %}
-                        
                     {% endif %}
                     {% endfor %}
-                </nav>
-            
-            </div>
-            <div class="help justify-content-end d-flex flex-fill flex-row flex-wrap">
-                {% comment %} <button class="btn btn-info keybind-button mx-2">Pintasan Keyboard</button> {% endcomment %}
-                <a href="{% url 'test:sessionInfo' %}?next=/test/{{q_testPackage.testID}}/{{q_question.questID}}" target="_blank" class="btn btn-primary session-info-button mx-2">Info Sesi</a>
-                
-                {% if q_testPackage.settings.allowEditData %}
+                    {% endif %}
+                    
+            <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
 
-                    <a href="{% url 'test:sessionEdit' %}?next=/test/{{q_testPackage.testID}}/{{q_question.questID}}" class="btn btn-warning update-session-button mx-2 ">Ubah Data</a>
+            {% for radio  in form %}
+                    
+                    {% if radio.choice_label == "Cancel" %}
+                        {% if form.data == None %}
+                        <label for="id_answer_{{forloop.counter0}}"  class="button-cancel d-none px-5 my-1 btn btn-outline-cancel rounded">
+                        {% else %}
+                        <label for="id_answer_{{forloop.counter0}}"  class="button-cancel px-5 my-1 btn btn-outline-cancel rounded">
+                        {% endif %}
+                    {{radio.tag}}<span id="choice{{forloop.counter}}">Batalkan Pilihan</span>
+
+                    {% else %}
+                    <label for="id_answer_{{forloop.counter0}}"  class="label_answer px-5 my-1 btn btn-outline-success btn-block rounded">
+                    <span class="btn-label h3">
+                    <span class="glyphicon glyphicon-chevron-right">&raquo;</span></span>
+                        
+                    {{radio.tag}}<span id="choice{{forloop.counter}}">{{radio.choice_label}}</span>
+                    {% endif %}
+                    </label > 
+                    {% endfor %}
+                    <input type="hidden" name="is_timeout">                    
+                </div>
+        </li>
+        <li class="p-0 pb-2 d-flex justify-content-around flex-row text-nowrap ">
+        
+        {% if is_preview %}
+            <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
+            {% if q_question.questionNum == 1 %}
+            {% else %}
+            <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+            {% endif %}
+            <a href="#" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+                <a class="btn rounded my-1  btn-primary" href="#">Kirim</a>
+            </li>
+        {% else %}
+            <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
+            {% if prev_question == None %}
+            {% else %}
+            <a href="{{prev_question.questID}}" class="btn rounded my-1 btn-success">&laquo; Kembali</a>
+            {% endif %}
+            {% if next_question == None %}
+            {% else %}
+            <a href="{{next_question.questID}}" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
+            {% endif %}
+                <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
+            </li>
+    {% endif %}
+    </li>
+    <li class="list-group-item px-0">
+        {% if is_preview %}
+            {% else %}
+        <div class="d-flex flex-wrap">
+            <nav class="question-list" aria-label="Quest navigation">
+            {% for i in q_answers_questions %}
+                {% if indexOf == forloop.counter %}
+                <a class="btn btn-outline-primary active my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                {% else %}
+                
+                    {% if i.answer == 'Error' %}
+                    <a class="btn btn-outline-primary my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                    {% else %}
+                    <a class="btn btn-success my-1" href="../q/{{i.questID}}">{{forloop.counter}}</a>
+                    {% endif %}
                     
                 {% endif %}
-                    
-
-            </div>         
-            {% endif %}
-        </li>
-            </ul>
-            {% endfor %}
-            </div>
-        </ul> 
-    </div>
-</main>
-    <div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-          <div class="modal-content">
-            
-            <div class="modal-body">
-                <h3 class="d-flex justify-content-between"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
-                    <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
-                    <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
-                  </svg><div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
-                  </div></h3>
-              <h1>Waktu Habis</h1>
-            </div>
-            
-          </div>
+                {% endfor %}
+            </nav>
+        
         </div>
+        <div class="help justify-content-end d-flex flex-fill flex-row flex-wrap">
+            {% comment %} <button class="btn btn-info keybind-button mx-2">Pintasan Keyboard</button> {% endcomment %}
+            <a href="{% url 'test:sessionInfo' %}?next=/test/{{q_testPackage.testID}}/q/{{q_question.questID}}" target="_blank" class="btn btn-primary session-info-button mx-2">Info Sesi</a>
+            
+            {% if q_testPackage.settings.allowEditData %}
+
+                <a href="{% url 'test:sessionEdit' %}?next=/test/{{q_testPackage.testID}}/q/{{q_question.questID}}" class="btn btn-warning update-session-button mx-2 ">Ubah Data</a>
+                
+            {% endif %}
+                
+
+        </div>         
+        {% endif %}
+    </li>
+        </ul>
+        {% endfor %}
+        </div>
+    </ul> 
+</div>
+</main>
+<div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        
+        <div class="modal-body">
+            <h3 class="d-flex justify-content-between"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+                <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
+                <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
+              </svg><div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+              </div></h3>
+          <h1>Waktu Habis</h1>
+        </div>
+        
       </div>
-     </ul>
+    </div>
+  </div>
+ </ul>
+{% endblock main_container %}
+    
 
     
-{% endblock no_container%}
-{% block user_script %}
-        <script>
-        const toggleCancel = () => {
-            cancelButton = document.querySelector('.button-cancel')
-            if (cancelButton.classList.contains("active")){
-                cancelButton.classList.add('d-none')
-            }else{
-                cancelButton.classList.remove('d-none')
+     
+     {% block user_script %}
+     <script>
+         {% if  choices%}
+            let choices = {{choices | safe}}
+            for(let i = 0; i< choices.length;i++){
+                document.getElementById(`choice` + (i +1)).innerText = choices[i]
             }
-        }
+         {% endif %}
         
-            // keybindHelpBtn = document.querySelector('.keybind-button')
-            // if (localStorage.useTouch == "true") {
-            //     keybindHelpBtn.classList.add('d-none')
-            // }
             {% if not q_testTaker.timeLimit == 0 %}
 
         const _0x315f=['43599ihoYLy','1tgloGo','34764QpyOgp','value','39626TaZjVJ','1KzQQQY','1052773BvchpC','.time','74194RizoZa','submit','getElementsByTagName','798269TOyHeJ','is_timeout','965199rmOsAp','3MgAJni'];function _0xff6e(_0x2277c0,_0x1af5d2){return _0xff6e=function(_0x315f07,_0xff6e1b){_0x315f07=_0x315f07-0x1de;let _0x598f03=_0x315f[_0x315f07];return _0x598f03;},_0xff6e(_0x2277c0,_0x1af5d2);}(function(_0x258e6c,_0x30d6b6){const _0x20d4ae=_0xff6e;while(!![]){try{const _0xc5e2af=-parseInt(_0x20d4ae(0x1df))*parseInt(_0x20d4ae(0x1e0))+parseInt(_0x20d4ae(0x1de))+-parseInt(_0x20d4ae(0x1e6))*parseInt(_0x20d4ae(0x1e1))+-parseInt(_0x20d4ae(0x1e4))+parseInt(_0x20d4ae(0x1eb))+parseInt(_0x20d4ae(0x1e2))+parseInt(_0x20d4ae(0x1e5))*parseInt(_0x20d4ae(0x1e8));if(_0xc5e2af===_0x30d6b6)break;else _0x258e6c['push'](_0x258e6c['shift']());}catch(_0x127d81){_0x258e6c['push'](_0x258e6c['shift']());}}}(_0x315f,0x9e80e),function(){const _0x560087=_0xff6e,_0x50d5b8=document[_0x560087(0x1ea)]('form')[0x0];let _0x54d49b={{timeNow |date:"U"}};setInterval(()=>{const _0x2231e9=_0x560087;makeTimer({{q_testTaker.timeStart |date:"U"}}+{{q_testTaker.timeLimit}}*0x3c,_0x54d49b,_0x2231e9(0x1e7),()=>{const _0x44f783=_0x2231e9;_0x50d5b8[_0x44f783(0x1ec)][_0x44f783(0x1e3)]=!![],_0x50d5b8[_0x44f783(0x1e9)]();}),_0x54d49b+=0x1;},0x3e8);}());
             {% endif %} 
-        document.forms[0].addEventListener('change',(e)=>{
-                toggleCancel()
-            })
+            window.addEventListener( "pageshow", function ( event ) {
+  var historyTraversal = event.persisted || 
+                         ( typeof window.performance != "undefined" && 
+                              window.performance.navigation.type === 2 );
+  if ( historyTraversal ) {
+    // Handle page restore.
+    window.location.reload();
+  }
+});
         </script>
 
     {% comment %} 

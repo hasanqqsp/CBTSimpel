@@ -3,26 +3,31 @@
 {% block web_title %}
 INFORMASI PESERTA DAN SESI
 {% endblock web_title %}
-{%block no_container%}
-<div class="d-flex flex-wrap container-lg p-2 align-items-end " style="min-height:100vh">
-          <div class="m-auto d-flex align-items-center flex-wrap text-center">
-            <div class="align-items-center">
-          <div class="row d-flex justify-content-center site-banner-mini">
-              <div class="">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="40px" height="40px" fill="currentColor" class="bi pr-2 bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
-<path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
-</svg>
-                  
-              </div>
-              
-              <div class="pb-2">
-                  
-                 <h1 class=" mx-auto text-break font-weight-bold"><span class="text-success">CBT</span> SIMPEL</h1>
-              </div>
-               </div>
 
-    <h3 class="m-1"><strong>INFORMASI PESERTA DAN SESI</strong></h3>
+{% block main_container %}
+    <h2 class="my-1"><strong>INFORMASI PESERTA DAN SESI</strong></h2>
     <ul class="list-group block list-group-flush text-left">
+    <li class="list-group-item d-flex justify-content-between">
+        <a href="{{back}}" class="btn btn-outline-success py-1 px-2">&laquo; Kembali ke Soal</a>
+        {% if not q_testTaker.timeLimit == 0 %}
+                <div class="bg-primary p-1 px-2 rounded text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+                        <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
+                        <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
+                    </svg>
+                    Sisa Waktu : <span class="time"></span></div>
+                {% endif %}
+        {% if q_testTaker.testPackage.settings.allowEditData %}  
+                <a href="{% url 'test:sessionEdit' %}?next={{back}}" class="btn btn-success py-1 px-2 ">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                    </svg>
+                    Ubah Data</a>
+                {% endif %}
+        
+    
+    </li>
         <li class="list-group-item"><div class="row">
             <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
             <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.testTakerName}}</div></div>
@@ -42,6 +47,26 @@ INFORMASI PESERTA DAN SESI
             <strong>Catatlah bersama Kode Sesi yang dibuat sebelumnya</strong> </small>
             </div></li>
           </ul>
-    
 
-{%endblock no_container%}
+{% endblock main_container %}
+
+{% block user_script %}
+<script>
+    {% if  choices%}
+       let choices = {{choices | safe}}
+       for(let i = 0; i< choices.length;i++){
+           document.getElementById(`choice` + (i +1)).innerText = choices[i]
+       }
+    {% endif %}
+   
+       {% if not q_testTaker.timeLimit == 0 %}
+       backLink = "{{back}}" ? "{{back}}" : "/test/{{q_testTaker.testPackage.testID}}/q/verify"
+       now = {{timeNow |date:"U"}} 
+        setInterval(() => {
+            makeTimer(({{q_testTaker.timeStart |date:"U"}}+{{q_testTaker.timeLimit}}*60),now,'.time',() =>  { location.href = backLink})
+            now += 1
+        }, 1000)
+       {% endif %} 
+   </script>
+{% endblock user_script %}
+    

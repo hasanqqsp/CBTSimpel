@@ -15,8 +15,8 @@ urlpatterns = [
     path('<str:testID>/q/verify' ,testViews.verifyAnswer, name='verify' ),
     path('<str:testID>/q/<str:questID>' ,testViews.doTest, name='question'),
     path('<str:testID>/' ,testViews.detailTest, name='detail'),
+    path('join/<str:testCode>',testViews.joinTestWithCode, name='joinWithCode'),
     path('cancel/r/<str:redirID>' ,testViews.cancelTest),
-    path('test',testViews.showTest),
     path('resume',testViews.resumeTest, name = 'resume'),
     path('join',testViews.joinTest, name='join'),
 ]

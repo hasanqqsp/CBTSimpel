@@ -5,7 +5,6 @@
 {% endblock web_title %}
 {% block main_container %}
     <h2 class="text-center"><strong>Login untuk Melanjutkan Tes</strong></h2>
-            
     <form method="post" class="flex-fill">
         {% csrf_token %}
         {% if form.errors.password %}
@@ -24,7 +23,12 @@
         {{form.username|add_class:"form-control form-control-lg my-4" |attr:"placeholder:Kode Sesi"}}
 
         {{form.password |add_class:"form-control-lg" |attr:"placeholder:Kunci Sesi"}}
-
+        <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+            <input type="checkbox" class="custom-control-input" id="show-hide-password" onClick="showHidePassword('id_password')">
+            <label class="custom-control-label" for="show-hide-password">
+              Tampilkan Password
+            </label>
+          </div>
         <div class="my-3 d-flex justify-content-between flex-wrap">
             <a class="h6 text-center flex-fill text-muted px-1" href="/test/join">Belum Mulai Mengerjakan? Mulai Disini</a>  
             <button class="btn btn-success flex-fill px-1" type="submit">Lanjutkan</button>

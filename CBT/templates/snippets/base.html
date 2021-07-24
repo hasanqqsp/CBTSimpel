@@ -1,5 +1,6 @@
 {% load static %}
 {% load widget_tweaks %}
+{% include 'snippets/head.html' %}
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -46,15 +47,16 @@
           </main>
             
           {% block footer %}
-          <footer class="w-100 d-flex mt-3">
+          <footer class="w-100 d-flex mt-3 flex-wrap">
             {% include 'snippets/footer.html' %}
             </footer>
           {% endblock footer %}
           </div>
         </div>
       </div>
-
-    {% endblock no_container %}
+      {% include "snippets/bodyScript.html" %}
+</body>
+{% endblock no_container %}
     {% block vendor_script %}
       <script src="{% static 'vendor/jquery/jquery-3.6.0.min.js' %}"></script>
       <script src="{% static 'vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
@@ -66,4 +68,3 @@
     {% block wysiwyg_script %}
       <script src="{% static 'vendor/quill/quill.min.js' %}"></script>
     {% endblock wysiwyg_script %}
-</body>

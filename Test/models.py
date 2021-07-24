@@ -9,6 +9,7 @@ from utils.generate_id import generate_id, generate_numeric_code
 import json
 from django.utils import timezone
 from functools import reduce
+
 class TestPackage(models.Model):
     defaultSettings = '''{
         "isActive": true,
@@ -54,12 +55,12 @@ class TestPackage(models.Model):
             beforeClose = self.testScheduleClose - timezone.now()
             if beforeClose < datetime.timedelta(minutes=self.timeLimit):
                 return int(beforeClose.total_seconds()/60)
- 
         return self.timeLimit    
 
 
     def get_question_count(self):
         return self.question_set.all().count()
+
     def get_random_sequence(self):
         list = []
         while len(list) < self.question_set.all().count():
@@ -105,8 +106,10 @@ class TestTaker(models.Model):
             user.save()
         if not self.testTakerID:
             self.testTakerID = generate_id(TestTaker,'testTakerID',16)
-        if not self.sequences:
+        if not self.sequences and self.testPackage.settings["randomSequences"]:
             self.sequences = json.dumps(self.testPackage.get_random_sequence())
+        elif not self.sequences and not self.testPackage.settings["random_sequences"]:
+            self.sequences = [i for i in range(self.testPackage.get_question_count())]
             
         super().save(*args, **kwargs)
     def timerStart(self):
@@ -180,8 +183,18 @@ class TestTaker(models.Model):
 
     def get_total_score(self):
         scores = [x.get_score() for x in self.get_all_answer()]
-        return reduce((lambda x, y: x + y), scores)
+        return reduce((lambda x, y: x + y), scores,0)
 
+    def update_sequences(self):
+        sequences = json.loads(self.sequences)
+        question_count = self.testPackage.get_question_count()
+        if len(sequences) > self.testPackage.get_question_count():
+            print(list(filter(lambda x: x < self.testPackage.get_question_count(), sequences)))
+            self.sequences = json.dumps(list(filter(lambda x: x < self.testPackage.get_question_count(), sequences)))
+        elif len(sequences) < self.testPackage.get_question_count():
+            self.sequences = json.dumps(sequences + [i for i in range(len(sequences),self.testPackage.get_question_count())])
+
+        super().save()
 
     def __str__(self):
         return "{}".format(self.testTakerName)
@@ -243,17 +256,17 @@ q= Question.objects.filter(questID='dhfDPn3i6jTA3CnG')[0]
 q.get_next_question("[4, 3, 2, 0, 1]").get_prev_question("[4, 3, 2, 0, 1]")
     '''
 
-    def delete(self,*args,**kwargs):
-        questionList = Question.objects.filter(testID = self.testID)
-        questionCount = questionList.count()
-        if not self.questionNum == questionCount:
-            print(self.questionNum)
-            questionList = questionList[self.questionNum-1:]
-            for i in questionList:
-                i.questionNum -= 1
-                i.save()
+    # def delete(self,*args,**kwargs):
+    #     questionList = Question.objects.filter(testID = self.testID)
+    #     questionCount = questionList.count()
+    #     if not self.questionNum == questionCount:
+    #         print(self.questionNum)
+    #         questionList = questionList[self.questionNum-1:]
+    #         for i in questionList:
+    #             i.questionNum -= 1
+    #             i.save()
                 
-        super().delete()
+    #     super().delete()
 
     def __str__(self):
         return "{}_{}".format(self.testPackage.testID,self.question)

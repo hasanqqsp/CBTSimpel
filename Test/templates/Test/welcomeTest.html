@@ -4,7 +4,7 @@
         {% block main_container %}
         <h2 class="m-1 text-uppercase"><strong>{{title}}</strong></h2>
         
-        <div class="container-fluid border my-2 ql-container ql-editor">
+        <div class="card-body ql-container ql-snow border rounded mb-2">
         {% if now < quest.testScheduleOpen%}
                 <h1 class="text-center font-weight-bold">TES BELUM DIMULAI</h1>
                 <h4 class="text-center font-weight-bold">Akan dimulai pada : {{quest.testScheduleOpen |date:"l, j F Y H:i:s T"}}</h4>
@@ -24,8 +24,9 @@
                 )()        
                 </script>
                 {% else %}
-                {{ welcomeMessage | safe }}
+                <div class="remove-all-styles ql-editor">{{welcomeMessage |safe }}</div>
         </div>
+        
         <form method="post">
                 {% csrf_token %}
                 <input type="submit" class="btn btn-success btn-block" value="Kerjakan &raquo;">

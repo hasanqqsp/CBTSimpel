@@ -180,12 +180,16 @@ def doTest(request, testID, questID):
         return HttpResponseRedirect('/test/resume')
 
     q_answer = q_testTaker.answer_set.filter(question=q_question)
-
+    if not q_testTaker.timeStart:
+        return HttpResponseRedirect('welcome')
     if Question.objects.get(questID=questID).get_next_question(q_testTaker.sequences) == None:
         query = "verify"
     else: 
-        # if next question not found 
         query = q_question.get_next_question(q_testTaker.sequences).questID
+    print(len(q_testTaker.sequences) == q_testPackage.get_question_count())
+    if not len(q_testTaker.sequences) == q_testPackage.get_question_count():
+        q_testTaker.update_sequences() 
+
     if request.method == 'POST':
         form = AnswerForm(request.POST)
         if (timezone.now() - timedelta(seconds=10)) <= q_testTaker.get_time_limit():
@@ -204,7 +208,8 @@ def doTest(request, testID, questID):
                 return HttpResponseRedirect('../q/{}'.format(query))
             return HttpResponseRedirect('../q/{}'.format('verify'))
         else:
-            form = AnswerForm
+            if request.POST['is_timeout']:
+                    return HttpResponseRedirect('../q/{}'.format('verify'))
     else:
         if len(q_answer) > 0:
             form = AnswerForm({'answer':q_answer[0].answer})
@@ -229,7 +234,8 @@ def doTest(request, testID, questID):
         'question_list' : q_testPackage.get_all_question(q_testTaker.sequences),
         'next_question' : q_question.get_next_question(q_testTaker.sequences),
         'prev_question' : q_question.get_prev_question(q_testTaker.sequences),
-        'indexOf' : q_question.get_question_num(q_testTaker.sequences)
+        'indexOf' : q_question.get_question_num(q_testTaker.sequences),
+        'choices' : CHOICES
         
     }
     return render(request,'Test/doTest.html',context)
@@ -267,6 +273,8 @@ def sessionInfo(request):
         return HttpResponseRedirect('/test/resume')
     context = {
         'q_testTaker' : q_testTaker[0], 
+        'back' : request.GET.get("next"),
+        'timeNow' : timezone.now()
         }   
     return render(request,'Test/sessionInfo.html',context)     
 
@@ -301,7 +309,9 @@ def sessionEdit(request):
         return HttpResponseRedirect("/test/resume")
     context = {
         'form' : form ,
+        'back' : request.GET.get("next"),
         'q_testTaker' : q_testTaker, 
+        'timeNow' : timezone.now(),
         }   
     return render(request,'Test/sessionEdit.html',context)
 
@@ -440,3 +450,9 @@ def generate_pdf(request, session_code):
             return response
         return HttpResponse("Not found")
     return HttpResponseForbidden()
+
+def joinTestWithCode(request,testCode):
+    query = TestPackage.objects.filter(testCode=testCode,settings__isActive = True)
+    if query.exists():
+        return HttpResponseRedirect(reverse("test:detail",kwargs={"testID":query[0].testID}))
+    return HttpResponseNotFound()

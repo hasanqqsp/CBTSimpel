@@ -17,22 +17,10 @@ from django.contrib.auth.views import LoginView , LogoutView
 import random ,string, sys , datetime
 from django.views.generic import ListView, UpdateView, DetailView, FormView, CreateView,TemplateView
 from django.views.generic.edit import FormMixin
-
+from utils.authorization import GroupRequiredMixin,isAdmin
 # Create your views here.
 adminLoginURL = reverse_lazy('create:login')
 
-# class GroupRequiredMixin(object):
-#     def dispatch(self, request, *args, **kwargs):
-#         if not request.user:
-#             return HttpResponseRedirect(adminLoginURL)
-#         else:
-#             if not request.user.groups.filter(name='author').exists():
-#                 return HttpResponseRedirect(adminLoginURL)
-#         return super(GroupRequiredMixin, self).dispatch(request, *args, **kwargs)
-
-def isAdmin(request):
-    if not request.user.groups.filter(name='creator').exists():
-        return HttpResponseRedirect(adminLoginURL)
 
 # def viewScoreQuery(session_key):
 #     findTestTaker = get_object_or_404(TestTaker, session_key = session_key)
@@ -148,13 +136,13 @@ def authorLogin(request):
     }
     return render(request,'CreateTest/adminLogin.html',context)
 
-# def editTest(request):
-#     isAdmin(request)
-#     query = TestPackage.objects.get(testCode=request.user) 
-#     context = {
-#         'testInfo': query,
-#     }
-#     return render(request,'CreateTest/dashboard.html', context)
+def editTest(request):
+    isAdmin(request)
+    query = TestPackage.objects.get(testCode=request.user) 
+    context = {
+        'testInfo': query,
+    }
+    return render(request,'CreateTest/dashboard.html', context)
 
 # class EditQuestion(GroupRequiredMixin,UpdateView):
 #     model = Question

@@ -1,41 +1,22 @@
 {% extends 'snippets/base.html' %}
 {% load widget_tweaks %}
-{% block no_container %}
-<div
-  class="flex-wrap d-flex align-items-center container-lg px-1"
-  style="min-height: 100vh"
->
-  <div class="m-auto d-flex align-items-center flex-wrap text-center">
-    <div class="align-items-center">
-      <div class="d-flex justify-content-center site-banner-mini">
-        <div class="">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="40px"
-            height="40px"
-            fill="currentColor"
-            class="bi pr-2 bi-arrow-up-right-square-fill"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803 10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"
-            />
-          </svg>
-        </div>
 
-        <div class="pb-2">
-          <h1 class="mx-auto text-break font-weight-bold">
-            <span class="text-success">CBT</span> SIMPEL
-          </h1>
-        </div>
-      </div>
-      <h4
-        class="pb-2 text-center my-auto align-items-center flex-fill font-weight-bold"
-      >
-        IDENTITAS DAN OTENTIKASI
-      </h4>
-    <button class="btn btn-outline-success justify-content-start">&laquo; Kembali Ke Soal</button>
-      <form class="mx-1" method="POST">
+{% block main_container %}
+    <h2 class="pb-2 text-center my-auto align-items-center flex-fill font-weight-bold" >
+        UBAH IDENTITAS DAN OTENTIKASI
+      </h2>
+    <div class="row mx-1 d-flex justify-content-between">
+      <a href="{{back}}" class="btn btn-outline-success justify-content-start py-1">&laquo; Kembali Ke Soal</a href="{{back}}">
+      {% if not q_testTaker.timeLimit == 0 %}
+        <div class="bg-primary p-1 px-2 rounded text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+              <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"></path>
+              <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"></path>
+          </svg>
+          Sisa Waktu : <span class="time"></span></div>
+        {% endif %}
+    </div>  
+      <form class="mx-1 text-left" method="POST">
         {% csrf_token %}
         {% if form.password_confirm.errors.1 == "Confirmation Wrong"%}
             <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
@@ -55,43 +36,35 @@
         <div class="form-group mx-1 flex-fill">
           <label for="id_session_password">Kunci Sesi / Password </label>
           {{form.session_password |add_class:"form-control"}}
-          <small class="form-text text-muted"
-            >Cukup Isi Konfirmasi jika tidak mengubah kunci Sesi
-            <strong
-              >Catatlah bersama Kode Sesi yang diberikan.</strong
-            ></small
-          >
-        <div class="form-group mx-1 flex-fill">
-          <label for=":id_testTakerGroup">Kelas / Kelompok </label>
-          {{form.password_confirm |add_class:"form-control"}}
+          <small class="form-text text-muted">
+            Cukup Isi Konfirmasi jika tidak mengubah kunci Sesi
+            <strong>Catatlah bersama Kode Sesi yang diberikan.</strong>
+            </small>
         </div>
-
-          <p class="text-capitalize text-muted text-center h6">
-            Sudah mulai mengerjakan? <br /><a href="{% url 'test:resume' %}"
-              >Lanjutkan dengan kunci sesi yang anda miliki disini</a
-            >
-          </p>
+          <div class="form-group mx-1 flex-fill">
+            <label for=":id_testTakerGroup">Konfirmasi Password </label>
+            {{form.password_confirm |add_class:"form-control"}}
+          </div>
         </div>
         <button type="submit" class="btn-block flex-fill btn btn-success">
           Perbarui Data &raquo;
         </button>
       </form>
-    </div>
-  </div>
-</div>
+      </div>
+   
 
-{% endblock no_container %}
+{% endblock main_container %}
+
 {% block user_script %}
 <script>
-    const backToTest = () {
-        search = new URLSearchParams(location.search)
-        if (search.has("next")){
-            location.href = search.get("next")
-        }
-
-    }
+       {% if not q_testTaker.timeLimit == 0 %}
+       backLink = "{{back}}" ? "{{back}}" : "/test/{{q_testTaker.testPackage.testID}}/q/verify"
+       now = {{timeNow |date:"U"}} 
+        setInterval(() => {
+            makeTimer(({{q_testTaker.timeStart |date:"U"}}+{{q_testTaker.timeLimit}}*60),now,'.time',() =>  { location.href = backLink})
+            now += 1
+        }, 1000)
+       {% endif %} 
 
 </script>
 {% endblock user_script %}
-
-
