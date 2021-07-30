@@ -1,5 +1,5 @@
 {% extends 'snippets/base.html' %}
-
+  
 {% block web_title %}
 Buat Sebuah Tes
     
@@ -15,7 +15,7 @@ Buat Sebuah Tes
         <div class="my-auto d-flex align-items-center flex-wrap text-center">
           <div class="align-items-center">
             <h2 class="text-center font-weight-bold pt-3 pb-3 flex-fill ">Administrasi Tes</h2>
-            <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="#">Buat Tes Baru</a>
+            <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="{% url 'create:newTest' %}">Buat Tes Baru</a>
             <a class="btn btn-success btn-lg text-uppercase js-scroll-trigger mb-2" href="{% url 'create:login' %}">Kelola Tes Saya</a>
             <p class="mt-1"><hr></p>
             <a class=" btn btn-warning btn-lg text-uppercase js-scroll-trigger" href="{% url 'homepage' %}">Kerjakan Sebuah Test</a>

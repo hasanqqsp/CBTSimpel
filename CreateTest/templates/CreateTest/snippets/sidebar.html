@@ -1,0 +1,87 @@
+<style>
+  .sidebar .nav .nav-item .nav-link i.menu-arrow:before{
+  /* display: inline-block;
+  vertical-align: -.125em;*/
+  background-repeat: no-repeat;
+  content: " ";
+  height: 15px;
+  width: 15px;
+  /* background-size: 1rem 1rem;  */
+  /* line-height: 15px; */
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-caret-right' viewBox='0 0 16 16'><path d='M6 12.796V3.204L11.481 8 6 12.796zm.659.753 5.48-4.796a1 1 0 0 0 0-1.506L6.66 2.451C6.011 1.885 5 2.345 5 3.204v9.592a1 1 0 0 0 1.659.753z'/></svg>");
+  
+  
+      -webkit-transition: all 0.2s ease-in;
+      -moz-transition: all 0.2s ease-in;
+      -ms-transition: all 0.2s ease-in;
+      -o-transition: all 0.2s ease-in;
+      transition: all 0.2s ease-in;
+    }
+}
+</style>
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'create:dashboard' %}">
+          <i class="bi bi-house menu-icon"></i>
+          <span class="menu-title">Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+          <i class="bi bi-gear menu-icon"></i>
+          <span class="menu-title">Konfigurasi</span>
+          <i class="menu-arrow"></i>
+        </a>
+        <div class="collapse" id="ui-basic">
+          <ul class="nav flex-column sub-menu">
+            <li class="nav-item"> <a class="nav-link" href="#">Halaman Depan</a></li>
+            <li class="nav-item"> <a class="nav-link" href="#">Dasar</a></li>
+            <li class="nav-item"> <a class="nav-link" href="#">Lanjutan</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="pages/forms/basic_elements.html">
+          <i class="bi bi-card-checklist menu-icon"></i>
+          <span class="menu-title">Soal</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="pages/charts/chartjs.html">
+          <i class="bi bi-people menu-icon"></i>
+          <span class="menu-title">Peserta</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="pages/tables/basic-table.html">
+          <i class="bi bi-tools menu-icon"></i>
+          <span class="menu-title">Kontrol</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="pages/icons/themify.html">
+          <i class="bi bi-arrow-left-right menu-icon"></i>
+          <span class="menu-title">Ekspor / Impor</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+          <i class="bi bi-three-dots menu-icon"></i>
+          <span class="menu-title">Lainnya</span>
+        </a> 
+      </li>
+    </ul>
+  </nav>
+  <script>
+    (function () {
+      var current = location.pathname
+      if (current === "") return;
+      var menuItems = document.querySelectorAll('.nav-item li');
+      for (var i = 0, len = menuItems.length; i < len; i++) {
+          if (menuItems[i].firstElementChild.getAttribute("href").indexOf(current) !== -1) {
+              menuItems[i].className += "active";
+          }
+      }
+  })();
+  </script>

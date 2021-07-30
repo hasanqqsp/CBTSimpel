@@ -1,53 +1,157 @@
 {% extends 'CreateTest/snippets/base.html' %}
-{% block nav_brand %}
+ {% block nav_brand %}
     Dashboard Administrasi Tes 
 {% endblock nav_brand %}
     
 
 {% block main_container %}
+<div class="d-flex flex-wrap flex-row align-content-stretch justify-content-center">
+
+            <div class="m-2">
+              <div class="card h-100" style="width: 13rem;">
+                <div class="card-body">
+                <div class="card-head d-flex justify-content-between">
+                  <p class="card-title">Jadwal</p>
+                  <i class="bi bi-calendar-x" style="font-size: 2rem;"></i>
+                </div>
+                  <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+                    {% if not q_testPackage.testScheduleOpen and not q_testPackage.testScheduleClose%}
+                    <h3>Tidak disetel</h3>
+                    {% else %}    
+                    <div class="flex-fill w-100 schedule-open">
+                        <h4 class="mb-0 ">{{q_testPackage.testScheduleOpen | date:"l,"}}</h4>
+                        <p class="mb-0 ">{{q_testPackage.testScheduleOpen | date:"d F Y"}}</p>
+                        <p class="mb-0 ">{{q_testPackage.testScheduleOpen | date:"H.i.s"}}</p>
+                    </div>
+                        {% if q_testPackage.testScheduleClose %}
+                            <p>s/d</p>
+                            <div class="flex-fill w-100 schedule-close">
+                                <h4 class="mb-0 ">{{q_testPackage.testScheduleClose | date:"l,"}}</h4>
+                                <p class="mb-0 ">{{q_testPackage.testScheduleClose | date:"d F Y"}}</p>
+                                <p class="mb-0 ">{{q_testPackage.testScheduleClose | date:"H.i.s"}}</p>
+                            </div>
+                            
+                        {% endif %}
+                    {% endif %}
+                        
+                  </div>  
+                  <p class="mb-0 mt-2">
+                    
+                    {% if q_testPackage.timeLimit %}
+                    ({{q_testPackage.timeLimit}} Menit)
+                     {% else %}
+                     (Tanpa Batas Waktu) 
+                    {% endif %}
+                      
+                  </span></p>
+                </div>
+              </div>
+            </div>
+            <div class="m-2">
+              <div class="card h-100" style="width: 13rem;">
+                <div class="card-body">
+                <div class="card-head d-flex justify-content-between">
+                  <p class="card-title">Jumlah Peserta</p>
+                  <i class="bi bi-people" style="font-size:2rem"></i>
+                </div>
+                  <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+                    <h3 class="mb-0">{{q_testPackage.get_testTaker_count}}</h3>
+                    </div>  
+                </div>
+              </div>
+            </div>
+            <div class="m-2">
+              <div class="card h-100" style="width: 13rem;">
+                <div class="card-body">
+                <div class="card-head d-flex justify-content-between">
+                  <p class="card-title">Kode Tes</p>
+                    <i class="bi bi-upc" style="font-size: 2rem;"></i>
+                </div>
+                  <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+                    <h3 class="mb-0">{{q_testPackage.testCode}}</h3>
+                  </div>
+                  <p class="mb-0 mt-1"><small>tautan undangan : </small></p>
+                  <input type="text" class="form-control p-1 invite-link" style="height:30px" readonly value="{{SITE_ADDRESS}}{% url 'test:joinWithCode'  q_testPackage.testCode%}">
+                  <button class="btn btn-link p-0 m-0" onclick="copyInviteLink()">salin tautan</button>
+                </div>
+              </div>
+            </div>
+            <div class="m-2">
+              <div class="card h-100" style="width: 13rem;">
+                <div class="card-body">
+                <div class="card-head d-flex justify-content-between">
+                  <p class="card-title">Jumlah Soal</p>
+                    <i class="bi bi-card-checklist" style="font-size:2rem"></i>                  
+                </div>
+                  <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+                    <h3 class="mb-0">{{q_testPackage.get_question_count}}</h3>
+                    </div>  
+                  {% comment %} <p class="mb-0 mt-2 text-success">23.00%<span class="text-black ml-1"><small>(30 days)</small></span></p> {% endcomment %}
+                </div>
+              </div>
+            </div>
+          </div>
 <div class="card px-0 border-0">
     <ul class="list-group list-group-flush">
-        <li class="list-group-item text-right p-1">
-            {% comment %} <a href="{% url 'create:info' %}" class=" btn btn-success mx-2">EDIT</a> {% endcomment %}
-        </li>
         <li class="list-group-item"><div class="row">
             <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Judul Tes</div></div>
-            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testTitle}}</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testTitle}}</div></div>
             </div></li>
-        <li class="list-group-item"><div class="row">
-            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Tes</div></div>
-            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testCode}}</div></div>
-        </div></li>
-        <li class="list-group-item"><div class="row">
-            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Tautan</div></div>
-            <div class="col-md-9 pl-2"><div class="card-text my-auto"><span id="invite-link"></span></div></div>
-        </div></li>
         <li class="list-group-item"><div class="row">
             <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Penyedia Tes</div></div>
-            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testAuthor}}</div></div>
-            </div></li>
-        <li class="list-group-item"><div class="row">
-            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jumlah Soal</div></div>
-            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.questionCount}}</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.testAuthor}}</div></div>
             </div></li>
         <li class="list-group-item"><div class="row">
             <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Skor Maksimal</div></div>
-            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.maxScore}}</div></div>
+            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testPackage.get_max_score}}</div></div>
             </div></li>
-        <li class="list-group-item"><div class="row">
-            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Jadwal / Waktu Mulai Tes</div></div>
-            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.testSchedule | date:"l, d F Y H:i:s e"}}</div></div>
-            </div></li>
-        <li class="list-group-item"><div class="row">
-            <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Batas Waktu Pengerjaan</div></div>
-            
-            {% if testInfo.timeLimit == 0 %}
-            <div class="col-md-9 pl-2"><div class="card-text my-auto">Tanpa Batas Waktu</div></div>
-            {% else %}
-            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{testInfo.timeLimit}} Menit</div></div>
-            {% endif %}
- 
-            </div></li>
+        
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-3 pl-2 my-auto">
+                  <div class="card-title text-muted my-auto h6 text-uppercase">
+                    Jadwal Mulai Tes
+                  </div>
+                </div>
+                <div class="col-md-9 pl-2">
+                  <div class="card-text my-auto">
+                    {{q_testPackage.testScheduleOpen |date:"l, j F Y H:i:s T"}}
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-3 pl-2 my-auto">
+                  <div class="card-title text-muted my-auto h6 text-uppercase">
+                    Jadwal Selesai Tes
+                  </div>
+                </div>
+                <div class="col-md-9 pl-2">
+                  <div class="card-text my-auto">
+                    {{q_testPackage.testScheduleClose |date:"l, j F Y H:i:s T"}}
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-md-3 pl-2 my-auto">
+                  <div class="card-title text-muted my-auto h6 text-uppercase">
+                    Batas Waktu Pengerjaan
+                  </div>
+                </div>
+                <div class="col-md-9 pl-2">
+                  <div class="card-text my-auto">
+                    {% if q_testPackage.timeLimit %}
+                    {{q_testPackage.timeLimit}} Menit
+                     {% else %}
+                     Tanpa Batas Waktu
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </li>
     </ul>
   </div>
 
@@ -55,9 +159,14 @@
 
 {% block user_script %}
 <script>
+    function copyInviteLink() {
+        copyText = document.querySelector('.invite-link')
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+        document.execCommand("copy");
 
-    document.getElementById('invite-link').innerHTML = `${location.host}/test/join/{{testInfo.testCode}}`
+    }
 </script>
 {% endblock user_script %}
     
-    
+   

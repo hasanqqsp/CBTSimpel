@@ -1,5 +1,5 @@
 {% load widget_tweaks %}
-<form  method="post">
+<form  method="post" class="text-left">
     {% csrf_token %}
   <div class="form-group">
     <label for="id_testTitle">Judul Tes</label>
@@ -14,26 +14,91 @@
     {{form.testCode |add_class:"form-control"}}
     <small  class="form-text text-muted">Buatlah Sebuah Kode 6 digit. Ini akan  digunakan peserta untuk mengakses tes. 
     <strong>Tidak dapat diubah lagi. Kosongkan untuk membuat secara otomatis</strong> </small>
-    </div>
-    <div class="form-group">
-    <label for="id_testSchedule">Jadwal Tes (Tahun/Bulan/Hari)</label>
-  <div class="input-group date" id="datepicker" data-date-format="dd.mm.yyyy">
-    {{form.testSchedule |add_class:"form-control datepicker" |attr:"placeholder:YYYY/MM/DD"}}
-    <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span></div></div>
+  
+  {% if form.testCode.errors %}
+  <div class="alert alert-danger" role="alert">
+    
+    {% for error in form.testCode.errors %}
+    
+    {% if error == "testCode can't be used" %}
+      Kode tidak dapat digunakan
+    {% endif %}
+    {% endfor %}
+      
+    
+  </div>
+  
+  {% endif %}
+      
+  </div>
+    
   <div class="form-group">
+    <label for="id_testScheduleOpen">Jadwal Mulai Tes</label>
+    {{form.testScheduleOpen | add_class:"form-control"}}
+  </div>
+  <div class="form-group">
+    <label for="id_testScheduleClose">Jadwal Selesai Tes</label>
+    {{form.testScheduleClose | add_class:"form-control"}}
+  </div>
+  
+    <div class="form-group">
     <label for="id_timeLimit">Batas Waktu (menit)</label>
     {{form.timeLimit |add_class:"form-control"}}
-    <small  class="form-text text-muted">
-    <strong>Isi dengan nol untuk tanpa batas waktu</strong> </small>
+    <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+      <input type="checkbox" class="custom-control-input" id="noTimeLimit" >
+      <label class="custom-control-label" for="noTimeLimit" onClick="disableFormField('id_timeLimit',0)">
+        Tanpa Batas Waktu
+      </label>
     </div>
+    </div>
+    
   <div class="form-group">
     <label for="id_passwordTest">Password Tes</label>
-    {{form.passwordTest |add_class:"form-control" |attr:"type:password"}}
-    <small  class="form-text text-muted">Buatlah Sebuah Password. Ini akan  digunakan peserta untuk mengakses tes. 
-    <strong>Isi dengan None untuk tanpa password</strong> </small>
+    {{form.passwordTest |add_class:"form-control"}}
+    <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+      <input type="checkbox" class="custom-control-input" id="noPasswordTest" >
+      <label class="custom-control-label" for="noPasswordTest" onClick="disableFormField('id_passwordTest','None')">
+        Tanpa Password Tes
+      </label>
     </div>
+    <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+      <input type="checkbox" class="custom-control-input" id="show-hide-passwordTest" onClick="showHidePassword('id_passwordTest')">
+      <label class="custom-control-label" for="show-hide-passwordTest">
+        Tampilkan Password
+      </label>
+    </div>
+    <small  class="form-text text-muted">Buatlah Sebuah Password. Ini akan  digunakan peserta untuk mengakses tes. </small>
+    </div>
+
   <div class="form-group">
     <label for="id_passwordAdminTest">Password Admin Tes </label>
-    {{form.passwordAdminTest |add_class:"form-control"|attr:"type:password"}}
+    {{form.passwordAdminTest |add_class:"form-control"}}
+    
+    <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+      <input type="checkbox" class="custom-control-input" id="show-hide-passwordAdminTest" onClick="showHidePassword('id_passwordAdminTest')">
+      <label class="custom-control-label" for="show-hide-passwordAdminTest">
+        Tampilkan Password
+      </label>
+    </div>
     <small  class="form-text text-muted">Buatlah Sebuah Password. Ini akan  digunakan peserta untuk mengakses administrasi tes. </small>
     </div>
+<button class="w-100 btn btn-success flex-fill" type="submit">Buat Tes Baru</button>
+</form>
+<script>
+  const disableFormField = (id,value) => {
+    const target = document.getElementById(id)
+    showHide = document.querySelector("#show-hide-" + id.split('_')[1])
+    if (showHide){
+      showHide.parentElement.classList.toggle('d-none')
+    }
+    if (value != undefined){
+      target.type = 'text'
+      target.value = value
+    }
+    if (target.disabled) {
+      target.removeAttribute('disabled')
+    }else{
+      target.setAttribute('disabled','disabled')
+    }
+  }
+</script>

@@ -36,6 +36,12 @@
         <div class="form-group mx-1 flex-fill">
           <label for="id_session_password">Kunci Sesi / Password </label>
           {{form.session_password |add_class:"form-control"}}
+          <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+            <input type="checkbox" class="custom-control-input" id="show-hide-password" onClick="showHidePassword('id_session_password')">
+            <label class="custom-control-label" for="show-hide-password">
+              Tampilkan Password
+            </label>
+          </div>
           <small class="form-text text-muted">
             Cukup Isi Konfirmasi jika tidak mengubah kunci Sesi
             <strong>Catatlah bersama Kode Sesi yang diberikan.</strong>
@@ -44,6 +50,12 @@
           <div class="form-group mx-1 flex-fill">
             <label for=":id_testTakerGroup">Konfirmasi Password </label>
             {{form.password_confirm |add_class:"form-control"}}
+          <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+            <input type="checkbox" class="custom-control-input" id="show-hide-password-confirm" onClick="showHidePassword('id_password_confirm')">
+            <label class="custom-control-label" for="show-hide-password-confirm">
+              Tampilkan Password
+            </label>
+          </div>
           </div>
         </div>
         <button type="submit" class="btn-block flex-fill btn btn-success">

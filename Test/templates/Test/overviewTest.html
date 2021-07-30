@@ -4,6 +4,9 @@
 INFORMASI TES
 {% endblock web_title %}
 {% block main_container %}
+  <nav class="justify-content-between d-flex mb-2">
+      <a href="{% url 'test:join' %}" class="py-1 btn btn-outline-success">&laquo; Kembali</a>
+    </nav>
   <h2 class="m-1"><strong>INFORMASI TES</strong></h2>
   {% include 'Test/snippets/testInfoDetail.html' %}
   {% if q_testPackage.testScheduleClose > timeNow or q_testPackage.testScheduleClose == None %}

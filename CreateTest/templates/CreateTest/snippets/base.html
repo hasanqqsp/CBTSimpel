@@ -1,148 +1,92 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Jekyll v4.1.1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>
-      
-      Dashboard Administrasi Tes
-      
-        </title>
-        
-        <link rel="stylesheet" type="text/css" href="/static/styles/styles.css">
-        <link rel="stylesheet" type="text/css" href="/static/styles/simple-sidebar.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha512-f0tzWhCwVFS3WeYaofoLWkTP62ObhewQ1EZn65oSYDZUg1+CyywGKkWzm8BxaJj5HGKI72PnMH9jYyIFz+GH7g==" crossorigin="anonymous" />
-        
-        <link href="/static/vendor/trix/trix.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous">    
-        
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-        <style>
-      body {
-        font-family: 'Montserrat';font-size: 18px;
-      }</style>
-      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-      
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>   
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
-      
-      <!-- The loading of KaTeX is deferred to speed up page rendering -->
-      <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
-      
-      <!-- To automatically render math in text elements, include the auto-render extension: -->
-      <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
-      
-      
-      <!-- form.media -->
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/darcula.min.css" type="text/css" media="all" rel="stylesheet">
-      <link href="/static/django_quill/django_quill.css" type="text/css" media="all" rel="stylesheet">
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha512-AIOTidJAcHBH2G/oZv9viEGXRqDNmfdPVPYOYKGy3fti0xIplnlgMHUGfuNRzC6FkzIo0iIxgFnr9RikFxK+sw==" crossorigin="anonymous"></script>
-<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" type="text/css" media="all" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
-<script src="/static/django_quill/django_quill.js"></script>
-<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-<script src="/static/script/image-resize.js"></script>
-<script src="https://unpkg.com/quill-image-compress@1.2.11/dist/quill.imageCompressor.min.js"></script>
-<script>
-  Quill.register("modules/imageCompressor", imageCompressor)
-  
-</script>
 
-    </head>
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>
     
-    <body>
-  <div class="d-flex" id="wrapper">
-    {% block sidebar %}
-    <!-- Sidebar -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
-      {% comment %} <div class="sidebar-heading"><a href="{% url 'create:edit' %}"class="text-reset text-decoration-none"> CBT Simpel</a></div> {% endcomment %}
-      <div class="list-group list-group-flush">
-        {% comment %} <a href="{% url 'create:info' %}" class="list-group-item list-group-item-action bg-light">Update Info Tes</a>
-        <a href="{% url 'create:welcome' %}" class="list-group-item list-group-item-action bg-light">Halaman Petunjuk</a>
-        <a href="{% url 'create:question' %}" class="list-group-item list-group-item-action bg-light">Soal</a>
-        <a href="{% url 'create:testTaker' %}" class="list-group-item list-group-item-action bg-light">Peserta</a>
-        <a href="{% url 'create:testReport' %}" class="list-group-item list-group-item-action bg-light">Laporan</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Pengaturan</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Ekspor/Impor</a>
-        <a href="{% url 'logout' %}" class="list-group-item list-group-item-action bg-light">Log Keluar</a> {% endcomment %}
+    {% block web_title %}
+    Dashboard Administrasi Tes
+    {% endblock web_title %}
+    
+  </title>
+  <!-- plugins:css -->
+  
+  {% block extra_head %}
+  {% endblock extra_head %}
+    
+  <link rel="stylesheet" href="{% static 'vendor/royal-ui/vendors/ti-icons/css/themify-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/royal-ui/vendors/base/vendor.bundle.base.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">  
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{% static 'vendor/royal-ui/css/style.css' %}">
+  {% block default_fonts %}
+      <style>
+        body {
+          font-family: 'Montserrat'!important;
+          font-size: 18px;
+        }
+        </style>
+      {% endblock default_fonts %}
+</head>
+<body>
+  <div class="container-scroller">
+    <!-- partial:navbar.html -->
+    {% include 'CreateTest/snippets/navbar.html' %}
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:sidebar.html -->
+      {% include 'CreateTest/snippets/sidebar.html' %}
+    
+      <div class="main-panel">
+        <main class="content-wrapper">
+           
+          {% block main_container %}
+          
+          {% endblock main_container %}
+          
+        </main> 
+          <footer class="content-wrapper w-100 d-flex px-5 py-3 flex-wrap justify-content-between" style="max-height:100px">
+            {% include 'snippets/footer.html' %}
+           <div class="w-100 mt-2 text-center">
+            <span class="d-block mt-1 text-muted"> Free Bootstrap dashboard templates from Bootstrapdash.com</span>
+          </div>
+        </footer>
       </div>
+      <!-- main-panel ends -->
     </div>
-    <!-- /#sidebar-wrapper -->
-    {% endblock sidebar %}
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-      {% block navbar %}
-      <nav class="navbar navbar-expand-lg navbar-light justify-content-start bg-light flex-nowrap border-bottom">
-        <button class="navbar-toggler" type="button" id="menu-toggle" data-toggle="collapse">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-brand pl-1 text-wrap">
-        {% block nav_brand %}
-        {% endblock nav_brand %}
-      </div>
-    </nav>
-
-    {% endblock navbar %}
-    
-    {% block no_container %}
-    
-    <div class="container-fluid ">
-    {% block main_container %}
-    <h1 class="mt-4">Simple Sidebar</h1>
-        <p>The starting state of the menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
-        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>
-      </div>
-      {% endblock main_container %}
-    </div>
-    {% endblock no_container %}
-    
-    <!-- /#page-content-wrapper -->
-    
+        <!-- partial:partials/_footer.html -->
+        <!-- partial -->
+    <!-- page-body-wrapper ends -->
   </div>
-  <!-- /#wrapper -->
-  <!-- Bootstrap, Popper and jQuery  -->
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
-  {% block vendor_script %}
-  <script>
-      $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-      });
-    </script>
-      
-      {% endblock vendor_script %}
-      
-{% block user_script %}
-{% endblock user_script %}
-{% block wysiwyg_script %}
-<script>
-  
-  if (document.querySelector('.django-quill-widget')){
-  Quill.register("modules/imageCompressor", imageCompressor)
-  var quill = new Quill('#editor', {
-    modules: {
-      toolbar: [
-        [{ header: [1, 3, false] }],
-        ['bold', 'italic', 'underline'],
-        ['image', 'code-block']
-      ]
-    },
-    scrollingContainer: '#scrolling-container', 
-    placeholder: 'Compose an epic...',
-    theme: 'bubble'
-  });
+  <!-- container-scroller -->
 
-}
-</script>
-{% endblock wysiwyg_script %}
+  <!-- plugins:js -->
+  <script src="{% static 'vendor/royal-ui/vendors/base/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page-->
+  <script src="{% static 'vendor/royal-ui/vendors/chart.js/Chart.min.js' %}"></script>
+  <!-- End plugin js for this page-->
+  <!-- inject:js -->
+  <script src="{% static 'vendor/royal-ui/js/off-canvas.js' %}"></script>
+  <script src="{% static 'vendor/royal-ui/js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'vendor/royal-ui/js/template.js' %}"></script>
+  <script src="{% static 'vendor/royal-ui/js/todolist.js' %}"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="{% static 'vendor/royal-ui/js/dashboard.js' %}"></script>
+  <!-- End custom js for this page-->
+  
+  {% block user_script %}
+    
+  {% endblock user_script %}
+    
 </body>
- 
+
 </html>
+

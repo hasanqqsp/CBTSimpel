@@ -1,7 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from django import forms
 
-# from CreateTest import forms as createTestForms
+from CreateTest.forms import CreateTestForm
 from Test.forms import LoginForm 
 # from django.views.generic.edit import UpdateView 
 from Test.models import (Question , TestPackage, Answer, TestTaker)
@@ -17,9 +17,8 @@ from django.contrib.auth.views import LoginView , LogoutView
 import random ,string, sys , datetime
 from django.views.generic import ListView, UpdateView, DetailView, FormView, CreateView,TemplateView
 from django.views.generic.edit import FormMixin
-from utils.authorization import GroupRequiredMixin,isAdmin
+from utils.authorization import GroupRequiredMixin,isAdmin,admin_required
 # Create your views here.
-adminLoginURL = reverse_lazy('create:login')
 
 
 # def viewScoreQuery(session_key):
@@ -112,8 +111,29 @@ def index(request):
     
 #     return render(request,'CreateTest/info.html',context)
 
+class NewTest(FormView):
+    template_name = 'CreateTest/newTest.html'
+    form_class = CreateTestForm
+    success_url = reverse_lazy('create:dashboard')
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            form.save()
+            credential = authenticate(
+                request,
+                username=form.cleaned_data['testCode'],
+                password=form.cleaned_data['passwordAdminTest']
+                )
+            login(request,credential)
+
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
 def authorLogin(request):
-    isAdmin(request)
+    if (isAdmin(request)):
+        return HttpResponseRedirect(reverse("create:dashboard"))
+
     if request.method == 'POST':
         loginForm = LoginForm(request.POST or None)
         if loginForm.is_valid():
@@ -125,7 +145,7 @@ def authorLogin(request):
                     loginForm.add_error(error=ValidationError(''),field='password')
                 else:
                     login(request,credential)
-                    return HttpResponseRedirect('/createtest/edit')
+                    return HttpResponseRedirect(reverse("create:dashboard"))
             except:
                 loginForm.add_error(error=ValidationError(''),field='username')
                     
@@ -136,11 +156,11 @@ def authorLogin(request):
     }
     return render(request,'CreateTest/adminLogin.html',context)
 
-def editTest(request):
-    isAdmin(request)
-    query = TestPackage.objects.get(testCode=request.user) 
+@admin_required()
+def dashboard(request):
+    q_testPackage = TestPackage.objects.get(testCode=request.user) 
     context = {
-        'testInfo': query,
+        'q_testPackage': q_testPackage,
     }
     return render(request,'CreateTest/dashboard.html', context)
 
@@ -461,3 +481,6 @@ def editTest(request):
 #         return context
     
 #     template_name = 'CreateTest/report.html'
+
+class AuthorLogout(LogoutView):
+    next_page = reverse_lazy('create:login')

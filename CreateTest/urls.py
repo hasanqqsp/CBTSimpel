@@ -16,8 +16,9 @@ urlpatterns = [
     # path('edit/welcome',createViews.EditWelcome.as_view(),name='welcome'),
     # path('edit/info', createViews.UpdateInfo.as_view(),name='info'),
     # path('edit/testTaker', createViews.TestTakerList.as_view(),name='testTaker'),
-    path('edit', createViews.editTest,name='edit'),
+    path('dashboard', createViews.dashboard,name='dashboard'),
     path('login',createViews.authorLogin,name='login'),
-    # path('new', createViews.newTest,name='newTest'),
+    path('logout',createViews.AuthorLogout.as_view(),name='logout'),
+    path('new', createViews.NewTest.as_view(),name='newTest'),
     path('', createViews.index,name='firstPage')
 ]

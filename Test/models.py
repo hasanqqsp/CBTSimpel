@@ -33,20 +33,21 @@ class TestPackage(models.Model):
     testScheduleClose = models.DateTimeField(default=None, editable=True,blank=True,null=True)
     timeLimit = models.IntegerField(default=0, null=True)
     passwordAdminTest = models.CharField(max_length=16,default=None, null=True)
-    passwordTest = models.CharField(max_length=16, default="123456")
-    welcomeMessage = models.TextField()
+    passwordTest = models.CharField(max_length=16, default=None,null=True,blank=True)
+    welcomeMessage = models.TextField(null=True,blank=True)
     settings = models.JSONField(default=json.loads(defaultSettings) ,blank=True,null=True)
     def save(self, *args, **kwargs):
         if not self.testID:
             self.testID = generate_id(TestPackage,'testID',16)
+        group = Group.objects.get(name='testAuthor') 
         try :
             user = User.objects.get(username=self.testCode)
-            group = Group.objects.get(name='testAuthor') 
             group.user_set.add(user)
             user.set_password = str(self.passwordAdminTest)
             user.save()
         except:
             user = User.objects.create_user(self.testCode, '', self.passwordAdminTest)
+            group.user_set.add(user)
             user.save()
         super().save(*args, **kwargs)
 
@@ -81,6 +82,13 @@ class TestPackage(models.Model):
         else:
             num -= 1
         return self.question_set.all()[num]
+
+    def get_max_score(self):
+        all_question = self.question_set.all()
+        return sum([x.trueScore for x in all_question])
+
+    def get_testTaker_count(self):
+        return self.testtaker_set.all().count()
         
     def __str__(self):
         return f"{self.testID}_{self.testTitle}"

@@ -2,6 +2,9 @@
 {% load widget_tweaks %} 
 
 {% block main_container %}
+<nav class="justify-content-between d-flex mb-2">
+      <a href="{% url 'create:firstPage' %}" class="py-1 btn btn-outline-success">&laquo; Kembali</a>
+    </nav>
   <h2 class="pb-2 text-center my-auto align-items-center flex-fill font-weight-bold">
     Masuk ke Dashboard Administrasi Test
   </h2>
@@ -25,9 +28,15 @@
     {{form.username|attr:"pattern:\d*" |attr:"maxlength:6"|add_class:"form-control"}}
     <label for="password">Password Administrasi Tes</label>
     {{form.password}}
+    <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+            <input type="checkbox" class="custom-control-input" id="show-hide-password" onClick="showHidePassword('id_password')">
+            <label class="custom-control-label" for="show-hide-password">
+              Tampilkan Password
+            </label>
+          </div>
     <p class="text-muted text-center h6">
         Belum memiliki akun Administrasi Tes?<br />
-        <a href="{% url 'test:resume' %}">Buat Tes Disini</a>
+        <a href="{% url 'create:newTest' %}">Buat Tes Disini</a>
       </p>
     
   
