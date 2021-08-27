@@ -1,126 +1,31 @@
-<div class="modal fade" id="Modal1" tabindex="-1" role="dialog" aria-labelledby="Modal1Label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="Modal1Label">Ubah Pilihan 1</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            {{form.choice1}}
-        </div>
-        <div class="modal-footer">
-            <a href="javascript:delChoice('choice1')"  class="btn btn-danger">Hapus</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-        </div>
-    </div>
-    </div>
-<div class="modal fade" id="Modal2" tabindex="-1" role="dialog" aria-labelledby="Modal2Label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="Modal2Label">Ubah Pilihan 2</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            {{form.choice2}}
-        </div>
-        <div class="modal-footer">
-            <a href="javascript:delChoice('choice2')"  class="btn btn-danger">Hapus</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-        </div>
-    </div>
-    </div>
-<div class="modal fade" id="Modal3" tabindex="-1" role="dialog" aria-labelledby="Modal3Label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="Modal3Label">Ubah Pilihan 3</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            {{form.choice3}}
-        </div>
-        <div class="modal-footer">
-            <a href="javascript:delChoice('choice3')"  class="btn btn-danger">Hapus</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-        </div>
-    </div>
-    </div>
-<div class="modal fade" id="Modal4" tabindex="-1" role="dialog" aria-labelledby="Modal4Label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="Modal4Label">Ubah Pilihan 4</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            {{form.choice4}}
-        </div>
-        <div class="modal-footer">
-            <a href="javascript:delChoice('choice4')"  class="btn btn-danger">Hapus</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-        </div>
-    </div>
-    </div>
-<div class="modal fade" id="Modal5" tabindex="-1" role="dialog" aria-labelledby="Modal5Label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="Modal5Label">Ubah Pilihan 5</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            {{form.choice5}}
-        </div>
-        <div class="modal-footer">
-            <a href="javascript:delChoice('choice5')"  class="btn btn-danger">Hapus</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-        </div>
-    </div>
-    </div>
-    <div class="modal fade" id="Modal6" tabindex="-1" role="dialog" aria-labelledby="Modal6Label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h6 class="modal-title" id="Modal6Label">Ubah Pilihan 6</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            {{form.choice6}}
-        </div>
-        <div class="modal-footer">
-            <a href="javascript:delChoice('choice6')"  class="btn btn-danger">Hapus</a>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </div>
-        </div>
-    </div>
-    </div>
+<div class="modal fade " id="ModalChoiceEditor" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="min-width: 80vw;" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div id="choice_editor"></div>
+                <input type="text" hidden name="choice_input" id="choice_input">
 
-    <script>
-    let quill_id = 'choice1'
-        const delChoice = quill_id => {
-            getQLEditor = document.querySelector(`#quill-id_${quill_id} .ql-editor`);
-            getQLEditor.innerText = "";
-         
-        }
-    </script>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <div class="left">
+                <button type="button" id="setAnswerKeyButton" class="btn btn-sm btn-primary">Jadikan Jawaban Benar</button>
+
+              </div>
+              <div class="right">
+                <button type="button" id="deleteButton" class="btn btn-sm btn-danger">Hapus</button>
+                <button type="button" id="savebutton" class="btn btn-sm btn-success">Simpan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
 
 

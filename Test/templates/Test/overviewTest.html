@@ -18,17 +18,22 @@ INFORMASI TES
                   <p> Password mungkin salah</p>
               </div>
       {% endif %}
+      
       <form method="POST" class="row m-1 ">
-          {% csrf_token %}
-          {{form.password|attr:"placeholder:Masukan Password Tes" |add_class:"form-control form-control-lg"}}
-          <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
+        {% csrf_token %}
+        {% if form %}
+        {{form.password|attr:"placeholder:Masukan Password Tes" |add_class:"form-control form-control-lg"}}
+        <div class="custom-control custom-checkbox my-1 mx-2 block flex-fill text-left w-100">
             <input type="checkbox" class="custom-control-input" id="show-hide-password" onClick="showHidePassword('id_password')">
             <label class="custom-control-label" for="show-hide-password">
               Tampilkan Password
             </label>
           </div>
+          {% endif %}
           <button class="btn btn-success mt-1 my-sm-0 flex-fill text-nowrap" type="submit">Lanjut</button>
         </form>   
+        
+        
     {% endif %}
   {% else %}
     <p class="m-auto h5 strong text-center">Test ini sudah Berakhir dan ditutup</p>

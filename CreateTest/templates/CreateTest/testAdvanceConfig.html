@@ -1,0 +1,79 @@
+{% extends 'CreateTest/snippets/base.html' %}
+{% load widget_tweaks %}
+{% block main_container %}
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="custom-control custom-checkbox">
+        {{form.isActive |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.isActive.id_for_label}}">
+            Tes Aktif dan Menerima Jawaban
+        </label>
+    </div>
+        
+    <div class="custom-control custom-checkbox">
+        {{form.completeRequired |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.completeRequired.id_for_label}}">
+            Seluruh soal wajib dijawab sebelum mengumpulkan
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.randomSequences |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.randomSequences.id_for_label}}">
+            Acak susunan soal
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.viewScore |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.viewScore.id_for_label}}">
+            Peserta dapat melihat Detail Skor tiap soal pada halaman Tes
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.viewAnswerKey |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.viewAnswerKey.id_for_label}}">
+            Peserta dapat melihat hasil koreksi tiap soal pada halaman Hasil tes
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.limitByScheduleStart |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.limitByScheduleStart.id_for_label}}">
+            Peserta tidak dapat mengerjakan sebelum jadwal dimulai
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.limitByScheduleFinish |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.limitByScheduleFinish.id_for_label}}">
+            Peserta tidak dapat mengerjakan setelah jadwal berakhir
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.onlyRegistered |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.onlyRegistered.id_for_label}}">
+            Hanya peserta terdaftar yang dapat mengerjakan
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.canViewScorePage |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.canViewScorePage.id_for_label}}">
+            Peserta dapat melihat pengumuman nilai
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.canViewScorePageAuth |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.canViewScorePageAuth.id_for_label}}">
+            Peserta harus memberikan Kunci Sesi untuk melihat pengumuman nilai
+        </label>
+    </div>
+    <div class="custom-control custom-checkbox">
+        {{form.allowEditData |add_class:"custom-control-input"}}
+        <label class="custom-control-label" for="{{form.allowEditData.id_for_label}}">
+            Peserta dapat mengubah data diri dan kunci sesi saat mengerjakan test
+        </label>
+    </div>
+
+
+    <button class="btn btn-sm btn-success" type="submit">Simpan</button>
+</form>
+{% endblock main_container %}
+    

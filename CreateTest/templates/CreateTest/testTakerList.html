@@ -5,55 +5,73 @@
     Daftar Peserta
     {% endblock nav_brand %}
     
+    {% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/gridjs/dist/gridjs.umd.js"></script></script>
+<link href="https://cdn.jsdelivr.net/npm/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+    {% endblock extra_head %}
+      
     {% block main_container %}
-    {{form.errors}}
+    
+    {% if form.errors %}
+    <div class="alert alert-danger">
+      {% if form.session_code.errors %}
+      <li>Kode Sesi tidak dapat digunakan</li>
+      {% endif %}
+    </div>
+    {% endif %}
+      
     <div class="d-flex flex-row">
-        <a href="#" class="btn btn-lg btn-block p-2 m-1 btn-outline-success"data-toggle="modal" data-target=".addTestTakerModal">TAMBAHKAN PESERTA</a>
-        <div class="btn-group">
-            <a href="javascript:location.reload()" class="btn btn-outline-secondary my-1  ">Muat Ulang</a>
-            
-            <button type="button" class="btn btn-lg btn-outline-secondary dropdown-toggle dropdown-toggle-split my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                <div class="form-check mx-2">
-                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions0" value="0" checked>
-                    <label class="form-check-label" for="autoRefreshOptions1">
-                      Mati
-                    </label>
-                  </div>
-                  <div class="form-check mx-2">
-                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions3" value="3" checked>
-                    <label class="form-check-label" for="autoRefreshOptions3">
-                      3s
-                    </label>
-                  </div>
-                  <div class="form-check mx-2">
-                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions5" value="5">
-                    <label class="form-check-label" for="autoRefreshOptions2">
-                      5s
-                    </label>
-                  </div>
-                  <div class="form-check mx-2">
-                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions10" value="10">
-                    <label class="form-check-label" for="autoRefreshOptions2">
-                      10s
-                    </label>
-                  </div>
-                  <div class="form-check mx-2">
-                    <input class="form-check-input" type="radio" name="autoRefreshOptions" id="autoRefreshOptions15" value="15">
-                    <label class="form-check-label" for="autoRefreshOptions3">
-                      15s
-                    </label>
-                  </div>
-                
-              </div>
-          </div>
+        <a href="#" class="btn btn-lg btn-block p-2 m-1 btn-outline-success"data-toggle="modal" data-target=".addTestTakerModal">Tambahkan Peserta</a>
         </div>
     
     {% if object_list == None %}
     Tidak Ada Peserta Terdaftar
     {% else %}
-        <table class="table table-striped"  id="myTable">
+    <div id="table"></div>
+
+    <script>
+      new gridjs.Grid({
+        columns: ["Kode Sesi", "Nama Peserta", "Kelas / Grup","Skor"],
+        server: {
+          url: '{% url 'create:testTakerList' %}?api=true',
+          then: res => res["data"],
+          total : res => res["total"]
+        },
+        pagination: {
+          enabled: true,
+          limit: 10,
+          server: {
+            url: (prev, page) => `${prev}&page=${page+1}`
+          },
+
+        },
+        search: {
+          server: {
+            url: (prev, keyword) => `${prev}&search=${keyword}`
+          }
+        },
+        sort: {
+          multiColumn: false,
+          server: {
+            url: (prev, columns) => {
+            if (!columns.length) return prev;
+            
+            const col = columns[0];
+            const dir = col.direction === 1 ? 'asc' : 'desc';
+            let colName = ['session_code','testTakerName','testTakerGroup','scoreObtained'][col.index];
+            console.log(`${prev}&order=${col.direction === 1 ? '' : '-'}${colName}`)
+            return `${prev}&order=${col.direction === 1 ? '' : '-'}${colName}`;
+          }
+        }
+        },
+        className: {
+          table: 'w-100',
+          search : 'w-100'
+        }
+      }).render(document.getElementById("table"));
+      document.querySelector('.gridjs-search-input').placeholder = 'Cari Peserta'
+    </script>
+        {% comment %} <table class="table table-striped"  id="myTable">
         <thead>
             <tr>
                 <th scope="col">NO</th>
@@ -75,16 +93,16 @@
             {% for i in object_list %}
             <tr data-toggle="collapse" data-target="#detail{{forloop.counter}}" data-parent="#myTable">
                 <td>{{forloop.counter}}</td>
-                <td class="d-none d-md-table-cell">{{i.session_key}}</td>
+                <td class="d-none d-md-table-cell">{{i.session_code}}</td>
                 <td>{{i.testTakerName}}</td>
                 <td class="d-none d-lg-table-cell">{{i.timeStart | date:"d-m-Y H:i:s"}}</td>
                 
                 {% if timeLimit == 0 %}
-                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_key}}">-- : -- : --</td>
+                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_code}}">-- : -- : --</td>
                 {% elif i.isFinish%}
-                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_key}}">Selesai</td>
+                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_code}}">Selesai</td>
                 {% else %}
-                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_key}}">--:--:--</td>
+                <td class="d-none d-md-table-cell text-nowrap timer{{i.session_code}}">--:--:--</td>
                 {% endif %}
                 
                 <td class="text-success">{{i.scoreObtained}}</td>
@@ -95,7 +113,7 @@
                     <div class="notice notice-info list-group-flush">
                         <li class="list-group-item py-1"><div class="row">
                             <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Kode Sesi</div></div>
-                            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.session_key}}</div></div>
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto">{{i.session_code}}</div></div>
                         </div></li>
                         <li class="list-group-item py-1"><div class="row">
                             <div class="col-md-3 pl-2 my-auto"><div class="card-title text-muted my-auto h6 text-uppercase">Nama Peserta</div></div>
@@ -127,28 +145,32 @@
                             <div class="col-md-9 pl-2"><div class="card-text my-auto ">Selesai</div></div>
                             {% else %}
                             
-                            <div class="col-md-9 pl-2"><div class="card-text my-auto timer{{i.session_key}}">-- : -- : --</div></div>
+                            <div class="col-md-9 pl-2"><div class="card-text my-auto timer{{i.session_code}}">-- : -- : --</div></div>
                             </div></li>
                             
-                                {% if i.timeStart %}
+                                 {% if i.timeStart %}
                                     
                                     <script src="{% static 'script/timer.js' %}"></script>
                                     <script>
-                                        timer{{i.session_key}} = new Timer({{i.timeStart | date:"U"}},{{timeLimit}},'.timer{{i.session_key}}')
-                                        timer{{i.session_key}}.tick()
+                                        timer{{i.session_code}} = new Timer({{i.timeStart | date:"U"}},{{timeLimit}},'.timer{{i.session_code}}')
+                                        timer{{i.session_code}}.tick()
                                             </script>   
                                 {% endif %}
                         {%endif%}
                             
                         <li class="list-group-item py-1"><div class="row">
                             <div class="col-6 p-1">
-                                <a href="{% url 'create:takerDelete' i.testTakerID %}" class="mx-1 btn btn-block btn-danger">HAPUS</a>
+                            <form action="{% url 'create:testTakerDelete' i.testTakerID %}" method="post">
+                            {% csrf_token %}
+                                <button class="mx-1 btn btn-sm btn-block btn-danger" type="submit">Hapus</a>
+                            
+                            </form>
                 
                             </div>
-                            <div class="col-6 p-1">
+                           <div class="col-6 p-1">
                                 <a href="{% url 'create:takerDetail' i.testTakerID%}" class="mx-1 btn btn-block btn-primary">DETAIL</a>
                 
-                            </div>
+                            </div> 
                                          
                         </div></li> 
                     </div>
@@ -156,7 +178,7 @@
             </tr><tr></tr>
             {%endfor%}
         </tbody>
-    </table>
+    </table> {% endcomment %}
     <br><br>
     {% endif %}
     <div class="modal fade addTestTakerModal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
@@ -169,23 +191,23 @@
                 </button>
               </div>
               <div class="modal-body">
-                <form method = 'POST'>
+                <form method="POST">
                     {% csrf_token %}
                   <div class="form-group">
-                      <label for="id_session_key">Kode Sesi</label>
-                      {{form.session_key |attr:"pattern:\d*" |attr:"maxlength:10"|add_class:"form-control "}}
+                      <label for="{{form.session_code.id_for_label}}">Kode Sesi</label>
+                      {{form.session_code |attr:"pattern:\d*" |attr:"maxlength:10"|add_class:"form-control form-control-sm "}}
                     </div>
                   <div class="form-group">
-                    <label for="id_testTakerName">Nama Peserta Tes</label>
-                    {{form.testTakerName |add_class:"form-control"}}
+                    <label for="{{form.testTakerName.id_for_label}}">Nama Peserta Tes</label>
+                    {{form.testTakerName |add_class:"form-control form-control-sm"}}
                     </div>
                   <div class="form-group">
-                    <label for="id_testTakerGroup">Kelas / Kelompok </label>
-                    {{form.testTakerGroup |add_class:"form-control"}}
+                    <label for="{{form.testTakerGroup.id_for_label}}">Kelas / Kelompok </label>
+                    {{form.testTakerGroup |add_class:"form-control form-control-sm"}}
                     </div>
                   <div class="form-group">
-                    <label for="id_session_password">Kunci Sesi / Password </label>
-                    {{form.session_password |add_class:"form-control"}}
+                    <label for="{{form.session_password.id_for_label}}">Kunci Sesi / Password </label>
+                    {{form.session_password |add_class:"form-control form-control-sm"}}
                     </div>
                 <button type="submit" class="btn btn-primary">Simpan</button>
           </div>

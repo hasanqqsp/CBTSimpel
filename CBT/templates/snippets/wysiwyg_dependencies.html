@@ -1,0 +1,98 @@
+{% load static %}
+<script src="{% static 'vendor/highlightjs/highlight.min.js' %}"></script>
+<link href="{% static 'vendor/quill/quill.snow.min.css' %}" rel="stylesheet">
+<script src="{% static 'vendor/quill/quill.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'django_quill/django_quill.css' %}">
+<script src="{% static 'django_quill/django_quill.js' %}"></script>
+<script src="{% static 'vendor/quillcompressor/quill.imageCompressor.min.js' %}"></script>
+<script src="{% static 'vendor/quill-image-resize/image-resize.min.js' %}"></script>
+<script>
+  Quill.register("modules/imageCompressor", imageCompressor)
+  const quillConfiguration = {
+        'theme': 'snow',
+        'formula': 'true',
+        'modules': {
+            'imageCompressor': {
+                'quality': 1,
+                'maxWidth': 2000,
+                'maxHeight': 2000,
+                'imageType': 'image/jpeg'
+            },
+            'imageResize': {
+              modules: [ 'Resize', 'DisplaySize' ]
+            },
+            'toolbar': [
+            [{ 'font': ['','mono','roboto','sofia','slabo'] }, { 'size': [] }],
+            [ 'bold', 'italic', 'underline', 'strike' ],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'script': 'super' }, { 'script': 'sub' }],
+            [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block' ],
+            [{ 'list': 'ordered' }, { 'list': 'bullet'}, { 'indent': '-1' }, { 'indent': '+1' }],
+            [ {'direction': 'rtl'}, { 'align': [] }],
+            [ 'image', 'video', 'formula' ],
+            [ 'clean' ],
+            ],
+        },
+      }
+  </script>
+<style>
+    /* Set default font-family */
+    #editor_welcomeMessage {
+      font-size: 18px;
+      min-height: 70vh;
+    }
+       
+    #editor_question {
+      font-size: 18px;
+      min-height: 50vh;
+    }
+    #choice_editor{
+      font-size: 18px;
+      min-height: 45vh;
+    }
+    #choice_editor.ql-container {
+      height: inherit;
+    }
+    .ql-snow{
+      background-color: #fff;
+    }
+    /* Set dropdown font-families */
+    .ql-snow .ql-picker.ql-font .ql-picker-label::before, .ql-snow .ql-picker.ql-font .ql-picker-item::before {
+      content : "Montserrat";
+      font-family: "Montserrat";
+    }
+    span[data-value="mono"]::before {
+      content : "Ubuntu Mono"!important;
+      font-family: "Ubuntu Mono"!important;
+    }
+    span[data-value="slabo"]::before {
+      content : "Slabo 13px"!important;
+      font-family: "Slabo 13px"!important;
+    }
+    span[data-value="sofia"]::before {
+      content : "Sofia"!important;
+      font-family: "Sofia"!important;
+    }
+    .ql-font span[data-value="roboto"]::before {
+      content : "Roboto"!important;
+      font-family: "Roboto";
+    }
+    
+    /* Set content font-families */
+    .ql-font-mono {
+      font-family: "Ubuntu Mono",monospace;
+    }
+    .ql-font-sofia {
+      font-family: "Sofia"
+    }
+    .ql-font-slabo {
+      font-family: "Slabo 13px"
+    }
+    .ql-font-roboto {
+      font-family: "Roboto";
+    }
+    
+    </style>
+
+    
+    

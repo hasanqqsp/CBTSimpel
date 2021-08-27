@@ -11,13 +11,18 @@
       {% endblock web_title %}
     </title>
     {% block extrahead %}{% endblock extrahead %}
+    
+    {% block wysiwyg_dependencies %}
+      
+    {% endblock wysiwyg_dependencies %}
+      
     {% block stylesheet %}
       <link rel="stylesheet" type="text/css" href="{% static '/styles/styles.css' %}">
       {% endblock stylesheet %}
     {% block vendor_css %}
       <link rel="stylesheet" href="{% static 'vendor/bootstrap/bootstrap.min.css' %}">    
       <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">  
-      <link href="{% static 'fonts/montserrat.css' %}" rel='stylesheet'>
+    {% include 'snippets/fonts.html' %}
     {% endblock vendor_css %}
     {% block vendor_script %}
     <script src="{% static 'vendor/jquery/jquery-3.6.0.min.js' %}"></script>

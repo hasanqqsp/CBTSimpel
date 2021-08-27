@@ -87,11 +87,3 @@ function makeTimer(timeEnd, timeStart, target, callback) {
   }
   $(target).html(timeLeft);
 }
-function showHidePassword(target) {
-  var x = document.getElementById(target);
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
-  }
-}

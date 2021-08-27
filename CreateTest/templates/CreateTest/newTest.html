@@ -1,16 +1,12 @@
 {% extends 'snippets/base.html' %}
-{% load widget_tweaks %}
 
-{% block head_script %}
-{{form.media}}
-{% endblock head_script %}
+
   
 {% block web_title %}
 Buat Tes Baru
 {% endblock web_title %}
 
 {% block main_container %}
-
   {% include 'snippets/testInfoForm.html' %}
 {% endblock main_container %}
   

@@ -1,0 +1,16 @@
+/* ubuntu-mono-regular - latin */
+@font-face {
+  font-family: "Ubuntu Mono";
+  font-style: normal;
+  font-weight: 400;
+  src: url("ubuntu-mono-v10-latin-regular.eot"); /* IE9 Compat Modes */
+  src: local(""),
+    url("ubuntu-mono-v10-latin-regular.eot?#iefix") format("embedded-opentype"),
+    /* IE6-IE8 */ url("ubuntu-mono-v10-latin-regular.woff2") format("woff2"),
+    /* Super Modern Browsers */ url("ubuntu-mono-v10-latin-regular.woff")
+      format("woff"),
+    /* Modern Browsers */ url("ubuntu-mono-v10-latin-regular.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      url("ubuntu-mono-v10-latin-regular.svg#UbuntuMono") format("svg"); /* Legacy iOS */
+}

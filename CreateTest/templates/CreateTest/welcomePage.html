@@ -1,29 +1,26 @@
-    {% extends 'CreateTest/snippets/base.html' %}
+{% extends 'CreateTest/snippets/base.html' %}
   {% load static %}
  {% load widget_tweaks %}
- {% block user_head_script %}
-
-<script src="{% static 'script/image-resize.js' %}"></script>
-<script src="https://unpkg.com/quill-image-compress@1.2.11/dist/quill.imageCompressor.min.js"></script>
-<script>
-
-</script>
-{% endblock user_head_script %}
-{% block nav_brand %}
-    Dashboard Administrasi Tes 
-{% endblock nav_brand %}
-{% block no_container %}
-<div class="container-fluid  p-0 mx-2 pr-3 my-1 flex-column h-75">
-<form  method="post" class=h-75>
+{% block wysiwyg_dependencies %}
+{% include 'snippets/wysiwyg_dependencies.html' %}
+{% endblock wysiwyg_dependencies %}
+{% block main_container %}
+<form method="post">
 {% csrf_token %}
-{{form.welcomeMessage}}
-
-<div class="container-fluid my-1 h-25">
-<button type="submit" class="btn btn-primary">Simpan</button>
-</form>
-<a href="{% url 'create:welcomeprev' %}" class="btn btn-success">Pratinjau</a>
+<div id="editor_welcomeMessage">
+{{welcomeMessage|safe}}
 </div>
-{% endblock no_container %}
-
+{{form.welcomeMessage |attr:"hidden:hidden"}}
+<div id="editor"></div>
+<button type="submit" class="my-2 btn btn-success btn-sm btn-block"><i class="bi bi-save mr-2"></i>Simpan</button>
+</form>
+{% endblock main_container %}
 {% block wysiwyg_script %}
+<script>
+  let Font = Quill.import('formats/font');
+  Font.whitelist = ['mono', 'roboto','sofia','slabo']
+  Quill.register(Font, true);
+    var quill = new QuillWrapper('editor_welcomeMessage',"id_welcomeMessage",quillConfiguration);
+    </script>
 {% endblock wysiwyg_script %}
+

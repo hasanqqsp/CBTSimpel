@@ -1,0 +1,176 @@
+{% extends 'CreateTest/snippets/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block nav_brand %}
+Dashboard Administrasi Tes 
+{% endblock nav_brand %}
+{% block extra_head %}
+<script>
+  {% if choices %}
+    let choices = {{choices | safe}}
+  {% else %}
+    let choices = []
+  {% endif %}
+</script>
+{% endblock extra_head %}
+  
+
+{% block wysiwyg_dependencies %}
+{% include 'snippets/wysiwyg_dependencies.html' %}
+{% endblock wysiwyg_dependencies %}
+
+{% block main_container %}
+<div class="container-fluid  p-0 mx-2 pr-3 my-1 flex-column">
+  <div class="d-flex flex-row justify-content-between">
+    <a href="{% url 'create:questions' %}" class="btn btn-outline-secondary p-2 m-1 text-nowrap">&laquo; Kembali</a>
+    <a href="{% url 'create:newQuestion' %}" class="btn p-2 m-1 btn-outline-primary">Tambahkan Soal Lain</a>
+    <form action="{% url 'create:questionDelete' object.questID %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-block p-2 m-1 btn-outline-danger flex-fill">Hapus</button>
+    </form>
+  </div>
+<div class="d-flex flex-wrap">
+  <p class="my-1 mr-2">Soal No :</p>
+
+  <nav aria-label="Quest navigation">
+  {% for i in questionsList %}
+    
+    {% if object.get_question_num == forloop.counter %}
+      <a class="btn p-2 btn-outline-primary my-1 active" href="../{{i.questID}}">{{forloop.counter}}</a>
+    {% else %}
+      <a class="btn p-2 btn-outline-primary my-1" href="../{{i.questID}}">{{forloop.counter}}</a>
+      
+    {% endif %}
+      
+      {% endfor %}
+  </nav>
+</div>
+<form  method="post">
+  {% if form.errors %}
+  <div class="alert alert-danger" role="alert">
+    {% for field, errors in form.errors.items %}
+    {% for error in errors %}
+    <b>{{ field }}</b>: {{ error }}
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endif %}
+{% csrf_token %}
+<div id="editor_question">
+  {{form.question.initial | safe}}
+</div>
+{{form.question |attr:"hidden:hidden"}}
+<div class="container-fluid my-1 text-right">
+<button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+</div>
+
+
+<p class="my-1">Pilihan Jawaban:</p>
+  <div class="choices-list"></div>
+  <div class="form-group mb-1">
+    <label for="id_trueScore">Skor Benar</label>
+    {{form.trueScore|add_class:"form-control form-control-sm"}}
+    </div>
+    <div class="form-group mb-1">
+      <label for="id_defaultScore">Skor Dasar (Tidak Diisi)</label>
+      {{form.defaultScore|add_class:"form-control form-control-sm"}}
+      </div>
+    <div class="form-group mb-1">
+      <label for="id_falseScore">Skor Salah</label>
+      {{form.falseScore |add_class:"form-control form-control-sm"}}
+    </div> 
+    {{form.choices|attr:"hidden:hidden"}}
+    {{form.answerKey|attr:"hidden:hidden"}}
+
+    <button type="submit" class="btn btn-primary btn-block mt-3">Simpan</button>
+</form>
+
+    {% include 'CreateTest/snippets/modalchoice.html' %}
+
+{% endblock main_container %}
+
+{% block user_script %}
+<script>
+let choices_list_dom = document.querySelector('.choices-list')
+const loadChoicesDOM = () =>{
+  let choices_list = []
+  for(let i = 0 ; i < choices.length; i++){
+    choices_list.push(`<div class="my-1">
+          <button type="button" data-toggle="modal" data-target="#ModalChoiceEditor"  data-choice-code="${choices[i]["choiceCode"]}" class="btn btn-outline-success text-left btn-block">
+          <div class="ql-container">
+            <div class="ql-editor">${choices[i]["choiceLabel"]}</div>
+          </div>
+          </button>
+      </div>`)
+  }
+  choices_list_dom.innerHTML = choices_list.join('') + `<div class="my-1">
+          <button type="button" data-toggle="modal" data-target="#ModalChoiceEditor" class="btn btn-outline-success text-center  btn-block" data-choice-code="new">Tambahkan Pilihan</button>
+      </div>`
+  document.getElementById('{{form.choices.id_for_label}}').value = JSON.stringify(choices)
+  document.querySelector(`button[data-choice-code="{{object.answerKey}}"]`).classList.add('active')
+
+}
+  loadChoicesDOM()
+$('.modal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) 
+  var choiceCode = button.data('choiceCode')
+  if (choiceCode == "new"){
+    choiceCodeList = choices.map(e => e.choiceCode)
+    choiceCode = choiceCodeList.length ? Math.max(...choiceCodeList) + 1 : 1
+    choices.push({"choiceCode": choiceCode,"choiceLabel" : ""})
+    loadChoicesDOM()
+
+  }
+  var choiceLabel = choices.find(e => e.choiceCode == choiceCode)[0]
+  var modal = $(this)
+  modal.find('.modal-title').html(`Edit Pilihan <span id="choice-code">${choiceCode}</span>`)
+  modal.find('#choice_editor .ql-editor').html(choiceLabel)
+  modal.find('#choice_input').val()
+})
+  const form = document.getElementsByTagName('form')[2]
+
+$('#savebutton').click(function() {
+  const modal = this.parentElement.parentElement.parentElement
+  let choice_code = parseInt(modal.querySelector('#choice-code').innerText)
+  let input_value = modal.querySelector("#choice_input").value
+  try {
+    input_value = JSON.parse(input_value).html
+  } catch {} finally {
+    choice_obj = choices.find(e => e.choiceCode == choice_code)
+    choice_obj["choiceLabel"] = input_value
+    loadChoicesDOM()
+    form.submit();
+  } 
+});  
+
+$('#deleteButton').click(function() {
+
+  const modal = this.parentElement.parentElement.parentElement
+  let choice_code = parseInt(modal.querySelector('#choice-code').innerText)
+  let index = choices.findIndex(e => e.choiceCode = choice_code)
+  choices.splice(index,1)
+  loadChoicesDOM()
+  form.submit();
+
+})
+
+$('#setAnswerKeyButton').click(function() {
+  const modal = this.parentElement.parentElement.parentElement
+  let choice_code = parseInt(modal.querySelector('#choice-code').innerText)
+  answerKeyField = document.getElementById('id_answerKey') 
+  answerKeyField.value = choice_code
+  form.submit();
+})
+</script>
+
+{% endblock user_script %}
+    
+{% block wysiwyg_script %}
+<script>
+  let Font = Quill.import('formats/font');
+  Font.whitelist = ['mono', 'roboto','sofia','slabo']
+  Quill.register(Font, true);
+    var quill = new QuillWrapper('editor_question',"id_question", quillConfiguration);
+    let quill_choice =  new QuillWrapper('choice_editor',"choice_input", quillConfiguration);
+    </script>
+{% endblock wysiwyg_script %}

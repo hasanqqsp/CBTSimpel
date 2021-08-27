@@ -14,6 +14,8 @@ class CreateSessionForm(forms.ModelForm):
             'session_password' : forms.PasswordInput()
         }
 
+    
+
 class UpdateSessionForm(forms.ModelForm):
     password_confirm =  forms.CharField(widget=forms.PasswordInput,required=False)
     class Meta:

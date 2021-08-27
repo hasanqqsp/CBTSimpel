@@ -20,7 +20,7 @@
 }
 </style>
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
-    <ul class="nav">
+    <ul class="nav" style="width:auto">
       <li class="nav-item">
         <a class="nav-link" href="{% url 'create:dashboard' %}">
           <i class="bi bi-house menu-icon"></i>
@@ -35,32 +35,32 @@
         </a>
         <div class="collapse" id="ui-basic">
           <ul class="nav flex-column sub-menu">
-            <li class="nav-item"> <a class="nav-link" href="#">Halaman Depan</a></li>
-            <li class="nav-item"> <a class="nav-link" href="#">Dasar</a></li>
-            <li class="nav-item"> <a class="nav-link" href="#">Lanjutan</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url 'create:welcomePageEdit' %}">Halaman Depan</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url 'create:basicConfig' %}">Dasar</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{% url 'create:advanceConfig' %}">Lanjutan</a></li>
           </ul>
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="pages/forms/basic_elements.html">
+        <a class="nav-link" href="{% url 'create:questions' %}">
           <i class="bi bi-card-checklist menu-icon"></i>
           <span class="menu-title">Soal</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="pages/charts/chartjs.html">
+        <a class="nav-link" href="{% url 'create:testTakerList' %}">
           <i class="bi bi-people menu-icon"></i>
           <span class="menu-title">Peserta</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="pages/tables/basic-table.html">
+        <a class="nav-link" href="#">
           <i class="bi bi-tools menu-icon"></i>
           <span class="menu-title">Kontrol</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="pages/icons/themify.html">
+        <a class="nav-link" href="{% url 'create:exportImport' %}">
           <i class="bi bi-arrow-left-right menu-icon"></i>
           <span class="menu-title">Ekspor / Impor</span>
         </a>

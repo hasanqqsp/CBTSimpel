@@ -1,8 +1,16 @@
 {% extends 'snippets/base.html' %}
+{% load static %}
 {% block web_title %}
  (Soal ke {{indexOf}}/{{question_list|length}}) {{q_testPackage.testTitle}}
 {% endblock web_title %}
 
+{% block wysiwyg_dependencies %}
+<script src="{% static 'vendor/highlightjs/highlight.min.js' %}"></script>
+<link href="{% static 'vendor/quill/quill.snow.min.css' %}" rel="stylesheet">
+<script src="{% static 'vendor/quill/quill.min.js' %}"></script>
+
+{% endblock wysiwyg_dependencies %}
+    
 {% block main_container %}
     
 <ul class="list-group block list-group-flush text-left flex-fill">
@@ -10,27 +18,22 @@
         <div class="row">
             <div class=" d-flex flex-fill flex-row flex-wrap justify-content-between ">
                 <div class="bg-success align-self-center border-primary rounded py-1 px-2 mb-0  text-nowrap">Soal Ke-{{indexOf}} dari {{question_list|length}}</div>
-            
-            {% if is_preview %}
-                <div class="bg-secondary  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : Pratinjau</div>
-            {% else %}
                 {% if not q_testTaker.timeLimit == 0 %}
                 <div class="bg-primary p-1 px-2 rounded text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
                         <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5V5.6z"/>
                         <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64a.715.715 0 0 1 .012-.013l.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354a.512.512 0 0 1-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5zM8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3z"/>
                     </svg>
-                    Sisa Waktu : <span class="time"></span></div>
+                    Sisa Waktu : <span class="time"></span>
+                </div>
                 {% endif %}
                 <div class="bg-success  align-self-center border-secondary rounded py-1 px-2 mb-0  text-nowrap ">Kode Sesi : {{user}}</div>
-            {% endif %}
-        
-        </div></li>
-    <li class="p-1 list-group-item ql-editor border-0 text-justify">
-        <div class="ql-container ql-snow" autofocus>
-            {{q_question.question | safe}}
         </div>
     </li>
+    <div class="ql-container ql-snow">
+        <li class="p-1 list-group-item ql-editor text-justify border-0" id="question">{{q_question.question | safe}}</li>
+    </div>
+
     <form method="post" accept-charset="utf-8">
     {{q_answers}}    
      {% for form in form  %}
@@ -75,16 +78,7 @@
         </li>
         <li class="p-0 pb-2 d-flex justify-content-around flex-row text-nowrap ">
         
-        {% if is_preview %}
-            <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
-            {% if q_question.questionNum == 1 %}
-            {% else %}
-            <a href="." class="btn rounded my-1 btn-success">&laquo; Kembali</a>
-            {% endif %}
-            <a href="#" class="btn rounded my-1 btn-warning">Lewati &raquo;</a>
-                <a class="btn rounded my-1  btn-primary" href="#">Kirim</a>
-            </li>
-        {% else %}
+        
             <li class="btn-group btn-group-toggle d-flex flex-row flex-wrap" data-toggle="buttons">
             {% if prev_question == None %}
             {% else %}
@@ -96,11 +90,8 @@
             {% endif %}
                 <input class="btn rounded my-1  btn-primary" type="submit" value="Kirim"></form>
             </li>
-    {% endif %}
     </li>
     <li class="list-group-item px-0">
-        {% if is_preview %}
-            {% else %}
         <div class="d-flex flex-wrap">
             <nav class="question-list" aria-label="Quest navigation">
             {% for i in q_answers_questions %}
@@ -117,29 +108,23 @@
                 {% endif %}
                 {% endfor %}
             </nav>
-        
         </div>
         <div class="help justify-content-end d-flex flex-fill flex-row flex-wrap">
-            {% comment %} <button class="btn btn-info keybind-button mx-2">Pintasan Keyboard</button> {% endcomment %}
             <a href="{% url 'test:sessionInfo' %}?next=/test/{{q_testPackage.testID}}/q/{{q_question.questID}}" target="_blank" class="btn btn-primary session-info-button mx-2">Info Sesi</a>
-            
             {% if q_testPackage.settings.allowEditData %}
-
-                <a href="{% url 'test:sessionEdit' %}?next=/test/{{q_testPackage.testID}}/q/{{q_question.questID}}" class="btn btn-warning update-session-button mx-2 ">Ubah Data</a>
-                
+                <a href="{% url 'test:sessionEdit' %}?next=/test/{{q_testPackage.testID}}/q/{{q_question.questID}}" class="btn btn-warning update-session-button mx-2 ">Ubah Data</a>     
             {% endif %}
-                
-
         </div>         
-        {% endif %}
     </li>
-        </ul>
+    </ul>
+
         {% endfor %}
-        </div>
-    </ul> 
-</div>
+
 </main>
-<div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+{% endblock main_container %}
+
+
+{% comment %} <div class="modal fade" id="modal-timeout" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
       <div class="modal-content">
         
@@ -156,10 +141,7 @@
       </div>
     </div>
   </div>
- </ul>
-{% endblock main_container %}
-    
-
+ </ul> {% endcomment %}
     
      
      {% block user_script %}

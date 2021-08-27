@@ -1,0 +1,61 @@
+{% extends 'CreateTest/snippets/base.html' %}
+
+{% block main_container %}
+<div class="card">
+    <div class="card-header">
+      Ekspor
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Ekspor Data Peserta</h5>
+      <p class="card-text">Unduh data peserta yang dibutuhkan dalam format JSON atau XLS</p>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#testTakerExportJSON">
+        Ekspor JSON
+      </button>   
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#testTakerExportXLS">
+        Ekspor XLS
+      </button>     
+      <a href="" class="btn btn-primary">Ekspor XLS</a>
+    </div>
+    <!-- Button trigger modal -->
+    
+    <!-- Modal -->
+    <div class="modal fade" id="testTakerExportXLS" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            ...
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>    
+    <hr class="my-0">
+    <div class="card-body">
+        <h5 class="card-title">Ekspor Soal</h5>
+        <p class="card-text">Unduh Soal beserta pilihan jawaban dan skor dalam format JSON atau XLS</p>
+        <a href="#" class="btn btn-primary">Ekspor JSON</a>
+        <a href="#" class="btn btn-primary">Ekspor XLS</a>
+      </div>
+  </div>
+  <hr>
+  <div class="card">
+    <div class="card-header">
+      Impor
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Special title treatment</h5>
+      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+      <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+  </div>
+{% endblock main_container %}
+    

@@ -1,0 +1,68 @@
+{% extends 'CreateTest/snippets/base.html' %}
+
+{% load static %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'styles/styles.css' %}">
+{% endblock extra_head %}
+    
+{% block main_container %}
+<div class="container-fluid  p-0 mx-2 pr-3 my-1 flex-column">
+  <div class="d-flex flex-row">
+    <a href="{% url 'create:newQuestion' %}" class="btn btn-block p-2 m-1 btn-success">Tambahkan Soal </a>
+</div>
+
+{% if object_list%}
+    {% for i in object_list %}
+        <div class="notice notice-info">
+            <p> Soal Ke-{{forloop.counter}}</p>
+            <p> {{i.question | truncatechars_html:200 | striptags}} <p>
+            <div class="flex-row">
+                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteConfirm" data-delete-link="{% url 'create:questionDelete' i.questID%}">
+                    Hapus
+                  </button>
+                
+                <a href="question/{{i.questID}}" class="btn btn-sm btn-primary">Edit</a>
+            </div>
+        </div>
+    {% endfor %}
+      
+    <div class="modal" tabindex="-1" role="dialog" id="deleteConfirm">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Konfirmasi</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Hapus 1 Soal ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Batal</button>
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+          $('#deleteConfirm').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) 
+            var deleteLink = button.data('deleteLink') 
+            var modal = $(this)
+            modal.find('.modal-footer form').attr('action', deleteLink )
+            })
+      </script>
+{% else %}
+    <div class="d-flex align-items-center mt-3">
+    <p class=" h4 text-center text-muted flex-fill">Tidak Ada Pertanyaan Tersedia</p>
+    </div>
+{% endif %}
+{% endblock main_container %}
+
+
+    
+    

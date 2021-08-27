@@ -17,8 +17,11 @@
   
   {% block extra_head %}
   {% endblock extra_head %}
+  
+  {% block wysiwyg_dependencies %}
     
-  <link rel="stylesheet" href="{% static 'vendor/royal-ui/vendors/ti-icons/css/themify-icons.css' %}">
+  {% endblock wysiwyg_dependencies %}
+      
   <link rel="stylesheet" href="{% static 'vendor/royal-ui/vendors/base/vendor.bundle.base.css' %}">
   <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">  
   <!-- endinject -->
@@ -26,6 +29,10 @@
   <!-- End plugin css for this page -->
   <!-- inject:css -->
   <link rel="stylesheet" href="{% static 'vendor/royal-ui/css/style.css' %}">
+  <script src="{% static 'vendor/royal-ui/vendors/base/vendor.bundle.base.js' %}"></script>
+
+  {% include 'snippets/fonts.html' %}
+   
   {% block default_fonts %}
       <style>
         body {
@@ -67,7 +74,6 @@
   <!-- container-scroller -->
 
   <!-- plugins:js -->
-  <script src="{% static 'vendor/royal-ui/vendors/base/vendor.bundle.base.js' %}"></script>
   <!-- endinject -->
   <!-- Plugin js for this page-->
   <script src="{% static 'vendor/royal-ui/vendors/chart.js/Chart.min.js' %}"></script>
@@ -82,6 +88,10 @@
   <script src="{% static 'vendor/royal-ui/js/dashboard.js' %}"></script>
   <!-- End custom js for this page-->
   
+  {% block wysiwyg_script %}
+    
+  {% endblock wysiwyg_script %}
+    
   {% block user_script %}
     
   {% endblock user_script %}

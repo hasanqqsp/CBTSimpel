@@ -15,6 +15,7 @@ from datetime import timedelta
 from django.template.loader import get_template
 from io import BytesIO
 from xhtml2pdf import pisa
+from utils.authorization import non_admin_required
 
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
@@ -55,7 +56,7 @@ def joinTest(request):
     }
     return render(request, 'Test/joinTest.html',context)
 
-@login_required(login_url='/test/resume', redirect_field_name=None)            
+@non_admin_required()           
 def changeTest(request,testID,testTakerInfo):
     q_testPackage = TestPackage.objects.get(testID=testID)
     if request.user.is_authenticated :
@@ -86,7 +87,7 @@ def detailTest(request, testID):
         return HttpResponseRedirect('/test/resume')    
 
     form = AuthTestForm2(request.POST or None)
-    if q_testPackage.passwordTest == 'None':
+    if q_testPackage.passwordTest == 'None' or not q_testPackage.passwordTest:
         form = None
         if request.method == 'POST':
             return HttpResponseRedirect(f"/test/createsession/{testID}") 
@@ -108,7 +109,7 @@ def detailTest(request, testID):
     }
     return render(request, 'Test/overviewTest.html', context)
         
-@login_required(login_url='/test/resume', redirect_field_name=None)  
+@non_admin_required() 
 def welcomeTest(request,testID):
     if not TestTaker.objects.filter(session_code = request.user).exists():
         pass
@@ -127,7 +128,7 @@ def welcomeTest(request,testID):
     }
     return render(request,'Test/welcomeTest.html',context)
 
-@login_required(login_url='/test/resume', redirect_field_name=None)  
+@non_admin_required() 
 def verifyAnswer(request, testID):
     q_testPackage = TestPackage.objects.filter(testID=testID)
     if len(q_testPackage) > 0:
@@ -169,7 +170,7 @@ def verifyAnswer(request, testID):
     print(context["questionCount"])
     return render(request, 'Test/verifyAnswer.html',context)
 
-@login_required(login_url='/test/resume', redirect_field_name=None)  
+@non_admin_required() 
 def doTest(request, testID, questID):
     q_testPackage = TestPackage.objects.get(testID=testID)
     q_question = q_testPackage.question_set.get(questID=questID)
@@ -217,10 +218,11 @@ def doTest(request, testID, questID):
             form = AnswerForm
        
     CHOICES = []
-    for i in q_question.choices:
-        CHOICES.append((i['choiceCode'],i['choiceLabel']))
-    if not q_testPackage.settings["completeRequired"]:
-        CHOICES.append(("","Cancel"))
+    if q_question.choices:
+        for i in q_question.choices:
+            CHOICES.append((i['choiceCode'],i['choiceLabel']))
+        if not q_testPackage.settings["completeRequired"]:
+            CHOICES.append(("","Cancel"))
         
     form.base_fields['answer'].choices = CHOICES
 
@@ -266,7 +268,7 @@ def createSession(request,testID):
 
     return render(request,'Test/createSession.html',context)
 
-@login_required(login_url='/test/resume', redirect_field_name=None)  
+@non_admin_required() 
 def sessionInfo(request):
     q_testTaker = TestTaker.objects.filter(session_code=request.user,timeFinish=None)
     if not TestTaker.objects.filter(session_code=request.user,timeFinish=None).exists:
@@ -278,7 +280,7 @@ def sessionInfo(request):
         }   
     return render(request,'Test/sessionInfo.html',context)     
 
-@login_required(login_url='/test/resume', redirect_field_name=None)  
+@non_admin_required() 
 def sessionEdit(request):
     if not TestTaker.objects.filter(session_code=request.user,timeFinish=None).exists:
         return HttpResponseRedirect('/test/resume')
@@ -349,7 +351,7 @@ def resumeTest(request,*args, **kwargs):
     }
     return render(request,'Test/resume.html',context)
 
-@login_required(login_url='/test/resume', redirect_field_name=None)  
+@non_admin_required() 
 def cancelTest(request,redirID):
     q_user = User.objects.get(username = request.user)
     q_user.delete()
@@ -456,3 +458,4 @@ def joinTestWithCode(request,testCode):
     if query.exists():
         return HttpResponseRedirect(reverse("test:detail",kwargs={"testID":query[0].testID}))
     return HttpResponseNotFound()
+

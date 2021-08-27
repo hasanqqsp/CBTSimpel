@@ -16,7 +16,6 @@ class TestPackage(models.Model):
         "completeRequired": true,
         "randomSequences": true,
         "viewScore": true,
-        "viewDetail": true,
         "viewAnswerKey": true,
         "limitByScheduleStart": true,
         "limitByScheduleFinish": false,
@@ -39,16 +38,19 @@ class TestPackage(models.Model):
     def save(self, *args, **kwargs):
         if not self.testID:
             self.testID = generate_id(TestPackage,'testID',16)
-        group = Group.objects.get(name='testAuthor') 
+        group = Group.objects.get(name='testAuthor')
+        try:
+            self.welcomeMessage = json.loads(self.welcomeMessage)['html']
+        except :
+            pass 
         try :
             user = User.objects.get(username=self.testCode)
-            group.user_set.add(user)
             user.set_password = str(self.passwordAdminTest)
             user.save()
         except:
             user = User.objects.create_user(self.testCode, '', self.passwordAdminTest)
-            group.user_set.add(user)
             user.save()
+        group.user_set.add(user)
         super().save(*args, **kwargs)
 
     def get_time_limit(self):
@@ -110,6 +112,8 @@ class TestTaker(models.Model):
         if not self.session_code:
             session_code = generate_numeric_code(TestTaker,'session_code',10)
             user = User.objects.create_user(session_code, None, self.session_password)
+            group = Group.objects.get(name='testTaker')
+            group.user_set.add(user)
             self.session_code = session_code
             user.save()
         if not self.testTakerID:
@@ -219,25 +223,22 @@ class Question(models.Model):
     def save(self,*args, **kwargs):
         if not self.questID:
             self.questID = generate_id(Question,'questID',16)
+        try:
+            self.question = json.loads(self.question)['html']
+        except :
+            pass
         super().save(*args, **kwargs)
-    # def save(self,*args, **kwargs):
-    #     sameData = Question.objects.filter(testID=self.testID, questionNum=self.questionNum)
-    #     for i in sameData:
-    #         if i.id != self.id:
-    #             i.delete()
-    #         else:
-    #             pass
-    #     max_score = 0
-    #     for i in Question.objects.filter(testID=self.testID):
-    #         max_score += i.trueScore
-    #     findPack.maxScore = max_score
-    #     super().save(*args, **kwargs)
+
     def get_question_num(self,*args):
         q_question = list(Question.objects.filter(testPackage=self.testPackage))
-        sequence = json.loads(args[0])
+        if args:
+            sequence = json.loads(args[0])
+        else:
+            sequence = [i for i in range(self.testPackage.get_question_count())]
         inIndex = q_question.index(self)
         inSequence = sequence.index(inIndex)
         return inSequence + 1
+        
     def get_next_question(self,*args):
         q_question = list(Question.objects.filter(testPackage=self.testPackage))
         sequence = json.loads(args[0])
@@ -258,11 +259,7 @@ class Question(models.Model):
             return None
         num = sequence[inSequence-1]
         return q_question[num]
-    '''
-from Test.models import *
-q= Question.objects.filter(questID='dhfDPn3i6jTA3CnG')[0]
-q.get_next_question("[4, 3, 2, 0, 1]").get_prev_question("[4, 3, 2, 0, 1]")
-    '''
+
 
     # def delete(self,*args,**kwargs):
     #     questionList = Question.objects.filter(testID = self.testID)
@@ -277,7 +274,7 @@ q.get_next_question("[4, 3, 2, 0, 1]").get_prev_question("[4, 3, 2, 0, 1]")
     #     super().delete()
 
     def __str__(self):
-        return "{}_{}".format(self.testPackage.testID,self.question)
+        return "{}_{}".format(self.testPackage.testID,self.question[:20])
 
 class Answer(models.Model):
     answerID =  models.CharField(max_length=16, unique=True,editable=True,blank=True)

@@ -1,4 +1,8 @@
 {% load widget_tweaks %}
+{% load static %}
+<script type="text/javascript" src="{% static 'vendor/moment/moment.min.js' %}"></script>
+<script src="{% static 'vendor/tempus-dominus/tempusdominus-bootstrap-4.min.js' %} " ></script>
+<link rel="stylesheet" href="{% static 'vendor/tempus-dominus/tempusdominus-bootstrap-4.min.css' %}" />
 <form  method="post" class="text-left">
     {% csrf_token %}
   <div class="form-group">
@@ -82,7 +86,15 @@
     </div>
     <small  class="form-text text-muted">Buatlah Sebuah Password. Ini akan  digunakan peserta untuk mengakses administrasi tes. </small>
     </div>
-<button class="w-100 btn btn-success flex-fill" type="submit">Buat Tes Baru</button>
+
+
+{% if request.path == '/createtest/new' %}
+  <button class="w-100 btn btn-success flex-fill" type="submit">Buat Tes Baru</button>
+  {% else %}
+  <button class="w-100 btn btn-success flex-fill" type="submit">Simpan</button>
+
+{% endif %}
+  
 </form>
 <script>
   const disableFormField = (id,value) => {
@@ -101,4 +113,13 @@
       target.setAttribute('disabled','disabled')
     }
   }
+  function showHidePassword(target) {
+  var x = document.getElementById(target);
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+
 </script>
