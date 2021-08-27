@@ -9,6 +9,7 @@ decorator==5.0.9
 defusedxml==0.6.0
 Django==3.1.1
 django-quill-editor==0.1.16
+django-tempus-dominus==5.1.2.14
 django-widget-tweaks==1.4.8
 future==0.18.2
 html5lib==1.1
@@ -25,6 +26,7 @@ prompt-toolkit==3.0.19
 ptyprocess==0.7.0
 pycparser==2.20
 Pygments==2.9.0
+PyPDF2==1.26.0
 Pyphen==0.10.0
 python-bidi==0.4.2
 pytz==2020.4
@@ -36,3 +38,4 @@ traitlets==5.0.5
 wcwidth==0.2.5
 webencodings==0.5.1
 xhtml2pdf==0.2.5
+xlwt==1.3.0
