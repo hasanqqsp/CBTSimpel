@@ -8,18 +8,13 @@ from CreateTest.forms import (
     BasicConfigTestForm,CreateTestTakerForm,
     AdvanceConfigTestForm)
 from Test.forms import LoginForm 
-# from django.views.generic.edit import UpdateView 
 from Test.models import (Question , TestPackage, Answer, TestTaker)
 from django.urls import reverse, reverse_lazy
 from django.http import (HttpResponseRedirect ,JsonResponse,HttpResponse)
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-# from django.core import serializers
 from django.core.exceptions import ValidationError, PermissionDenied
-# from django.utils.translation import gettext as _
 from django.contrib.auth.views import LoginView , LogoutView
-# from django_quill.forms import QuillFormField
-import random ,string, sys , datetime
 from django.views.generic import ListView, UpdateView, DetailView, FormView, CreateView,TemplateView
 from django.views.generic.edit import DeleteView, FormMixin
 from utils.authorization import GroupRequiredMixin,isAdmin,admin_required
