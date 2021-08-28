@@ -13,4 +13,4 @@ Aplikasi Tes Berbasis Web Gratis dan opensource dibuat dengan Django 3
 
 ## Preview
 
-hasanismail0305.pythonanywhere.com
+https://hasanismail0305.pythonanywhere.com
