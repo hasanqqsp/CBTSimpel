@@ -24,11 +24,11 @@ from django.views.generic import ListView, UpdateView, DetailView, FormView, Cre
 from django.views.generic.edit import DeleteView, FormMixin
 from utils.authorization import GroupRequiredMixin,isAdmin,admin_required
 from utils.generate_id import generate_id
+from utils.mapper import serializeTestTaker
 import json
 import math
 from django.db.models.functions import Lower
 from django.db.models import Q
-
 import xlwt 
 
 
@@ -224,7 +224,7 @@ class TestTakerList(GroupRequiredMixin,ListView,FormMixin):
     def get(self, request, *args, **kwargs):
             
         if self.request.GET.get('api'):
-            schema = ['session_code','testTakerName','testTakerGroup','scoreObtained']
+            schema = ['session_code','testTakerName','testTakerGroup']
             page = int(request.GET.get('page'))
             qs = self.get_queryset()
             qs_total = qs.count()
@@ -248,11 +248,11 @@ class TestTakerList(GroupRequiredMixin,ListView,FormMixin):
                 "page" : request.GET.get('page')
                 })
             if page_size:
-                paginated_qs = self.paginate_queryset(qs.values_list(*schema), page_size)
-
+                paginated_qs = self.paginate_queryset(qs, page_size)
+            
             response = {
                 "total" : qs.count(),
-                "data" : list(paginated_qs[2]),
+                "data" : list(map(serializeTestTaker,paginated_qs[2])),
                 "page" : paginated_qs[1].number
             }
             return JsonResponse(response)

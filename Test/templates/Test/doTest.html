@@ -149,7 +149,7 @@
          {% if  choices%}
             let choices = {{choices | safe}}
             for(let i = 0; i< choices.length;i++){
-                document.getElementById(`choice` + (i +1)).innerText = choices[i]
+                document.getElementById(`choice` + (i +1)).innerHTML = choices[i]
             }
          {% endif %}
         

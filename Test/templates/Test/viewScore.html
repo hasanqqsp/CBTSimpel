@@ -5,7 +5,7 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
 {% endblock web_title %}
 
 {% block main_container %}
-    {% if is_authenticated %}  
+    {% if is_authenticated %}
       <h3 class="m-1 text-uppercase"><strong>JAWABAN {{q_testPackage.testTitle}}</strong></h3>
       <ul class="list-group block text-left list-group-flush">
         <li class="list-group-item"><div class="row">
@@ -98,7 +98,7 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
                 </div>
                 <div class="col-md-9 pl-2">
                   <div class="card-text my-auto">
-                    {{q_testTaker.timeLimit}} Menit 
+                    {{q_testTaker.timeLimit}} Menit
                   </div>
                 </div>
               </div>
@@ -112,8 +112,8 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
             </li>
         <li class="list-group-item">
           <ul class="flex-fill d-flex justify-content-between list-group block list-group-flush">
-            
-            {% if q_testPackage.settings.viewAnswerKey %}
+
+            {% if q_testPackage.settings.viewScore %}
             {% for q in q_testTaker.get_all_answer_question_and_score %}
               <li class="list-group-item d-flex flex-column py-1  "><div class="row">
                 <div class="col-md-2 pl-2 my-auto"><div class="card-title text-muted my-auto  h6 text-uppercase">Soal Ke-{{q.num}}</div></div>
@@ -122,12 +122,14 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
                   <div class="col-md-4 pl-2"><div  class="card-text bg-danger text-left rounded h6 my-1 p-2">Tidak Diisi</div></div>
                 {% else %}
                   {% if q.isTrue == 'True' %}
-                    <div class="col-md-4 pl-2"><div  class="card-text bg-info text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</div></div>
+                    <div class="col-md-4 pl-2"><div  class="card-text bg-info text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer | safe}}</div></div>
+                    <div class="col-md-2 pl-2"><div  class="card-text border border-info text-left rounded h6 my-1 p-2">Skor: <br>{{q.score}}</div></div>
                   {% else %}
-                    <div class="col-md-4 pl-2"><div  class="card-text bg-danger text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</div></div>
-                  {% endif %}   
-                {% endif %}  
-              {% endfor %}          
+                    <div class="col-md-4 pl-2"><div  class="card-text bg-danger text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer | safe}}</div></div>
+                    <div class="col-md-2 pl-2"><div  class="card-text border border-danger text-left rounded h6 my-1 p-2">Skor: <br>{{q.score}}</div></div>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
             {% else %}
             {% for q in q_testTaker.get_all_answer_question_and_score %}
               <li class="list-group-item d-flex flex-column py-1  "><div class="row">
@@ -135,15 +137,15 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
                 <div class="col-md-5 pl-2"><div class="card-text h6 border border-info rounded my-1 p-2">{{q.question | safe | truncatechars_html:45}}</div></div>
                 {% if q.answer == "Error"%}
                   <div class="col-md-5 pl-2"><div  class="card-text bg-danger text-left rounded h6 my-1 p-2">Tidak Diisi</div></div>
-                {% else %}          
+                {% else %}
                     <div class="col-md-5 pl-2"><div  class="card-text bg-info text-left rounded h6 my-1 p-2">Jawaban Anda: <br>{{q.answer}}</div></div>
-                {% endif %}  
-              {% endfor %}          
+                {% endif %}
+              {% endfor %}
             {% endif %}
-          
-           
-              
-                  
+
+
+
+
                 </li>
           </ul>
         <li class="list-group-item mx-3 px-4"><div class="row">
@@ -151,7 +153,7 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
           <div class="col-md-9 pl-2"><div class="card-text my-auto">{{q_testTaker.get_total_score}}</div></div>
             </div></li>
         </li>
-        
+
 
             <footer class="mt-2 d-flex justify-content-end px-3">
               <form action="pdf" method="post">
@@ -166,7 +168,7 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
             </footer>
         {% else %}
         <h4 class=" pb-2 text-center my-auto align-items-center flex-fill font-weight-bold">Masukan Kunci Sesi</h4>
-                    
+
                       {% if form.errors.session_password %}
                       <div class="alert alert-danger mt-2 alert-dismissible fade show pb-0" role="alert">
                         <p>Kunci Sesi Salah</p>
@@ -177,9 +179,8 @@ JAWABAN {{q_testTaker.testTakerName}} {{q_testPackage.testTitle}}
                       {{form.session_password|attr:"placeholder:Masukan Kunci Sesi"|add_class:"form-control form-control-lg col-sm-9"}}
                       <button class="btn btn-success mt-1 my-sm-0 col-sm-3 text-nowrap" type="submit">Lihat</button>
                     </form>
-                  
-            
+
+
         {% endif %}
-  
+
 {% endblock main_container %}
-  

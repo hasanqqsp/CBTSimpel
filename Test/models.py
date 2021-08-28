@@ -42,7 +42,7 @@ class TestPackage(models.Model):
         try:
             self.welcomeMessage = json.loads(self.welcomeMessage)['html']
         except :
-            pass 
+            pass
         try :
             user = User.objects.get(username=self.testCode)
             user.set_password = str(self.passwordAdminTest)
@@ -58,7 +58,7 @@ class TestPackage(models.Model):
             beforeClose = self.testScheduleClose - timezone.now()
             if beforeClose < datetime.timedelta(minutes=self.timeLimit):
                 return int(beforeClose.total_seconds()/60)
-        return self.timeLimit    
+        return self.timeLimit
 
 
     def get_question_count(self):
@@ -71,7 +71,7 @@ class TestPackage(models.Model):
             if r not in list :
                 list.append(r)
         return list
-    
+
     def get_all_question(self,*args):
         list = []
         for i in json.loads(args[0]):
@@ -91,7 +91,7 @@ class TestPackage(models.Model):
 
     def get_testTaker_count(self):
         return self.testtaker_set.all().count()
-        
+
     def __str__(self):
         return f"{self.testID}_{self.testTitle}"
 
@@ -122,19 +122,19 @@ class TestTaker(models.Model):
             self.sequences = json.dumps(self.testPackage.get_random_sequence())
         elif not self.sequences and not self.testPackage.settings["random_sequences"]:
             self.sequences = [i for i in range(self.testPackage.get_question_count())]
-            
+
         super().save(*args, **kwargs)
     def timerStart(self):
         print(timezone.now())
         self.timeStart = timezone.now()
         super().save()
-        
+
     def timerEnd(self):
         self.timeFinish = timezone.now()
         user = User.objects.get(username = self.session_code)
         user.delete()
         super().save()
-    
+
     def get_time_limit(self):
         return self.timeStart + datetime.timedelta(minutes=self.timeLimit)
 
@@ -177,11 +177,11 @@ class TestTaker(models.Model):
                 'isTrue':'{}'.format(q.answer_set.filter(testTaker=self)[0].get_check_result() if q.answer_set.filter(testTaker=self).exists() else 'Error' ),
                 'score':'{}'.format(score)
                 })
-        return query        
+        return query
 
     def get_last_answered(self):
         if self.answer_set.all().exists():
-            return self.answer_set.all().order_by('timestamp')[0].question 
+            return self.answer_set.all().order_by('timestamp')[0].question
         else:
             return self.testPackage.get_one_question(1,self.sequences)
 
@@ -238,7 +238,7 @@ class Question(models.Model):
         inIndex = q_question.index(self)
         inSequence = sequence.index(inIndex)
         return inSequence + 1
-        
+
     def get_next_question(self,*args):
         q_question = list(Question.objects.filter(testPackage=self.testPackage))
         sequence = json.loads(args[0])
@@ -270,7 +270,7 @@ class Question(models.Model):
     #         for i in questionList:
     #             i.questionNum -= 1
     #             i.save()
-                
+
     #     super().delete()
 
     def __str__(self):
@@ -290,12 +290,12 @@ class Answer(models.Model):
 
     def get_answer_text(self):
         list_choices = self.question.choices
-        return next((item["choiceLabel"] for item in list_choices if item["choiceCode"] == self.answer), False)
+        return next((item["choiceLabel"] for item in list_choices if str(item["choiceCode"]) == str(self.answer)), False)
 
     def get_check_result(self):
         if self.answer == None:
             return None
-        if self.answer == self.question.answerKey:
+        if str(self.answer) == str(self.question.answerKey):
             self.isTrue = True
             super().save()
             return True
@@ -311,58 +311,3 @@ class Answer(models.Model):
             return self.question.falseScore
         return self.question.defaultScore
 
-    # def save(self, *args, **kwargs):
-    #     if not self.pk and self.questi == 1:
-    #         findTaker = TestTaker.objects.get(testTakerID=self.testTakerID, session_code=self.session_code)
-    #         findTaker.startTime = datetime.datetime.now()
-    #         findTaker.save()
-    #         super(Answer, self).save(*args, **kwargs)
-    #     try:
-    #         findQuest = Answer.objects.get(questionID=self.questionID, testTakerID=self.testTakerID)
-    #     except:
-    #         pass
-    #     try:
-    #         findAnswer = Answer.objects.filter(testTakerID=self.testTakerID, session_code=self.session_code)
-    #         findTaker = TestTaker.objects.get(testTakerID= self.testTakerID)
-
-    #         score_obtained = 0
-    #         for i in findAnswer:
-    #             score_obtained += i.scoreObtain
-
-    #         findTaker.scoreObtained = score_obtained
-    #         findTaker.save()
-
-    #         checkAnswer = Question.objects.get(questID=self.questionID,testTakerID=self.testTakerID)
-    #         findTaker.lastAnswered = checkAnswer.questionNum
-    #         findTaker.save()
-    #         if str(self.answer) == str(checkAnswer.answerKey):
-    #             self.scoreObtain = checkAnswer.trueScore
-    #         else :
-    #             self.scoreObtain = checkAnswer.falseScore
-    #         checkAnswer.save()
-
-    #         findTaker = Answer.objects.filter(testTakerID==self.testTakerID, session_code=self.session_code)
-    #         findTestTaker = TestTaker.objects.get(testTakerID=self.testTakerID)
-    #         if self.questi == 1:
-    #             findTestTaker.firstAnswerID = self.answerID
-    #             findTestTaker.save()
-    #         else:
-    #             pass
-
-    #         findPA = Answer.objects.get(questionID=self.questionID, testTakerID=self.testTakerID, questi=(self.questi-1))
-    #         self.prevAnswerID = findPA.answerID
-    #         findPA.nextQuestID = self.answerID
-    #         findPA.save()
-    #     except:
-    #         pass
-
-    #     sameData = Answer.objects.filter(session_code=self.session_code, testID=self.testID, questionID=self.questionID)
-    #     for i in sameData:
-    #         if i.id != self.id:
-    #             i.delete()
-    #         else:
-    #             pass
-    #     super(Answer, self).save(*args, **kwargs)
-
-    # def __str__(self):
-    #     return "{} for {}".format(self.testTakerID , self.questionID)

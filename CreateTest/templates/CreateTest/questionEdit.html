@@ -6,10 +6,10 @@ Dashboard Administrasi Tes
 {% endblock nav_brand %}
 {% block extra_head %}
 <script>
-  {% if choices %}
-    let choices = {{choices | safe}}
-  {% else %}
+  {% if choices == ""%}
     let choices = []
+  {% else %}
+    let choices = {{choices | safe}}
   {% endif %}
 </script>
 {% endblock extra_head %}
@@ -107,7 +107,10 @@ const loadChoicesDOM = () =>{
           <button type="button" data-toggle="modal" data-target="#ModalChoiceEditor" class="btn btn-outline-success text-center  btn-block" data-choice-code="new">Tambahkan Pilihan</button>
       </div>`
   document.getElementById('{{form.choices.id_for_label}}').value = JSON.stringify(choices)
-  document.querySelector(`button[data-choice-code="{{object.answerKey}}"]`).classList.add('active')
+    {% if object.answerKey%}
+    document.querySelector(`button[data-choice-code="{{object.answerKey}}"]`).classList.add('active')
+  {% endif %}
+
 
 }
   loadChoicesDOM()
@@ -121,7 +124,7 @@ $('.modal').on('show.bs.modal', function (event) {
     loadChoicesDOM()
 
   }
-  var choiceLabel = choices.find(e => e.choiceCode == choiceCode)[0]
+  var choiceLabel = choices.find(e => e.choiceCode == choiceCode )["choiceLabel"]
   var modal = $(this)
   modal.find('.modal-title').html(`Edit Pilihan <span id="choice-code">${choiceCode}</span>`)
   modal.find('#choice_editor .ql-editor').html(choiceLabel)
